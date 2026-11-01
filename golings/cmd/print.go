@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -17,6 +16,7 @@ func PrintHint(infoFile string) {
 	exercise, err := exercises.NextPending(infoFile)
 	if err != nil {
 		color.Red("Failed to find next exercises")
+		return
 	}
 	color.Yellow(exercise.Hint)
 }
@@ -26,6 +26,7 @@ func PrintList(infoFile string) {
 	exs, err := exercises.List(infoFile)
 	if err != nil {
 		color.Red("Failed to list exercises")
+		return
 	}
 	ui.PrintList(os.Stdout, exs)
 }
@@ -35,13 +36,19 @@ func RunNextExercise(infoFile string) {
 
 	progress, done, total, err := exercises.Progress(infoFile)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	} else {
-		color.Blue("Progress: %d/%d (%.2f%%)\n\n", done, total, progress*100)
+		color.Red("Failed to read the exercises: %s", err)
+		color.Yellow("Run golings from the folder that holds info.toml, or try `golings doctor`.")
+		return
 	}
+	color.Blue("Progress: %d/%d (%.2f%%)\n\n", done, total, progress*100)
 
 	if skipped, err := exercises.Skipped(infoFile); err == nil && len(skipped) > 0 {
 		color.Yellow("%d exercise(s) skipped: they need a newer Go than %s\n\n", len(skipped), localGo())
+	}
+
+	if total == 0 {
+		color.Yellow("There are no exercises to run. Try `golings doctor` to check your setup.")
+		return
 	}
 
 	if done == total {
@@ -59,6 +66,7 @@ func RunNextExercise(infoFile string) {
 	exercise, err := exercises.NextPending(infoFile)
 	if err != nil {
 		color.Red("Failed to find next exercises")
+		return
 	}
 
 	result, err := exercise.Run()

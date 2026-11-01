@@ -151,6 +151,20 @@ var _ = Describe("More commands", func() {
 			Expect(out.String()).To(ContainSubstring("Progress: 1/1 (100.00%)"))
 			Expect(out.String()).To(ContainSubstring("completed all 1 of the currently available exercises"))
 		})
+		It("does not congratulate when the info file can't be read", func() {
+			cmd.RunNextExercise("../fixtures/info404.toml")
+
+			Expect(out.String()).To(ContainSubstring("Failed to read the exercises"))
+			Expect(out.String()).NotTo(ContainSubstring("Congratulations"))
+			Expect(out.String()).NotTo(ContainSubstring("NaN"))
+		})
+		It("does not congratulate when there are no exercises to run", func() {
+			cmd.RunNextExercise("../fixtures/empty/info.toml")
+
+			Expect(out.String()).To(ContainSubstring("no exercises to run"))
+			Expect(out.String()).NotTo(ContainSubstring("Congratulations"))
+			Expect(out.String()).NotTo(ContainSubstring("NaN"))
+		})
 		It("explains that a compiling exercise is still pending", func() {
 			cmd.RunNextExercise("../fixtures/pending1/info.toml")
 
