@@ -40,6 +40,10 @@ func RunNextExercise(infoFile string) {
 		color.Blue("Progress: %d/%d (%.2f%%)\n\n", done, total, progress*100)
 	}
 
+	if skipped, err := exercises.Skipped(infoFile); err == nil && len(skipped) > 0 {
+		color.Yellow("%d exercise(s) skipped: they need a newer Go than %s\n\n", len(skipped), localGo())
+	}
+
 	if done == total {
 		color.Green("Congratulations!!\n")
 		color.Green("You have completed all %d of the currently available exercises.", total)
@@ -95,4 +99,12 @@ func ClearScreen() {
 			color.Red("Clear terminal command error")
 		}
 	}
+}
+
+func localGo() string {
+	v, err := exercises.LocalGoVersion()
+	if err != nil {
+		return "the installed version"
+	}
+	return v
 }
