@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -29,6 +30,35 @@ func PrintList(infoFile string) {
 		return
 	}
 	ui.PrintList(os.Stdout, exs)
+	printTopicProgress(infoFile)
+}
+
+// printTopicProgress prints the per-topic table below the exercise list.
+func printTopicProgress(infoFile string) {
+	topics, err := exercises.ProgressByTopic(infoFile)
+	if err != nil || len(topics) == 0 {
+		return
+	}
+	fmt.Println()
+	ui.PrintTopicProgress(os.Stdout, topics)
+}
+
+// currentTopicLine describes how far along the learner is in a topic,
+// e.g. "Topic: slices (2/5)". It is empty for exercises without a topic.
+func currentTopicLine(infoFile string, exercise exercises.Exercise) string {
+	if exercise.Topic() == "" {
+		return ""
+	}
+	topics, err := exercises.ProgressByTopic(infoFile)
+	if err != nil {
+		return ""
+	}
+	for _, t := range topics {
+		if t.Topic == exercise.Topic() {
+			return fmt.Sprintf("Topic: %s (%d/%d)", t.Topic, t.Done, t.Total)
+		}
+	}
+	return ""
 }
 
 func RunNextExercise(infoFile string) {
@@ -67,6 +97,10 @@ func RunNextExercise(infoFile string) {
 	if err != nil {
 		color.Red("Failed to find next exercises")
 		return
+	}
+
+	if line := currentTopicLine(infoFile, exercise); line != "" {
+		color.Blue(line + "\n")
 	}
 
 	result, err := exercise.Run()
