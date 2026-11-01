@@ -12,6 +12,16 @@ import (
 
 const tabWidth = 4
 
+// write prints to w, colored when c is not nil. Write errors are ignored: this
+// is terminal output and there is nothing useful to do about them.
+func write(w io.Writer, c *color.Color, format string, args ...any) {
+	if c == nil {
+		_, _ = fmt.Fprintf(w, format, args...)
+		return
+	}
+	_, _ = c.Fprintf(w, format, args...)
+}
+
 // PrintFailure explains why an exercise failed. Compiler errors are shown with
 // the offending source line and a caret under the column.
 func PrintFailure(w io.Writer, ex exercises.Exercise, f exercises.Failure) {
@@ -19,11 +29,11 @@ func PrintFailure(w io.Writer, ex exercises.Exercise, f exercises.Failure) {
 
 	switch f.Kind {
 	case exercises.CompileFailure:
-		cyan.Fprintf(w, "Failed to compile the exercise %s\n\n", ex.Path)
+		write(w, cyan, "Failed to compile the exercise %s\n\n", ex.Path)
 	case exercises.TestFailure:
-		cyan.Fprintf(w, "Tests failed for the exercise %s\n\n", ex.Path)
+		write(w, cyan, "Tests failed for the exercise %s\n\n", ex.Path)
 	default:
-		cyan.Fprintf(w, "The exercise %s failed while running\n\n", ex.Path)
+		write(w, cyan, "The exercise %s failed while running\n\n", ex.Path)
 	}
 
 	for _, d := range f.Diagnostics {
@@ -31,18 +41,18 @@ func PrintFailure(w io.Writer, ex exercises.Exercise, f exercises.Failure) {
 		if d.Col > 0 {
 			location += fmt.Sprintf(":%d", d.Col)
 		}
-		red.Fprintf(w, "%s: %s\n", location, d.Message)
+		write(w, red, "%s: %s\n", location, d.Message)
 		printSnippet(w, d)
-		fmt.Fprintln(w)
+		write(w, nil, "\n")
 	}
 
 	if f.Output != "" {
 		if f.Kind != exercises.CompileFailure {
-			white.Fprintln(w, "Output:")
-			fmt.Fprintln(w)
+			write(w, white, "Output:\n")
+			write(w, nil, "\n")
 		}
-		red.Fprintln(w, f.Output)
-		fmt.Fprintln(w)
+		write(w, red, "%s\n", f.Output)
+		write(w, nil, "\n")
 	}
 }
 
@@ -60,7 +70,7 @@ func printSnippet(w io.Writer, d exercises.Diagnostic) {
 	gutter := fmt.Sprintf("%d", d.Line)
 	pad := strings.Repeat(" ", len(gutter))
 
-	fmt.Fprintf(w, "\n  %s | %s\n", gutter, expandTabs(source))
+	write(w, nil, "\n  %s | %s\n", gutter, expandTabs(source))
 	if d.Col > 0 {
 		prefix := source
 		if d.Col-1 < len(prefix) {
@@ -68,7 +78,7 @@ func printSnippet(w io.Writer, d exercises.Diagnostic) {
 		}
 		// Columns count bytes, the caret has to line up with what is displayed.
 		offset := len([]rune(expandTabs(prefix)))
-		fmt.Fprintf(w, "  %s | %s^\n", pad, strings.Repeat(" ", offset))
+		write(w, nil, "  %s | %s^\n", pad, strings.Repeat(" ", offset))
 	}
 }
 
