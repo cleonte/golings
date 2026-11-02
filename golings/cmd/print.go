@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/cleonte/golings/golings/exercises"
 	"github.com/cleonte/golings/golings/ui"
@@ -73,7 +73,7 @@ func RunNextExercise(infoFile string) {
 	color.Blue("Progress: %d/%d (%.2f%%)\n\n", done, total, progress*100)
 
 	if skipped, err := exercises.Skipped(infoFile); err == nil && len(skipped) > 0 {
-		color.Yellow("%d exercise(s) skipped: they need a newer Go than %s\n\n", len(skipped), localGo())
+		color.Yellow("%d exercise(s) skipped: %s. Try `golings doctor`.\n\n", len(skipped), skipReasons(skipped))
 	}
 
 	if total == 0 {
@@ -104,7 +104,7 @@ func RunNextExercise(infoFile string) {
 	}
 
 	result, err := exercise.Run()
-	if errors.Is(err, exercises.ErrGoVersionTooOld) {
+	if exercises.IsSkipped(err) {
 		color.Yellow(err.Error())
 		return
 	}
@@ -139,12 +139,14 @@ func ClearScreen() {
 	}
 }
 
-func localGo() string {
-	v, err := exercises.LocalGoVersion()
-	if err != nil {
-		return "the installed version"
+// skipReasons names the exercises that can't run here and why, e.g.
+// "future1 (needs Go 1.30), concurrent2 (needs the race detector)".
+func skipReasons(skipped []exercises.Exercise) string {
+	reasons := make([]string, len(skipped))
+	for i, e := range skipped {
+		reasons[i] = fmt.Sprintf("%s (%s)", e.Name, e.SkipReason())
 	}
-	return v
+	return strings.Join(reasons, ", ")
 }
 
 // printFailure explains why the exercise failed and where to find help.

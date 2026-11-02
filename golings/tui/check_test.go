@@ -161,7 +161,7 @@ func TestCheckAllShowsWhatEveryExerciseDoes(t *testing.T) {
 	g.Expect(view).To(MatchRegexp(`✔ a1\n`))
 	g.Expect(view).To(ContainSubstring("✔ a2  works, the I AM NOT DONE marker is still there"))
 	g.Expect(view).To(ContainSubstring("✗ a3  does not compile"))
-	g.Expect(view).To(ContainSubstring("• a4  needs Go"))
+	g.Expect(view).To(ContainSubstring("• a4  needs a newer Go"))
 	g.Expect(view).To(ContainSubstring("✗ a5  was finished, but now does not compile"))
 	g.Expect(m.mode).To(Equal(modeCheck))
 }
@@ -375,4 +375,23 @@ func TestFooterShowsTheNewKeys(t *testing.T) {
 	runCmds(t, m, cmd)
 
 	g.Expect(m.View().Content).To(ContainSubstring("n next   l list   c check all"))
+}
+
+func TestCheckAllSaysWhenTheRaceDetectorIsMissing(t *testing.T) {
+	g := NewWithT(t)
+	noColor(t)
+	info := newWorkspace(t, "!a/a1", "!a/a2")
+	fake := resultsFor(map[string]func(exercises.Exercise) (exercises.Result, error){
+		"a1": func(ex exercises.Exercise) (exercises.Result, error) {
+			return exercises.Result{Exercise: ex}, exercises.ErrRaceUnsupported
+		},
+	})
+	m, cmd := start(t, Config{InfoFile: info, Run: fake.run})
+	runCmds(t, m, cmd)
+
+	pump(t, m, press(m, "c"))
+
+	view := plain(m.View().Content)
+	g.Expect(view).To(ContainSubstring("Checked 2 exercises: 1 work, 0 do not, 1 skipped"))
+	g.Expect(view).To(ContainSubstring("• a1  needs the race detector"))
 }

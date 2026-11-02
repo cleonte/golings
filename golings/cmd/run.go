@@ -40,7 +40,7 @@ example specific exercise : golings run variables1`,
 
 			spinner.Close() // nolint
 
-			if errors.Is(err, exercises.ErrGoVersionTooOld) {
+			if exercises.IsSkipped(err) {
 				color.Yellow(err.Error())
 				return err
 			}

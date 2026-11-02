@@ -1,0 +1,7 @@
+# error1 does not compile: if the race guard fails, running it would fail loudly
+[[exercises]]
+name = "racy-broken"
+path = "../fixtures/error1/main.go"
+mode = "test"
+race = true
+hint = ""
