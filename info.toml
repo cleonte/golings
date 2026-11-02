@@ -1136,3 +1136,33 @@ hint = """
 The new `uuid` package (Go 1.27) has the standard library generate and parse UUIDs, RFC 9562 identifiers like `123e4567-e89b-12d3-a456-426614174000`. `uuid.New()` returns a random one, `uuid.NewV7()` one that sorts by creation time, `uuid.Parse(text)` reads the text form and returns an error when it is not a UUID, and `String()` gives the text back. A `uuid.UUID` is an array of 16 bytes, so you can compare two with `==`.
 
 For more information: https://pkg.go.dev/uuid"""
+
+[[exercises]]
+name = "go127_3"
+path = "exercises/go127/go127_3/main_test.go"
+mode = "test"
+go_version = "1.27"
+hint = """
+A struct that embeds another gets the fields of the embedded struct as its own (they are "promoted"): `person.City` is `person.Address.City`. Until Go 1.27 a composite literal could not use them as keys, you had to write the embedded struct out: `Person{Address: Address{City: "Lisbon"}}`. Now the key can be a promoted field: `Person{Name: "Ana", City: "Lisbon"}`. The file needs `//go:build go1.27` at the top, because the module's language version is older; the exercise already has it.
+
+For more information: https://go.dev/doc/go1.27#language"""
+
+[[exercises]]
+name = "go127_4"
+path = "exercises/go127/go127_4/main.go"
+mode = "compile"
+go_version = "1.27"
+hint = """
+Go 1.27 lets a method declare type parameters of its own, after its name: `func (l List[T]) Map[U any](f func(T) U) List[U]`. Before, you had to write a function and pass the list in. `math/rand/v2` is the standard library example: `(*Rand).N` works for any integer type, `r.N(10 * time.Second)` gives a random Duration. The type parameters of the type (`T`) stay in the receiver, the ones of the method (`U`) go after the name. The file needs `//go:build go1.27` at the top, because the module's language version is older; the exercise already has it.
+
+For more information: https://go.dev/doc/go1.27#language"""
+
+[[exercises]]
+name = "go127_5"
+path = "exercises/go127/go127_5/main.go"
+mode = "compile"
+go_version = "1.27"
+hint = """
+A generic method has limits. An interface method can't have type parameters, and a method with type parameters can't be the one that makes a type implement an interface: `Get[T any](key string) T` is not the method `Get(key string) any` that the interface asks for. When you need both, keep the interface method plain and put the generic part in a function that takes the interface: `func GetAs[T any](s Store, key string) (T, bool)`. The file needs `//go:build go1.27` at the top; the exercise already has it.
+
+For more information: https://go.dev/doc/go1.27#language"""
