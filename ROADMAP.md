@@ -17,7 +17,8 @@ Go version policy: the project floor is **Go 1.26** (latest deps such as x/sys, 
 
 ## Phase 2 — Tooling and learner experience (done)
 - [x] `golings doctor`: Go version against the floor and per-exercise minimums, workspace, race detector prerequisites.
-- [x] Per-exercise `go_version` in `info.toml`; the runner skips such exercises when the local Go is too old.
+- [x] Per-exercise `go_version` in `info.toml`; the runner skips such exercises when the local Go is too old. Everything now needs Go 1.26 (the floor), so it is for exercises that need a later release, 1.27 and up.
+- [x] Per-exercise `race = true` in `info.toml`: only the exercises that depend on the race detector (`concurrent2`, `concurrent10`) are built with `-race`, and they are skipped, like a `go_version` skip, where it is not available (no cgo or no C compiler; macOS needs neither). Every other test exercise runs anywhere Go runs.
 - [x] `golings init` (create the exercises folder from the copy embedded in the binary) and `golings reset <exercise>`.
 - [x] `golings solution <exercise>`: hidden while the exercise is pending, `--reveal` to look anyway.
 - [x] Clearer failure output: compile errors with the source line and caret, test failures and condensed panics.
@@ -53,8 +54,8 @@ Already covered along the way: per-iteration loop variables (closures4), `string
 - [ ] Go 1.22: `for i := range 10` as a topic of its own.
 - [ ] Go 1.23: iterators — range-over-func, `iter.Seq`/`Seq2`, `slices.Collect`, `maps.Keys` as iterators.
 - [ ] Go 1.24: generic type aliases; `omitzero` JSON tag.
-- [ ] Go 1.25 (tagged min 1.25): `sync.WaitGroup.Go`; `testing/synctest`.
-- [ ] Go 1.26 (tagged min 1.26): `new(expr)`; `errors.AsType`; self-referential generic constraints.
+- [ ] Go 1.25: `sync.WaitGroup.Go`; `testing/synctest`.
+- [ ] Go 1.26: `new(expr)`; `errors.AsType`; self-referential generic constraints.
 - [ ] `log/slog` structured logging basics.
 - [ ] Expand **generics** beyond 2 exercises: constraints, `cmp.Ordered`, generic structs, generic methods limits.
 

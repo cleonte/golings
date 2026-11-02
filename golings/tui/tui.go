@@ -435,7 +435,7 @@ func (m *Model) header() string {
 		title += "  " + dimStyle.Render(m.topic)
 	}
 	if m.skipped > 0 {
-		title += "  " + warnStyle.Render(fmt.Sprintf("%d skipped (newer Go needed)", m.skipped))
+		title += "  " + warnStyle.Render(fmt.Sprintf("%d skipped (see golings doctor)", m.skipped))
 	}
 
 	current := ""
@@ -564,7 +564,7 @@ func (m *Model) resultLines() []string {
 	var lines []string
 
 	switch {
-	case errors.Is(m.runErr, exercises.ErrGoVersionTooOld):
+	case exercises.IsSkipped(m.runErr):
 		lines = append(lines, warnStyle.Render(m.runErr.Error()))
 
 	case m.runErr != nil:

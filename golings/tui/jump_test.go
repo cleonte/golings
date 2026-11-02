@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tea "charm.land/bubbletea/v2"
+	"github.com/cleonte/golings/golings/exercises"
 	. "github.com/onsi/gomega"
 )
 
@@ -230,4 +231,51 @@ func TestLWithoutExercisesSaysSo(t *testing.T) {
 
 	g.Expect(m.mode).To(Equal(modeResult))
 	g.Expect(plain(m.View().Content)).To(ContainSubstring("There are no exercises to list."))
+}
+
+func TestTheListShowsExercisesThatNeedTheRaceDetector(t *testing.T) {
+	g := NewWithT(t)
+	noColor(t)
+	previous := exercises.RaceSupported
+	exercises.RaceSupported = func() bool { return false }
+	t.Cleanup(func() { exercises.RaceSupported = previous })
+
+	info := newWorkspace(t, "!a/a1", "!a/a2")
+	data, err := os.ReadFile(info)
+	if err != nil {
+		t.Fatal(err)
+	}
+	data = []byte(strings.Replace(string(data), "name = \"a2\"\n", "name = \"a2\"\nrace = true\n", 1))
+	if err := os.WriteFile(info, data, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	m, cmd := start(t, Config{InfoFile: info, Run: (&fakeRuns{}).run})
+	runCmds(t, m, cmd)
+
+	typeKeys(t, m, "l")
+
+	g.Expect(plain(m.View().Content)).To(MatchRegexp(`• a2\s+needs the race detector`))
+}
+
+func TestNLeavesASkippedExerciseAloneAndMovesOn(t *testing.T) {
+	g := NewWithT(t)
+	fake := &fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) {
+		if ex.Name == "a2" {
+			return exercises.Result{Exercise: ex}, exercises.ErrRaceUnsupported
+		}
+		return passing(ex)
+	}}
+	m := listed(t, fake, "!a/a1", "!a/a2")
+
+	typeKeys(t, m, "l", "down", "enter")
+	g.Expect(m.exercise.Name).To(Equal("a2"))
+	g.Expect(plain(m.View().Content)).To(ContainSubstring("race detector"))
+
+	skipped := m.exercise.Path
+	typeKeys(t, m, "n")
+
+	g.Expect(marker(t, skipped)).To(BeTrue(), "the skipped exercise is not marked as done")
+	g.Expect(m.exercise.Name).To(Equal("a1"), "back to the first pending exercise")
+	g.Expect(m.pinned).To(BeEmpty())
+	g.Expect(m.notice).To(ContainSubstring("a2 is skipped"))
 }

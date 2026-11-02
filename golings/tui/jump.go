@@ -15,7 +15,7 @@ import (
 type jumpItem struct {
 	exercise exercises.Exercise
 	done     bool
-	skipped  bool // the local Go is too old to run it
+	skipped  bool // this machine can not run it: Go too old, or no race detector
 }
 
 // FilterValue lets the learner find an exercise by its name or its topic.
@@ -53,7 +53,7 @@ func (jumpDelegate) Render(w io.Writer, m list.Model, index int, item list.Item)
 
 	line := fmt.Sprintf("%s%s %s", cursor, mark, name)
 	if it.skipped {
-		line += warnStyle.Render("  needs Go " + it.exercise.GoVersion)
+		line += warnStyle.Render("  " + it.exercise.SkipReason())
 	} else if topic := it.exercise.Topic(); topic != "" {
 		line += dimStyle.Render("  " + topic)
 	}

@@ -119,4 +119,42 @@ var _ = Describe("Commands", func() {
 			Expect(out.String()).To(ContainSubstring("1 exercise(s) skipped"))
 		})
 	})
+	Describe("Exercises that need the race detector, where it is missing", func() {
+		const infoFile = "../fixtures/race/cmd/info.toml"
+		var out *bytes.Buffer
+
+		BeforeEach(func() {
+			out = &bytes.Buffer{}
+			prevOutput, prevNoColor := color.Output, color.NoColor
+			color.Output, color.NoColor = out, true
+			prevRace := exercises.RaceSupported
+			exercises.RaceSupported = func() bool { return false }
+			DeferCleanup(func() {
+				color.Output, color.NoColor = prevOutput, prevNoColor
+				exercises.RaceSupported = prevRace
+			})
+		})
+
+		It("run refuses to run it and says what to install", func() {
+			run := cmd.RunCmd(infoFile)
+			run.SetArgs([]string{"racy-broken"})
+
+			err := run.Execute()
+
+			Expect(err).To(MatchError(exercises.ErrRaceUnsupported))
+			Expect(out.String()).To(And(ContainSubstring("CGO_ENABLED=1"), ContainSubstring("golings doctor")))
+			Expect(out.String()).NotTo(ContainSubstring("Failed to compile"))
+		})
+		It("verify skips it", func() {
+			err := cmd.VerifyCmd(infoFile).Execute()
+
+			Expect(err).ToNot(HaveOccurred())
+			Expect(out.String()).To(ContainSubstring("Skipped"))
+		})
+		It("watch says which exercise was skipped and why", func() {
+			cmd.RunNextExercise(infoFile)
+
+			Expect(out.String()).To(ContainSubstring("1 exercise(s) skipped: racy-broken (needs the race detector)"))
+		})
+	})
 })

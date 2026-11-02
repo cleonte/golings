@@ -72,6 +72,25 @@ var _ = Describe("Repository manifest", func() {
 		}
 	})
 
+	It("sets race only on test-mode exercises", func() {
+		for _, ex := range all {
+			if ex.Race {
+				Expect(ex.Mode).To(Equal("test"), "exercise %s: -race only applies to tests", ex.Name)
+			}
+		}
+	})
+
+	It("marks the exercises that only fail with the race detector", func() {
+		var racy []string
+		for _, ex := range all {
+			if ex.Race {
+				racy = append(racy, ex.Name)
+			}
+		}
+		Expect(racy).To(Equal([]string{"concurrent2", "concurrent10"}),
+			"set race = true only on an exercise whose unsolved version does not fail without -race (see CONTRIBUTING.md)")
+	})
+
 	It("lists every exercise directory in the manifest", func() {
 		listed := []string{}
 		for _, ex := range all {

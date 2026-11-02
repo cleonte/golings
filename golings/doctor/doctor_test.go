@@ -11,6 +11,7 @@ import (
 const (
 	infoFile   = "../fixtures/goversion/info.toml" // two exercises, one needing Go 99.0
 	testsInfo  = "../fixtures/info.toml"           // compile1 and test1
+	raceInfo   = "../fixtures/race/info.toml"      // test1 and race1, which needs the race detector
 	noExercise = "../fixtures/info404.toml"
 )
 
@@ -123,10 +124,11 @@ func TestRaceDetectorRequirements(t *testing.T) {
 		want   doctor.Status
 		detail string
 	}{
-		{"fine", func(*doctor.Env) {}, testsInfo, doctor.OK, "available"},
-		{"cgo disabled", func(e *doctor.Env) { e.CGOEnabled = func() bool { return false } }, testsInfo, doctor.Warn, "CGO_ENABLED=1"},
-		{"no compiler", func(e *doctor.Env) { e.HasCCompiler = func() bool { return false } }, testsInfo, doctor.Warn, "C compiler"},
-		{"no test exercises", func(e *doctor.Env) { e.CGOEnabled = func() bool { return false } }, infoFile, doctor.OK, "not needed"},
+		{"fine", func(*doctor.Env) {}, raceInfo, doctor.OK, "available, for the 1 exercises"},
+		{"cgo disabled", func(e *doctor.Env) { e.CGOEnabled = func() bool { return false } }, raceInfo, doctor.Warn, "CGO_ENABLED=1"},
+		{"no compiler", func(e *doctor.Env) { e.HasCCompiler = func() bool { return false } }, raceInfo, doctor.Warn, "C compiler"},
+		{"macOS needs no cgo", func(e *doctor.Env) { e.GOOS, e.CGOEnabled = "darwin", func() bool { return false } }, raceInfo, doctor.OK, "available"},
+		{"no exercise needs it", func(e *doctor.Env) { e.CGOEnabled = func() bool { return false } }, testsInfo, doctor.OK, "not needed"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -140,4 +142,16 @@ func TestRaceDetectorRequirements(t *testing.T) {
 			g.Expect(c.Detail).To(ContainSubstring(tt.detail))
 		})
 	}
+}
+
+func TestMissingRaceDetectorNamesTheExercisesItAffects(t *testing.T) {
+	g := NewWithT(t)
+	env := healthyEnv()
+	env.CGOEnabled = func() bool { return false }
+
+	checks := doctor.Run(raceInfo, env)
+
+	c := find(g, checks, "Race detector")
+	g.Expect(c.Detail).To(And(ContainSubstring("1 will be skipped: race1"), Not(ContainSubstring("test1"))))
+	g.Expect(doctor.Failed(checks)).To(BeFalse(), "a warning, not a failure")
 }

@@ -17,7 +17,8 @@ const allSolutionsRequired = true
 const repoRoot = "../.."
 
 // TestSolutions proves each exercise can be solved: the unsolved version has
-// to fail and the solution has to pass, through the same runner learners use.
+// to fail and the solution has to pass, through the same runner learners use,
+// so with the race detector exactly when the manifest says race = true.
 func TestSolutions(t *testing.T) {
 	if testing.Short() {
 		t.Skip("runs every exercise with go run / go test; skipped in -short mode")
@@ -50,6 +51,10 @@ func TestSolutions(t *testing.T) {
 
 		t.Run(ex.Name, func(t *testing.T) {
 			t.Parallel()
+
+			if ex.Race && !exercises.RaceSupported() {
+				t.Skip("needs the race detector, which is not available here (cgo and a C compiler)")
+			}
 
 			if strings.Contains(string(source), "I AM NOT DONE") {
 				t.Errorf("%s still has the 'I AM NOT DONE' marker", solutionPath)

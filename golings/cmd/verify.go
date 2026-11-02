@@ -49,7 +49,7 @@ func VerifyCmd(infoFile string) *cobra.Command {
 				result, err := exercise.Run()
 				bar.Add(1) // nolint
 
-				if errors.Is(err, exercises.ErrGoVersionTooOld) {
+				if exercises.IsSkipped(err) {
 					fmt.Print("\n")
 					color.Yellow("Skipped: %s", err)
 					continue

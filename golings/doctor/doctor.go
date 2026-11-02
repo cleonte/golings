@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/version"
 	"os"
-	"os/exec"
 	"runtime"
 	"strings"
 
@@ -32,6 +31,7 @@ type Check struct {
 
 // Env holds everything doctor learns about the machine, so tests can fake it.
 type Env struct {
+	GOOS         string
 	GoVersion    func() (string, error)
 	CGOEnabled   func() bool
 	HasCCompiler func() bool
@@ -39,20 +39,12 @@ type Env struct {
 }
 
 func DefaultEnv() Env {
+	race := exercises.DefaultRaceEnv()
 	return Env{
-		GoVersion: exercises.LocalGoVersion,
-		CGOEnabled: func() bool {
-			out, err := exec.Command("go", "env", "CGO_ENABLED").Output()
-			return err == nil && strings.TrimSpace(string(out)) == "1"
-		},
-		HasCCompiler: func() bool {
-			for _, cc := range []string{"cc", "gcc", "clang"} {
-				if _, err := exec.LookPath(cc); err == nil {
-					return true
-				}
-			}
-			return false
-		},
+		GOOS:         race.GOOS,
+		GoVersion:    exercises.LocalGoVersion,
+		CGOEnabled:   race.CGOEnabled,
+		HasCCompiler: race.HasCCompiler,
 		FileExists: func(path string) bool {
 			_, err := os.Stat(path)
 			return err == nil
@@ -135,25 +127,26 @@ func versionGatedCheck(all []exercises.Exercise, local string) Check {
 	return Check{Name: "Exercise Go versions", Status: OK, Detail: "every exercise can run on this Go"}
 }
 
-// raceCheck looks at what `go test -race`, used by test-mode exercises, needs.
+// raceCheck looks at what `go test -race` needs. Only the exercises marked
+// with race = true are built with it; the others run anywhere Go runs.
 func raceCheck(all []exercises.Exercise, env Env) Check {
 	c := Check{Name: "Race detector"}
-	hasTests := false
+	var needing []string
 	for _, ex := range all {
-		if ex.Mode == "test" {
-			hasTests = true
-			break
+		if ex.Race {
+			needing = append(needing, ex.Name)
 		}
 	}
+
+	race := exercises.RaceEnv{GOOS: env.GOOS, CGOEnabled: env.CGOEnabled, HasCCompiler: env.HasCCompiler}
 	switch {
-	case !hasTests:
+	case len(needing) == 0:
 		c.Status, c.Detail = OK, "not needed"
-	case !env.CGOEnabled():
-		c.Status, c.Detail = Warn, "CGO is disabled; test exercises run with -race and need CGO_ENABLED=1"
-	case !env.HasCCompiler():
-		c.Status, c.Detail = Warn, "no C compiler found (cc, gcc, clang); test exercises run with -race and need one"
+	case race.Supported():
+		c.Status, c.Detail = OK, fmt.Sprintf("available, for the %d exercises that need it", len(needing))
 	default:
-		c.Status, c.Detail = OK, "CGO enabled and a C compiler is available"
+		c.Status = Warn
+		c.Detail = fmt.Sprintf("not available (it needs cgo and a C compiler: install gcc or clang and set CGO_ENABLED=1); %d will be skipped: %s", len(needing), strings.Join(needing, ", "))
 	}
 	return c
 }

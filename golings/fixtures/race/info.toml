@@ -1,0 +1,12 @@
+[[exercises]]
+name = "test1"
+path = "exercises/test1/main_test.go"
+mode = "test"
+hint = "no hint"
+
+[[exercises]]
+name = "race1"
+path = "exercises/race1/main_test.go"
+mode = "test"
+race = true
+hint = "no hint"

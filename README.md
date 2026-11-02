@@ -43,7 +43,7 @@ Add `go/bin` to your PATH if you want to run golings anywhere in your terminal. 
 
 #### Windows installation
 
-Some tests depend on `CGO` which is not installed by default.
+Two concurrency exercises (`concurrent2` and `concurrent10`) need the race detector, which needs `CGO` and a C compiler on Windows and Linux (on macOS it needs nothing). Without them those exercises are skipped, with a message, and everything else runs as usual; `golings doctor` tells you which ones. To run them too:
 
 1. Install scoop package manager [Scoop Homepage](https://scoop.sh)
     ```powershell
@@ -95,7 +95,7 @@ To run the exercises in the recommended order while taking advantage of fast fee
 golings watch
 ```
 
-For Windows:
+For Windows, only if you installed the C compiler above:
 ```powershell
 $env:CGO_ENABLED=1
 golings watch

@@ -36,6 +36,14 @@ func (m *Model) next() tea.Cmd {
 	switch {
 	case !m.hasExercise():
 		return nil
+	case m.status == statusFinished && exercises.IsSkipped(m.runErr):
+		// Only an exercise picked from the list can be a skipped one. It is not
+		// done, so its marker stays; go back to the first pending exercise.
+		name := m.exercise.Name
+		m.pinned = ""
+		cmd := m.startRun()
+		m.notice = name + " is skipped here, so it is not done."
+		return cmd
 	case m.status != statusFinished || m.runErr != nil:
 		m.notice = "Get " + m.exercise.Name + " to work first, then n moves on to the next exercise."
 		return nil
@@ -114,7 +122,7 @@ func (m *Model) finishCheck(msg checkDoneMsg) tea.Cmd {
 	item := &m.checkItems[msg.index]
 	item.result, item.err = msg.result, msg.err
 	switch {
-	case errors.Is(msg.err, exercises.ErrGoVersionTooOld):
+	case exercises.IsSkipped(msg.err):
 		item.status = checkSkipped
 	case msg.err != nil:
 		item.status = checkFailed
@@ -175,6 +183,18 @@ func (m *Model) checkLines() []string {
 	return lines
 }
 
+// skipReason says why an exercise was skipped, from the exercise itself or, if
+// that can't tell (the local Go changed since), from the error of its run.
+func skipReason(item checkItem) string {
+	if reason := item.exercise.SkipReason(); reason != "" {
+		return reason
+	}
+	if errors.Is(item.err, exercises.ErrRaceUnsupported) {
+		return "needs the race detector"
+	}
+	return "needs a newer Go"
+}
+
 func (m *Model) checkLine(item checkItem) string {
 	name := item.exercise.Name
 	switch item.status {
@@ -183,7 +203,7 @@ func (m *Model) checkLine(item checkItem) string {
 	case checkRunning:
 		return dimStyle.Render("… " + name)
 	case checkSkipped:
-		return warnStyle.Render(fmt.Sprintf("• %s  needs Go %s", name, item.exercise.GoVersion))
+		return warnStyle.Render(fmt.Sprintf("• %s  %s", name, skipReason(item)))
 	case checkPassed:
 		if item.exercise.State() == exercises.Pending {
 			return okStyle.Render("✔ "+name) + dimStyle.Render("  works, the I AM NOT DONE marker is still there")
