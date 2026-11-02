@@ -1098,3 +1098,21 @@ hint = """
 Checking a flag and then setting it is not safe when many goroutines do it at the same time: two of them can both see it unset. sync.Once runs a function exactly once, however many goroutines call Do, and everyone waits for it to finish.
 
 For more information: https://pkg.go.dev/sync#Once"""
+
+[[exercises]]
+name = "concurrent11"
+path = "exercises/concurrent/concurrent11/main_test.go"
+mode = "test"
+hint = """
+Since Go 1.25, `wg.Go(f)` starts `f` in a new goroutine and does the `wg.Add(1)` before and the `wg.Done()` after for you, so you can't forget one of them. You still call `wg.Wait()` to wait for all of them.
+
+For more information: https://pkg.go.dev/sync#WaitGroup.Go"""
+
+[[exercises]]
+name = "concurrent12"
+path = "exercises/concurrent/concurrent12/main_test.go"
+mode = "test"
+hint = """
+Tests that wait for time are slow and flaky. `synctest.Test(t, f)` (Go 1.25) runs `f` in a bubble with a fake clock: when every goroutine in the bubble is blocked, time jumps ahead to the next timer, so `time.Sleep(time.Hour)` takes no real time. `synctest.Wait()` waits until all the other goroutines of the bubble are blocked, and it only works inside a bubble.
+
+For more information: https://go.dev/blog/testing-time"""
