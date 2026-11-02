@@ -50,8 +50,8 @@ Added in learning order, each with hints, a `// TODO:` at the fix site and verif
 
 ## Phase 4 — Modern Go features
 Already covered along the way: per-iteration loop variables (closures4), `strings.SplitSeq` and `strings.Lines` (strings6), `b.Loop` (testing5), `errors.Join` (errors5), `slices.Reverse` (strings3).
-- [ ] Go 1.21: `min`/`max`/`clear` builtins; `slices` (Sort, SortFunc, BinarySearch, Contains, Index) and `maps` (Keys, Values, Clone) packages.
-- [ ] Go 1.22: `for i := range 10` as a topic of its own.
+- [x] Go 1.21: `min`/`max`/`clear` builtins (builtins, 3); the `slices` package: sorting, `BinarySearch`, `Contains`/`Index`, `Insert`/`Delete`/`Compact`, `Clone` (slices_package, 5); the `maps` package: `Keys` with `slices.Sorted`, `Clone`/`Copy`/`Equal`, `DeleteFunc` (maps_package, 3).
+- [x] Go 1.22: `for i := range 10` (range4).
 - [ ] Go 1.23: iterators — range-over-func, `iter.Seq`/`Seq2`, `slices.Collect`, `maps.Keys` as iterators.
 - [ ] Go 1.24: generic type aliases; `omitzero` JSON tag.
 - [ ] Go 1.25: `sync.WaitGroup.Go`; `testing/synctest`.
