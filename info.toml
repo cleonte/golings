@@ -285,6 +285,114 @@ hint = """
 Use a `for` loop with `range` to check if each number is even and append it to the `evenNumbers` slice."""
 
 [[exercises]]
+name = "range4"
+path = "exercises/range/range4/main.go"
+mode = "compile"
+hint = """
+Since Go 1.22 you can range over an integer: `for i := range 3` runs the body three times, with `i` going 0, 1, 2. It replaces the `for i := 0; i < 3; i++` loop when you only need to repeat something.
+
+For more information: https://go.dev/blog/go1.22"""
+
+[[exercises]]
+name = "builtins1"
+path = "exercises/builtins/builtins1/main.go"
+mode = "compile"
+hint = """
+`min` and `max` are built into the language (Go 1.21): no import and no loop. They take two or more values of one ordered type, numbers or strings, and return the smallest or the largest.
+
+For more information: https://go.dev/ref/spec#Min_and_max"""
+
+[[exercises]]
+name = "builtins2"
+path = "exercises/builtins/builtins2/main_test.go"
+mode = "test"
+hint = """
+`clear(m)` removes every entry of a map and keeps the map itself, so everybody who holds the same map sees it empty. Setting your own variable to `nil` only changes that variable.
+
+For more information: https://go.dev/ref/spec#Clear"""
+
+[[exercises]]
+name = "builtins3"
+path = "exercises/builtins/builtins3/main_test.go"
+mode = "test"
+hint = """
+On a slice, `clear` sets every element to its zero value and leaves the length alone: nothing is removed. That is useful to wipe a secret from memory. `s = s[:0]` would only hide the elements, they would still be in the array.
+
+For more information: https://go.dev/ref/spec#Clear"""
+
+[[exercises]]
+name = "slices_package1"
+path = "exercises/slices_package/slices_package1/main_test.go"
+mode = "test"
+hint = """
+`slices.Sort` sorts a slice of numbers or strings in place. For anything else, `slices.SortFunc` takes a compare function that returns a negative number, zero or a positive number. `cmp.Compare` does that for any ordered type, and `cmp.Or` returns the first of its arguments that is not zero, which is how you sort by one field and then by another.
+
+For more information: https://pkg.go.dev/slices#SortFunc and https://pkg.go.dev/cmp#Or"""
+
+[[exercises]]
+name = "slices_package2"
+path = "exercises/slices_package/slices_package2/main_test.go"
+mode = "test"
+hint = """
+`slices.BinarySearch` looks for a value in a slice that is already sorted, much faster than going through every element. It returns the position and whether the value is there. When it is not, the position is where the value would have to be inserted to keep the slice sorted.
+
+For more information: https://pkg.go.dev/slices#BinarySearch"""
+
+[[exercises]]
+name = "slices_package3"
+path = "exercises/slices_package/slices_package3/main.go"
+mode = "compile"
+hint = """
+`slices.Contains(s, v)` says whether a value is in the slice. `slices.Index(s, v)` gives its position, or -1 when it is not there. `slices.IndexFunc` does the same with a function that says what a match is. Both go through the slice one by one, so the slice doesn't have to be sorted.
+
+For more information: https://pkg.go.dev/slices#Contains"""
+
+[[exercises]]
+name = "slices_package4"
+path = "exercises/slices_package/slices_package4/main_test.go"
+mode = "test"
+hint = """
+The slices package changes slices without you writing the loops: `slices.Insert(s, i, v...)` adds values at a position, `slices.Delete(s, i, j)` removes `s[i:j]`, and `slices.Compact(s)` removes runs of equal neighbours. They return the new slice, so keep the result: `s = slices.Delete(s, 1, 3)`.
+
+For more information: https://pkg.go.dev/slices#Insert"""
+
+[[exercises]]
+name = "slices_package5"
+path = "exercises/slices_package/slices_package5/main_test.go"
+mode = "test"
+hint = """
+A slice is a window on an array, so `a := b` or passing it to a function shares the elements: sorting it sorts the caller's slice too. `slices.Clone` makes a copy with its own array, which you can change freely.
+
+For more information: https://pkg.go.dev/slices#Clone"""
+
+[[exercises]]
+name = "maps_package1"
+path = "exercises/maps_package/maps_package1/main_test.go"
+mode = "test"
+hint = """
+`maps.Keys(m)` gives an iterator over the keys of a map, in no particular order: Go makes map order random on purpose. `slices.Sorted` takes an iterator, collects the values and sorts them, so `slices.Sorted(maps.Keys(m))` is the usual way to get the keys in order.
+
+For more information: https://pkg.go.dev/maps#Keys"""
+
+[[exercises]]
+name = "maps_package2"
+path = "exercises/maps_package/maps_package2/main_test.go"
+mode = "test"
+hint = """
+A map is a reference: `copy := original` is the same map. `maps.Clone` makes a separate one, and `maps.Copy(dst, src)` adds all the entries of one map to another. `maps.Equal` compares two maps by their contents.
+
+For more information: https://pkg.go.dev/maps#Clone"""
+
+[[exercises]]
+name = "maps_package3"
+path = "exercises/maps_package/maps_package3/main_test.go"
+mode = "test"
+hint = """
+`maps.DeleteFunc(m, f)` deletes every entry for which `f(key, value)` returns true. Deleting while ranging over a map is allowed in Go, but this says what you mean in one line.
+
+For more information: https://pkg.go.dev/maps#DeleteFunc"""
+
+[[exercises]]
 name = "structs1"
 path = "exercises/structs/structs1/main.go"
 mode = "compile"
