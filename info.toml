@@ -503,6 +503,15 @@ new(int) returns a *int. count++ would add one to the pointer itself, which is n
 For more information: https://go.dev/doc/effective_go#allocation_new"""
 
 [[exercises]]
+name = "pointers6"
+path = "exercises/pointers/pointers6/main.go"
+mode = "compile"
+hint = """
+Optional values in a struct are often pointers: nil means "not set". Before Go 1.26 you needed a variable or a helper function to get a pointer to a value, because `&3` is not allowed. Now `new` takes an expression: `new(3)` is a `*int` that points to 3, `new("fast")` a `*string`.
+
+For more information: https://go.dev/doc/go1.26#language"""
+
+[[exercises]]
 name = "methods1"
 path = "exercises/methods/methods1/main.go"
 mode = "compile"
@@ -645,6 +654,15 @@ hint = """
 Keep the problems in a slice of errors instead of returning at the first one. errors.Join combines them into one error that errors.Is can look through, and it returns nil when it gets no errors at all.
 
 For more information: https://pkg.go.dev/errors#Join"""
+
+[[exercises]]
+name = "errors6"
+path = "exercises/errors/errors6/main_test.go"
+mode = "test"
+hint = """
+`errors.AsType[T](err)` (Go 1.26) looks through the chain of err for an error of type T and returns it with a bool, so you don't declare a variable first and pass its address like with `errors.As`: `if limit, ok := errors.AsType[*RateLimitError](err); ok { ... }`. The type is checked by the compiler.
+
+For more information: https://pkg.go.dev/errors#AsType"""
 
 [[exercises]]
 name = "anonymous_functions1"
@@ -811,6 +829,60 @@ hint = """
 for b.Loop() { ... } replaces for i := 0; i < b.N; i++ { ... }. The benchmark function then runs once, so the setup before the loop is not repeated, and the timer only counts the loop.
 
 For more information: https://go.dev/blog/testing-b-loop"""
+
+[[exercises]]
+name = "slog1"
+path = "exercises/slog/slog1/main_test.go"
+mode = "test"
+hint = """
+`log/slog` writes structured logs: a message plus key/value pairs, `logger.Info("user logged in", "user", "ana", "attempts", 3)`. Don't build the text with `fmt.Sprintf`: separate fields can be searched and filtered by the tools that read the logs, a sentence can't.
+
+For more information: https://pkg.go.dev/log/slog"""
+
+[[exercises]]
+name = "slog2"
+path = "exercises/slog/slog2/main_test.go"
+mode = "test"
+hint = """
+A handler decides how records are written and which are kept. `slog.NewJSONHandler` writes one JSON object per record, which is what log collectors expect; `slog.NewTextHandler` writes `key=value` text. Records below the handler's level are dropped, and the default level is Info: set `HandlerOptions.Level` to `slog.LevelDebug` to see debug records.
+
+For more information: https://pkg.go.dev/log/slog#HandlerOptions"""
+
+[[exercises]]
+name = "slog3"
+path = "exercises/slog/slog3/main_test.go"
+mode = "test"
+hint = """
+`logger.With("order_id", 7)` returns a new logger that adds those pairs to every record it writes, so you don't repeat them at each call. `slog.Group("customer", "name", "ana")` nests pairs under a name: the text handler writes `customer.name=ana`, the JSON handler an object.
+
+For more information: https://pkg.go.dev/log/slog#Logger.With"""
+
+[[exercises]]
+name = "slog4"
+path = "exercises/slog/slog4/main_test.go"
+mode = "test"
+hint = """
+`HandlerOptions.ReplaceAttr` is called for every attribute before it is written. It can change the value (to hide a secret), return an empty `slog.Attr{}` to drop the attribute (the time, say), or rename it. The first argument is the group the attribute is in, `a.Key` its key.
+
+For more information: https://pkg.go.dev/log/slog#HandlerOptions"""
+
+[[exercises]]
+name = "json1"
+path = "exercises/json/json1/main_test.go"
+mode = "test"
+hint = """
+Struct tags say how a field is written by `encoding/json`: `json:"name"` names it (otherwise the Go name `Name` is used, capitalised), `json:"email,omitempty"` leaves it out when it is empty, and `json:"-"` never writes it. Only exported fields are written at all.
+
+For more information: https://pkg.go.dev/encoding/json#Marshal"""
+
+[[exercises]]
+name = "json2"
+path = "exercises/json/json2/main_test.go"
+mode = "test"
+hint = """
+`omitempty` leaves out empty values: false, 0, nil, an empty string or slice. But a struct is never "empty", so a `time.Time` that was not set is still written (as year 1). The `omitzero` tag option (Go 1.24) leaves out any field that is the zero value of its type, structs included, and it uses an `IsZero()` method when the type has one, like time.Time.
+
+For more information: https://go.dev/doc/go1.24#encodingjsonpkgencodingjson"""
 
 [[exercises]]
 name = "generics1"
