@@ -4,12 +4,12 @@ Where things stand (latest release: see the GitHub releases page): 97 exercises 
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
-Go version policy: the project floor is **Go 1.26** (latest deps such as x/sys, x/term, x/text require it; raised from the original 1.24 plan). Exercises needing a newer Go than the floor are tagged with a minimum Go version (`go_version` in `info.toml`). CI tests a matrix: the floor and the latest stable.
+Go version policy: the project floor is **Go 1.26** (latest deps such as x/sys, x/term, x/text require it; raised from the original 1.24 plan). Exercises needing a newer Go than the floor are tagged with a minimum Go version (`go_version` in `info.toml`). CI tests a matrix: the floor (1.26), 1.27 and the latest stable, which keeps tracking new releases.
 
 ## Phase 1 — Housekeeping (done)
 - [x] Fork, `upstream` remote, branch per phase.
 - [x] `go.mod` at `go 1.26`, every dependency updated.
-- [x] CI: `actions/checkout`, `actions/setup-go`, version matrix (1.26, stable), cache on, `fixtures/error1` kept out of build and lint.
+- [x] CI: `actions/checkout`, `actions/setup-go`, version matrix (1.26, 1.27, stable), cache on, `fixtures/error1` kept out of build and lint.
 - [x] `go fix`, `gofmt`, `any` instead of `interface{}`, no deprecated APIs.
 - [x] All existing exercises verified: unsolved fails, solved passes.
 - [x] README: install, fork notice, supported Go versions. Module renamed to `github.com/cleonte/golings`.
