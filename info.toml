@@ -839,6 +839,96 @@ Ensure you include the appropriate type signature.
 """
 
 [[exercises]]
+name = "generics3"
+path = "exercises/generics/generics3/main.go"
+mode = "compile"
+hint = """
+A type constraint lists what a type parameter can be. Two things trip people up. `T any` allows every type, so you can't compare values with `>`: use `cmp.Ordered`, which is every type that can be ordered (numbers and strings). And `int | float64` lists exactly those types, not types built on them such as `type Celsius float64`: put a `~` in front to accept every type whose underlying type is that one.
+
+For more information: https://pkg.go.dev/cmp#Ordered"""
+
+[[exercises]]
+name = "generics4"
+path = "exercises/generics/generics4/main_test.go"
+mode = "test"
+hint = """
+A generic struct has type parameters after its name: `Stack[T any]`, and every method repeats them in the receiver: `func (s *Stack[T]) Push(item T)`. Inside, T is a real type. To return "nothing" for a type you don't know, declare a variable of it: `var zero T` is the zero value of T, whatever T is.
+
+For more information: https://go.dev/blog/intro-generics"""
+
+[[exercises]]
+name = "generics5"
+path = "exercises/generics/generics5/main.go"
+mode = "compile"
+hint = """
+`T any` lets a function take every type, which is why it can't do much with the values: not even `==`, because some types (slices, maps, functions) can't be compared. The `comparable` constraint says T supports `==` and `!=`: use it when you need to find or count equal values, or use T as a map key.
+
+For more information: https://go.dev/blog/comparable"""
+
+[[exercises]]
+name = "generics6"
+path = "exercises/generics/generics6/main.go"
+mode = "compile"
+hint = """
+Since Go 1.24 a type alias can have type parameters. `type Set[T comparable] = map[T]struct{}` makes `Set[string]` another name for `map[string]struct{}`: the two are the same type, so values go from one to the other without a conversion. Without the `[T comparable]` the alias has no T to use.
+
+For more information: https://go.dev/blog/go1.24#generic-type-aliases"""
+
+[[exercises]]
+name = "generics7"
+path = "exercises/generics/generics7/main.go"
+mode = "compile"
+hint = """
+Some constraints talk about the type itself: "A can be added to another A". For that, the constraint of `A` has to name `A`: `type Adder[A Adder[A]] interface { Add(A) A }`. Before Go 1.26 a generic type could not refer to itself in its own type parameter list, you had to work around it; now you can.
+
+For more information: https://go.dev/doc/go1.26#language"""
+
+[[exercises]]
+name = "iterators1"
+path = "exercises/iterators/iterators1/main_test.go"
+mode = "test"
+hint = """
+An iterator is a function that gets a `yield` function and calls it once for every value, in order. `iter.Seq[V]` is the type of such a function: `func(yield func(V) bool)`. Write one by looping and passing each value to `yield`. `yield` returns false when whoever is ranging stopped early: then you must return.
+
+For more information: https://pkg.go.dev/iter"""
+
+[[exercises]]
+name = "iterators2"
+path = "exercises/iterators/iterators2/main.go"
+mode = "compile"
+hint = """
+You can range over an iterator like over a slice: `for fruit := range fruits()`. An `iter.Seq[V]` gives one value per round. An `iter.Seq2[K, V]` gives two, like `slices.All` does with the index and the value, and then you write two variables.
+
+For more information: https://go.dev/blog/range-functions"""
+
+[[exercises]]
+name = "iterators3"
+path = "exercises/iterators/iterators3/main_test.go"
+mode = "test"
+hint = """
+`iter.Seq2[K, V]` is an iterator that gives two values at a time: its `yield` takes two arguments, `yield(key, value)`. It is what you use for pairs, such as an index and a value, or a key and a value.
+
+For more information: https://pkg.go.dev/iter#Seq2"""
+
+[[exercises]]
+name = "iterators4"
+path = "exercises/iterators/iterators4/main_test.go"
+mode = "test"
+hint = """
+`yield` returns false when the loop that is ranging over your iterator has stopped, with `break` or `return`. You have to stop too: `if !yield(value) { return }`. If you keep calling yield, Go panics with "range function continued iteration after function for loop body returned false". This matters most for iterators that never end.
+
+For more information: https://go.dev/blog/range-functions"""
+
+[[exercises]]
+name = "iterators5"
+path = "exercises/iterators/iterators5/main_test.go"
+mode = "test"
+hint = """
+Iterators compose: a function can take an `iter.Seq` and give another one. The standard library offers the pieces around it: `slices.Values` turns a slice into an iterator, `maps.Keys` gives the keys of a map, and `slices.Collect` or `slices.Sorted` turn an iterator back into a slice. Writing the middle part, a filter, is a loop over the input that calls `yield` for the values you keep.
+
+For more information: https://pkg.go.dev/slices#Collect"""
+
+[[exercises]]
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"
