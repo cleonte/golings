@@ -1118,6 +1118,16 @@ Tests that wait for time are slow and flaky. `synctest.Test(t, f)` (Go 1.25) run
 For more information: https://go.dev/blog/testing-time"""
 
 [[exercises]]
+name = "concurrent13"
+path = "exercises/concurrent/concurrent13/main_test.go"
+mode = "test"
+go_version = "1.27"
+hint = """
+`synctest.Sleep(d)` (Go 1.27) is `time.Sleep(d)` followed by `synctest.Wait()`. After a plain sleep, a goroutine that sleeps for the same time is woken at the same instant and it is not decided which of the two runs first, so the test may look before that goroutine did its work. `synctest.Sleep` also waits until the other goroutines of the bubble have run as far as they can, so you see what they did.
+
+For more information: https://pkg.go.dev/testing/synctest#Sleep"""
+
+[[exercises]]
 name = "go127_1"
 path = "exercises/go127/go127_1/main_test.go"
 mode = "test"
@@ -1166,3 +1176,13 @@ hint = """
 A generic method has limits. An interface method can't have type parameters, and a method with type parameters can't be the one that makes a type implement an interface: `Get[T any](key string) T` is not the method `Get(key string) any` that the interface asks for. When you need both, keep the interface method plain and put the generic part in a function that takes the interface: `func GetAs[T any](s Store, key string) (T, bool)`. The file needs `//go:build go1.27` at the top; the exercise already has it.
 
 For more information: https://go.dev/doc/go1.27#language"""
+
+[[exercises]]
+name = "go127_6"
+path = "exercises/go127/go127_6/main_test.go"
+mode = "test"
+go_version = "1.27"
+hint = """
+`encoding/json/v2` (Go 1.27) is a new JSON package with the same two entry points, `json.Marshal(value)` and `json.Unmarshal(data, &value)`, and stricter, more interoperable defaults than the old `encoding/json`. Two differences you can see here: a nil slice (or map) is written as `[]` (or `{}`), where v1 writes `null`; and an object with the same name twice is an error, where v1 quietly keeps the last one. (JSON names are also matched case-sensitively.) `encoding/json` itself is built on v2 now, but keeps its old behavior.
+
+For more information: https://pkg.go.dev/encoding/json/v2"""
