@@ -40,11 +40,25 @@ Sleep 1s
 # The fix is saved by the background job: the view runs the exercise again.
 Sleep 4s
 
-# The solution, after confirming.
-Type "s"
+# n takes out the marker of the exercise that works and moves on.
+Type "n"
+Sleep 3s
+
+# l lists every exercise: filter by name or topic, enter opens one.
+Type "l"
 Sleep 2s
-Type "y"
-Sleep 4s
+Type "/"
+Sleep 400ms
+Type "map"
+Sleep 1s
+Enter
+Sleep 1s
+Enter
+Sleep 3s
+
+# c checks all the exercises, without changing any file.
+Type "c"
+Sleep 13s
 Escape
 Sleep 1s
 
