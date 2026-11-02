@@ -106,7 +106,15 @@ var _ = Describe("Topics", func() {
 				Expect(topic.Topic).NotTo(BeEmpty())
 				total += topic.Total
 			}
-			Expect(total).To(Equal(len(all)))
+			// The exercises this machine can't run (a newer Go, no race detector)
+			// are left out of the progress.
+			runnable := 0
+			for _, ex := range all {
+				if ex.SkipReason() == "" {
+					runnable++
+				}
+			}
+			Expect(total).To(Equal(runnable))
 			Expect(topics[0].Topic).To(Equal("variables"))
 		})
 	})

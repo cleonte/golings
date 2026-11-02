@@ -52,8 +52,10 @@ func TestSolutions(t *testing.T) {
 		t.Run(ex.Name, func(t *testing.T) {
 			t.Parallel()
 
-			if ex.Race && !exercises.RaceSupported() {
-				t.Skip("needs the race detector, which is not available here (cgo and a C compiler)")
+			// An exercise this machine can't run: a Go older than its go_version
+			// (the Go 1.27 ones on 1.26), or no race detector (cgo and a C compiler).
+			if reason := ex.SkipReason(); reason != "" {
+				t.Skipf("%s %s here", ex.Name, reason)
 			}
 
 			if strings.Contains(string(source), "I AM NOT DONE") {

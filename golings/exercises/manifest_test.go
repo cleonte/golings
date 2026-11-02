@@ -1,8 +1,10 @@
 package exercises_test
 
 import (
+	"go/version"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 
 	"github.com/cleonte/golings/golings/exercises"
@@ -89,6 +91,42 @@ var _ = Describe("Repository manifest", func() {
 		}
 		Expect(racy).To(Equal([]string{"concurrent2", "concurrent10"}),
 			"set race = true only on an exercise whose unsolved version does not fail without -race (see CONTRIBUTING.md)")
+	})
+
+	It("tags the exercises that need a newer Go with its go_version", func() {
+		// What only a newer Go has, and the version that brought it. A learner
+		// on an older Go would otherwise get a confusing build error, not a skip.
+		needs := []struct {
+			pattern *regexp.Regexp
+			version string
+		}{
+			{regexp.MustCompile(`(?m)^//go:build go1\.27`), "1.27"},
+			{regexp.MustCompile(`"uuid"`), "1.27"},
+			{regexp.MustCompile(`"encoding/json/v2"`), "1.27"},
+			{regexp.MustCompile(`\bstrings\.CutLast\b|\bbytes\.CutLast\b`), "1.27"},
+			{regexp.MustCompile(`\bsynctest\.Sleep\b`), "1.27"},
+		}
+
+		for _, ex := range all {
+			for _, file := range []string{ex.Path, ex.SolutionPath()} {
+				data, err := os.ReadFile(filepath.Join("../..", file))
+				Expect(err).NotTo(HaveOccurred())
+				for _, need := range needs {
+					if need.pattern.Match(data) {
+						Expect(ex.GoVersion).NotTo(BeEmpty(), "%s uses %s, which needs Go %s: set go_version", file, need.pattern, need.version)
+						Expect(version.Compare("go"+ex.GoVersion, "go"+need.version)).To(BeNumerically(">=", 0), "%s uses %s, which needs Go %s, but go_version is %s", file, need.pattern, need.version, ex.GoVersion)
+					}
+				}
+			}
+		}
+	})
+
+	It("tags every exercise of the go127 topic with go_version 1.27", func() {
+		for _, ex := range all {
+			if ex.Topic() == "go127" {
+				Expect(ex.GoVersion).To(Equal("1.27"), "exercise %s", ex.Name)
+			}
+		}
 	})
 
 	It("lists every exercise directory in the manifest", func() {
