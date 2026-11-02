@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 97 exercises in 22 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 3 are done; the open work is Phase 4, the rest of Phase 5, the remaining TUI keys and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 129 exercises in 28 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4 are done; the open work is the rest of Phase 5, condensing the data race report in the TUI and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -48,13 +48,13 @@ Added in learning order, each with hints, a `// TODO:` at the fix site and verif
 - [x] testing (5): subtests, `t.Helper`, `t.TempDir`/`t.Cleanup`, examples, `b.Loop` (1.24).
 - [ ] Modules, `internal` packages and multi-package layouts. These need an exercise that spans several files with its own `go.mod`; the tool, `reset` and the embedded copy assume one file per exercise. A feature of its own (see Ideas).
 
-## Phase 4 — Modern Go features
+## Phase 4 — Modern Go features (done)
 Already covered along the way: per-iteration loop variables (closures4), `strings.SplitSeq` and `strings.Lines` (strings6), `b.Loop` (testing5), `errors.Join` (errors5), `slices.Reverse` (strings3).
 - [ ] Go 1.21: `min`/`max`/`clear` builtins; `slices` (Sort, SortFunc, BinarySearch, Contains, Index) and `maps` (Keys, Values, Clone) packages.
 - [ ] Go 1.22: `for i := range 10` as a topic of its own.
 - [ ] Go 1.23: iterators — range-over-func, `iter.Seq`/`Seq2`, `slices.Collect`, `maps.Keys` as iterators.
 - [ ] Go 1.24: generic type aliases; `omitzero` JSON tag.
-- [ ] Go 1.25: `sync.WaitGroup.Go`; `testing/synctest`.
+- [x] Go 1.25: `sync.WaitGroup.Go` (concurrent11); `testing/synctest` (concurrent12).
 - [ ] Go 1.26: `new(expr)`; `errors.AsType`; self-referential generic constraints.
 - [ ] `log/slog` structured logging basics.
 - [ ] Expand **generics** beyond 2 exercises: constraints, `cmp.Ordered`, generic structs, generic methods limits.
