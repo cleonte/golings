@@ -744,6 +744,7 @@ Our goal is to print something, but what exactly should be printed?
 name = "concurrent2"
 path = "exercises/concurrent/concurrent2/main_test.go"
 mode = "test"
+race = true
 hint = """
 Updating a variable from multiple goroutines can lead to a data race. A data race occurs when multiple goroutines read and write the same variable simultaneously without proper synchronization.
 
@@ -822,6 +823,7 @@ For more information: https://go.dev/blog/pipelines"""
 name = "concurrent10"
 path = "exercises/concurrent/concurrent10/main_test.go"
 mode = "test"
+race = true
 hint = """
 Checking a flag and then setting it is not safe when many goroutines do it at the same time: two of them can both see it unset. sync.Once runs a function exactly once, however many goroutines call Do, and everyone waits for it to finish.
 
