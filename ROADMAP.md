@@ -52,12 +52,12 @@ Added in learning order, each with hints, a `// TODO:` at the fix site and verif
 Already covered along the way: per-iteration loop variables (closures4), `strings.SplitSeq` and `strings.Lines` (strings6), `b.Loop` (testing5), `errors.Join` (errors5), `slices.Reverse` (strings3).
 - [ ] Go 1.21: `min`/`max`/`clear` builtins; `slices` (Sort, SortFunc, BinarySearch, Contains, Index) and `maps` (Keys, Values, Clone) packages.
 - [ ] Go 1.22: `for i := range 10` as a topic of its own.
-- [x] Go 1.23: iterators (iterators, 5): writing an `iter.Seq`, ranging over one, `iter.Seq2`, stopping when `yield` returns false, composing with `slices.Values`, `maps.Keys` and `slices.Collect`.
-- [ ] Go 1.24: generic type aliases (done, generics6); `omitzero` JSON tag.
+- [ ] Go 1.23: iterators — range-over-func, `iter.Seq`/`Seq2`, `slices.Collect`, `maps.Keys` as iterators.
+- [ ] Go 1.24: generic type aliases; `omitzero` JSON tag.
 - [ ] Go 1.25: `sync.WaitGroup.Go`; `testing/synctest`.
-- [ ] Go 1.26: `new(expr)`; `errors.AsType`; self-referential generic constraints (done, generics7).
+- [ ] Go 1.26: `new(expr)`; `errors.AsType`; self-referential generic constraints.
 - [ ] `log/slog` structured logging basics.
-- [x] Expand **generics** beyond 2 exercises (now 7): `cmp.Ordered` and `~`, a generic struct, `comparable`, generic type aliases, self-referential constraints. (The "methods can't have type parameters" rule is left out on purpose: generic methods arrive in Go 1.27, so it would not hold on the newest Go.)
+- [ ] Expand **generics** beyond 2 exercises: constraints, `cmp.Ordered`, generic structs, generic methods limits.
 
 ## Phase 5 — Concurrency and pitfalls
 - [x] Concurrency from 3 to 10 exercises: goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
