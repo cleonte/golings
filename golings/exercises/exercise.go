@@ -16,6 +16,9 @@ type Exercise struct {
 	Hint string
 	// GoVersion is the minimum Go version (e.g. "1.26") needed to run the exercise.
 	GoVersion string `toml:"go_version"`
+	// Race is set for the exercises that only fail with the race detector. They
+	// are built with -race, and skipped where that is not available.
+	Race bool `toml:"race"`
 }
 
 // ErrNotMarked means the exercise file has no "I AM NOT DONE" marker to remove.

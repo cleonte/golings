@@ -33,14 +33,15 @@ func ParseInfo(data []byte) ([]Exercise, error) {
 	return info.Exercises, nil
 }
 
-// runnable reports whether the local Go can run the exercise. If the local
-// version can't be determined, exercises are assumed runnable.
+// runnable reports whether this machine can run the exercise: the local Go is
+// new enough (if it can't be determined, it is assumed to be) and the race
+// detector is there when the exercise needs it.
 func runnable(e Exercise) bool {
-	local, err := LocalGoVersion()
-	return err != nil || e.Supports(local)
+	return e.SkipReason() == ""
 }
 
-// Skipped lists the exercises the local Go is too old to run.
+// Skipped lists the exercises this machine can't run: the local Go is too old
+// or the race detector is missing.
 func Skipped(infoFile string) ([]Exercise, error) {
 	allExercises, err := List(infoFile)
 	if err != nil {

@@ -46,8 +46,8 @@ func (e Exercise) Run() (Result, error) {
 func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result, error) {
 	result := Result{Exercise: e}
 
-	if local, err := LocalGoVersion(); err == nil && !e.Supports(local) {
-		return result, fmt.Errorf("%w: %s needs Go %s, found %s", ErrGoVersionTooOld, e.Name, e.GoVersion, local)
+	if err := e.skipError(); err != nil {
+		return result, err
 	}
 
 	dir, err := os.MkdirTemp("", "golings-*")
@@ -99,13 +99,17 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 }
 
 // buildArgs compiles the exercise into the file out: a program for compile
-// mode, a test binary (with the race detector, as before) for test mode.
+// mode, a test binary for test mode, with the race detector if the exercise
+// needs it (it needs cgo and a C compiler on most systems).
 func buildArgs(e Exercise, out string) []string {
 	path := fmt.Sprintf("./%s", e.Path)
-	if e.Mode == "compile" {
+	switch {
+	case e.Mode == "compile":
 		return []string{"build", "-o", out, path}
+	case e.Race:
+		return []string{"test", "-c", "-race", "-o", out, path}
 	}
-	return []string{"test", "-c", "-race", "-o", out, path}
+	return []string{"test", "-c", "-o", out, path}
 }
 
 func runArgs(e Exercise) []string {
