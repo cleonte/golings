@@ -99,3 +99,49 @@ func TestPrintTimeoutFailure(t *testing.T) {
 	g.Expect(got).To(ContainSubstring("infinite loop"))
 	g.Expect(got).To(ContainSubstring("started"))
 }
+
+func TestPrintFailureOptionsForShortenedOutput(t *testing.T) {
+	ex := exercises.Exercise{Path: "a/main_test.go"}
+	f := exercises.Failure{Kind: exercises.TestFailure, Output: "short version", Full: "the very long version"}
+	note := "Run again with --verbose."
+
+	t.Run("shows the short output and the note", func(t *testing.T) {
+		g := NewWithT(t)
+		var out bytes.Buffer
+		prev := color.NoColor
+		color.NoColor = true
+		defer func() { color.NoColor = prev }()
+
+		ui.PrintFailureWith(&out, ex, f, ui.Options{ShortenedNote: note})
+
+		g.Expect(out.String()).To(And(ContainSubstring("short version"), ContainSubstring(note), Not(ContainSubstring("very long"))))
+	})
+	t.Run("shows the full output, without the note", func(t *testing.T) {
+		g := NewWithT(t)
+		var out bytes.Buffer
+		prev := color.NoColor
+		color.NoColor = true
+		defer func() { color.NoColor = prev }()
+
+		ui.PrintFailureWith(&out, ex, f, ui.Options{Full: true, ShortenedNote: note})
+
+		g.Expect(out.String()).To(And(ContainSubstring("the very long version"), Not(ContainSubstring("short version")), Not(ContainSubstring(note))))
+	})
+	t.Run("has no note when nothing was shortened", func(t *testing.T) {
+		g := NewWithT(t)
+		var out bytes.Buffer
+		prev := color.NoColor
+		color.NoColor = true
+		defer func() { color.NoColor = prev }()
+
+		ui.PrintFailureWith(&out, ex, exercises.Failure{Kind: exercises.TestFailure, Output: "as it was"}, ui.Options{ShortenedNote: note})
+
+		g.Expect(out.String()).To(And(ContainSubstring("as it was"), Not(ContainSubstring(note))))
+	})
+	t.Run("PrintFailure keeps the short output and adds no note", func(t *testing.T) {
+		g := NewWithT(t)
+		got := render(t, ex, f)
+
+		g.Expect(got).To(And(ContainSubstring("short version"), Not(ContainSubstring("very long")), Not(ContainSubstring("verbose"))))
+	})
+}
