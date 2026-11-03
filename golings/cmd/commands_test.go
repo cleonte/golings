@@ -58,7 +58,7 @@ func main() { panic("boom") }
 	info := filepath.Join(dir, "info.toml")
 	Expect(os.WriteFile(info, []byte(`[[exercises]]
 name = "panics"
-path = "`+rel+`"
+path = "`+filepath.ToSlash(rel)+`"
 mode = "compile"
 hint = "do not panic"
 `), 0o644)).To(Succeed())
@@ -81,7 +81,7 @@ func main() { a := 1 }
 	info := filepath.Join(dir, "info.toml")
 	Expect(os.WriteFile(info, []byte(`[[exercises]]
 name = "broken"
-path = "`+rel+`"
+path = "`+filepath.ToSlash(rel)+`"
 mode = "compile"
 hint = "remove the unused variable"
 `), 0o644)).To(Succeed())
@@ -107,7 +107,7 @@ func TestBroken(t *testing.T) { t.Fatal("not yet") }
 	info := filepath.Join(dir, "info.toml")
 	Expect(os.WriteFile(info, []byte(`[[exercises]]
 name = "broken-test"
-path = "`+rel+`"
+path = "`+filepath.ToSlash(rel)+`"
 mode = "test"
 hint = ""
 `), 0o644)).To(Succeed())
@@ -136,7 +136,7 @@ func writeTopicInfo(specs ...string) string {
 
 		rel, err := filepath.Rel(wd, file)
 		Expect(err).NotTo(HaveOccurred())
-		info += "[[exercises]]\nname = \"" + filepath.Base(spec) + "\"\npath = \"" + rel + "\"\nmode = \"compile\"\nhint = \"\"\n\n"
+		info += "[[exercises]]\nname = \"" + filepath.Base(spec) + "\"\npath = \"" + filepath.ToSlash(rel) + "\"\nmode = \"compile\"\nhint = \"\"\n\n"
 	}
 	infoFile := filepath.Join(root, "info.toml")
 	Expect(os.WriteFile(infoFile, []byte(info), 0o644)).To(Succeed())
