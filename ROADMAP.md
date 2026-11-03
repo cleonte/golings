@@ -80,7 +80,7 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] CI check that every unsolved exercise fails and every solution passes (`TestSolutions`, part of the normal test run; a new exercise without a solution fails the build).
 - [x] Contributor docs: how to add an exercise, its solution and its `TODO` (CONTRIBUTING.md).
 - [x] Releases with binaries on every `v*` tag.
-- [ ] Decide: open PRs back to upstream (small, per-topic) or keep the fork independent. Upstream is dormant, so the fork is maintained on its own for now.
+- [x] Decide: open PRs back to upstream (small, per-topic) or keep the fork independent. Decided: the fork stays independent (see Decided).
 
 ## Ideas, not scheduled
 - Exercises that span several files (modules, `internal`, multi-package), which also needs `init`, `reset` and the embedded copy to handle a folder instead of a file.
@@ -89,6 +89,7 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - A web version, as the upstream README mentions.
 
 ## Decided
+- The fork stays independent. No pull requests back to upstream: it has had no commit since March 2025, and the changes (Go 1.26 floor, a new manifest field, the TUI, 105 more exercises) are too large to send in small pieces. Upstream gets a friendly issue saying a maintained fork exists; the README credits Mauricio Abreu and keeps the Apache-2.0 license.
 - Module path: `github.com/cleonte/golings`.
 - Where solutions live: a top-level `solutions/` tree that mirrors `exercises/`, embedded in the binary separately so `golings init` never writes it, shown only by `golings solution`.
 - Exercise format: one file per exercise (`main.go` for compile mode, `main_test.go` for test mode), a manifest entry in `info.toml` in learning order, a `// TODO:` at the spot to fix.
