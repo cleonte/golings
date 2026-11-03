@@ -25,12 +25,25 @@ func captureColor() *bytes.Buffer {
 	return out
 }
 
+// tempDirHere makes a folder inside the working directory, removed after the
+// test. The exercise paths of these tests are relative to the working directory,
+// and on Windows the temporary folder of the system can be on another drive,
+// where no relative path exists.
+func tempDirHere() string {
+	dir, err := os.MkdirTemp(".", "tmp-")
+	Expect(err).NotTo(HaveOccurred())
+	DeferCleanup(os.RemoveAll, dir)
+	abs, err := filepath.Abs(dir)
+	Expect(err).NotTo(HaveOccurred())
+	return abs
+}
+
 // writeBrokenPendingInfo creates a pending exercise that does not compile and
 // returns the path of an info file listing it.
 // writePanickingPendingInfo is a pending exercise that panics: its failure
 // output is shortened, so --verbose has something to show.
 func writePanickingPendingInfo() string {
-	dir := GinkgoT().TempDir()
+	dir := tempDirHere()
 	Expect(os.WriteFile(filepath.Join(dir, "main.go"), []byte(`// I AM NOT DONE
 package main
 
@@ -53,7 +66,7 @@ hint = "do not panic"
 }
 
 func writeBrokenPendingInfo() string {
-	dir := GinkgoT().TempDir()
+	dir := tempDirHere()
 	Expect(os.WriteFile(filepath.Join(dir, "main.go"), []byte(`// I AM NOT DONE
 package main
 
@@ -78,7 +91,7 @@ hint = "remove the unused variable"
 // writeFailingTestInfo creates a test-mode exercise whose test fails and
 // returns the path of an info file listing it.
 func writeFailingTestInfo() string {
-	dir := GinkgoT().TempDir()
+	dir := tempDirHere()
 	Expect(os.WriteFile(filepath.Join(dir, "x_test.go"), []byte(`package x
 
 import "testing"
@@ -104,7 +117,7 @@ hint = ""
 // writeTopicInfo creates exercises laid out as exercises/<topic>/<name>/main.go
 // ("topic/name", a leading "!" leaves it unsolved) and returns the info file.
 func writeTopicInfo(specs ...string) string {
-	root := GinkgoT().TempDir()
+	root := tempDirHere()
 	wd, err := os.Getwd()
 	Expect(err).NotTo(HaveOccurred())
 

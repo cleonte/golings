@@ -46,18 +46,26 @@ func TestWithoutTheRaceDetector(t *testing.T) {
 		t.Fatal("no exercise in the manifest has race = true: this test checks nothing")
 	}
 
+	// Others may be skipped too (the Go 1.27 ones, on a Go 1.26): the skipped
+	// list has all of them, and the progress leaves them out.
 	skipped, err := exercises.Skipped(infoFile)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(skipped) != racy {
-		t.Errorf("%d exercises skipped, want the %d with race = true", len(skipped), racy)
+	names := map[string]bool{}
+	for _, ex := range skipped {
+		names[ex.Name] = true
+	}
+	for _, ex := range all {
+		if ex.Race && !names[ex.Name] {
+			t.Errorf("%s needs the race detector but is not in the skipped list", ex.Name)
+		}
 	}
 	_, _, total, err := exercises.Progress(infoFile)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if total != len(all)-racy {
-		t.Errorf("the progress counts %d exercises, want %d (the skipped ones are left out)", total, len(all)-racy)
+	if total != len(all)-len(skipped) {
+		t.Errorf("the progress counts %d exercises, want %d (the skipped ones are left out)", total, len(all)-len(skipped))
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -23,6 +24,9 @@ func buildBinary(t *testing.T) string {
 		t.Skip("builds the binary and runs go; skipped in -short mode")
 	}
 	bin := filepath.Join(t.TempDir(), "golings")
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
 	if out, err := exec.Command("go", "build", "-ldflags", "-X main.version=e2e-test", "-o", bin, ".").CombinedOutput(); err != nil {
 		t.Fatalf("go build: %v\n%s", err, out)
 	}
