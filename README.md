@@ -13,7 +13,7 @@ You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you 
 
 > **Fork notice:** this is a modernized fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings), created by Mauricio Abreu and released under the Apache-2.0 license. The upstream project is no longer actively maintained; this fork updates it for current Go and adds new topics. Credit for the original idea and exercises goes to the upstream author and contributors.
 
-**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release).
+**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release). The exercises of the `go127` topic, and `concurrent13`, are about Go 1.27: with an older Go they are skipped, with a message, and the rest of the course runs as usual..
 
 After setting up all the tools required to run `golings` you have the task to fix tiny go programs.
 

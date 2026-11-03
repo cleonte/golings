@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 129 exercises in 28 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4 are done; the open work is the rest of Phase 5, condensing the data race report in the TUI and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 136 exercises in 29 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4b are done; the open work is the rest of Phase 5, condensing the data race report in the TUI and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -67,8 +67,8 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] Struct literal keys that are promoted fields (go127_3).
 - [x] Generic methods: a method with its own type parameter, `rand.Rand.N` as the reference (go127_4).
 - [x] The limit of generic methods: they can't satisfy interface methods (go127_5).
-- [ ] `encoding/json/v2`: `Marshal` and `Unmarshal`, and where v2 differs from v1 (go127_6).
-- [ ] `synctest.Sleep` (concurrent13).
+- [x] `encoding/json/v2`: `Marshal` and `Unmarshal`, and where v2 differs from v1 (go127_6).
+- [x] `synctest.Sleep` (concurrent13).
 
 ## Phase 5 — Concurrency and pitfalls
 - [x] Concurrency from 3 to 10 exercises: goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
