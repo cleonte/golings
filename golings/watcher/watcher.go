@@ -26,13 +26,17 @@ func Watch(ctx context.Context, root string, quiet time.Duration) (<-chan []stri
 	if err != nil {
 		return nil, err
 	}
-	if err := addTree(w, root); err != nil {
-		_ = w.Close()
-		return nil, err
-	}
 
+	// The events are read from the start, while the folders are still being
+	// added: the Windows backend of fsnotify waits for its event loop to take
+	// each folder, and the loop waits for somebody to read an event that arrived
+	// meanwhile (an editor, an indexer, antivirus software), which is a deadlock.
+	ctx, cancel := context.WithCancel(ctx)
 	changes := make(chan []string)
+	stopped := make(chan struct{})
 	go func() {
+		defer close(stopped)
+		defer cancel()
 		defer close(changes)
 		defer w.Close() // nolint
 
@@ -86,6 +90,11 @@ func Watch(ctx context.Context, root string, quiet time.Duration) (<-chan []stri
 		}
 	}()
 
+	if err := addTree(w, root); err != nil {
+		cancel()
+		<-stopped // the goroutine closes the watcher
+		return nil, err
+	}
 	return changes, nil
 }
 
