@@ -1116,3 +1116,23 @@ hint = """
 Tests that wait for time are slow and flaky. `synctest.Test(t, f)` (Go 1.25) runs `f` in a bubble with a fake clock: when every goroutine in the bubble is blocked, time jumps ahead to the next timer, so `time.Sleep(time.Hour)` takes no real time. `synctest.Wait()` waits until all the other goroutines of the bubble are blocked, and it only works inside a bubble.
 
 For more information: https://go.dev/blog/testing-time"""
+
+[[exercises]]
+name = "go127_1"
+path = "exercises/go127/go127_1/main_test.go"
+mode = "test"
+go_version = "1.27"
+hint = """
+`strings.CutLast(s, sep)` (Go 1.27) splits a string around the last `sep`, like `strings.Cut` does around the first one. It returns the text before, the text after, and whether `sep` was found. When it is not found you get `s, "", false`: the whole string comes back as the "before" part, so check `found` when the other way round makes more sense. It replaces most uses of `strings.LastIndex`.
+
+For more information: https://pkg.go.dev/strings#CutLast"""
+
+[[exercises]]
+name = "go127_2"
+path = "exercises/go127/go127_2/main_test.go"
+mode = "test"
+go_version = "1.27"
+hint = """
+The new `uuid` package (Go 1.27) has the standard library generate and parse UUIDs, RFC 9562 identifiers like `123e4567-e89b-12d3-a456-426614174000`. `uuid.New()` returns a random one, `uuid.NewV7()` one that sorts by creation time, `uuid.Parse(text)` reads the text form and returns an error when it is not a UUID, and `String()` gives the text back. A `uuid.UUID` is an array of 16 bytes, so you can compare two with `==`.
+
+For more information: https://pkg.go.dev/uuid"""

@@ -57,7 +57,18 @@ Already covered along the way: per-iteration loop variables (closures4), `string
 - [x] Go 1.25: `sync.WaitGroup.Go` (concurrent11); `testing/synctest` (concurrent12).
 - [x] Go 1.26: `new(expr)` (pointers6); `errors.AsType` (errors6); self-referential generic constraints (generics7).
 - [x] `log/slog` structured logging basics (slog, 4): key/value pairs, the JSON handler and levels, `With` and groups, `ReplaceAttr`.
-- [x] Expand **generics** beyond 2 exercises (now 7): `cmp.Ordered` and `~`, a generic struct, `comparable`, generic type aliases, self-referential constraints. (The "methods can't have type parameters" rule is left out on purpose: generic methods arrive in Go 1.27, so it would not hold on the newest Go.)
+- [x] Expand **generics** beyond 2 exercises (now 7): `cmp.Ordered` and `~`, a generic struct, `comparable`, generic type aliases, self-referential constraints. (The old "methods can't have type parameters" rule is not an exercise: generic methods arrived in Go 1.27, so it is wrong there. They are covered in Phase 4b, tagged for 1.27.)
+
+## Phase 4b — Go 1.27
+Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the floor) and runs on 1.27. Language features also need a `//go:build go1.27` line in the exercise file, because the module language version is 1.26 (see CONTRIBUTING). The exercises live in the `go127` topic, except the one about `synctest`, which goes with the other concurrency exercises. Checked against the release notes and the real toolchain.
+- [x] Gating: `TestSolutions` skips them on a Go that is too old (the tests pass on 1.26 and 1.27); a manifest test requires `go_version` for any exercise that uses a Go 1.27 feature or API; specs show them skipped on 1.26 and running on 1.27.
+- [x] `strings.CutLast`: split a file name and a path on the last separator (go127_1).
+- [x] `uuid`: generate and parse (go127_2).
+- [ ] Struct literal keys that are promoted fields (go127_3).
+- [ ] Generic methods: a method with its own type parameter, `rand.Rand.N` as the reference (go127_4).
+- [ ] The limit of generic methods: they can't satisfy interface methods (go127_5).
+- [ ] `encoding/json/v2`: `Marshal` and `Unmarshal`, and where v2 differs from v1 (go127_6).
+- [ ] `synctest.Sleep` (concurrent13).
 
 ## Phase 5 — Concurrency and pitfalls
 - [x] Concurrency from 3 to 10 exercises: goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
