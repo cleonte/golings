@@ -17,7 +17,7 @@ type MemStore struct {
 	data map[string]any
 }
 
-// TODO: This generic Get is not the Get of Store, so *MemStore is not a Store. Make Get a plain method that returns (any, bool), and write the generic part as a function: GetAs[T any](s Store, key string) (T, bool).
+// TODO: *MemStore must be a Store. Why isn't it?
 func (m *MemStore) Get[T any](key string) (T, bool) {
 	value, ok := m.data[key].(T)
 	return value, ok
