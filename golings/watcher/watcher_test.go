@@ -13,7 +13,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-const quiet = 100 * time.Millisecond
+// quiet is long enough that a slow machine does not split five quick writes into two reports.
+const quiet = 250 * time.Millisecond
 
 // start watches a fresh folder holding exercises/a/main.go.
 func start(t *testing.T) (root, file string, changes <-chan []string, stop context.CancelFunc) {
