@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 136 exercises in 29 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4b are done; the open work is the rest of Phase 5 and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 148 exercises in 30 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -70,10 +70,10 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] `encoding/json/v2`: `Marshal` and `Unmarshal`, and where v2 differs from v1 (go127_6).
 - [x] `synctest.Sleep` (concurrent13).
 
-## Phase 5 — Concurrency and pitfalls
+## Phase 5 — Concurrency and pitfalls (done)
 - [x] Concurrency from 3 to 10 exercises: goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
-- [ ] More concurrency: `context` deadlines (`WithTimeout`), fan-out, an `errgroup`-style pattern with the standard library only, `RWMutex`, `sync/atomic`.
-- [ ] "Pitfalls" track: slice aliasing and append capacity, map iteration order, shadowing with `:=`, defer in loops, closing channels twice, copying a mutex. (The nil-interface gotcha, closure capture and shadowing are already covered in interfaces5, closures3 and closures4.)
+- [x] More concurrency (concurrent14 to 18): `context.WithTimeout`, a limit on how many tasks run at once (a channel as a semaphore), an `errgroup`-style pattern with the standard library only, `RWMutex`, `sync/atomic` (`CompareAndSwap`).
+- [x] "Pitfalls" track (pitfalls, 7): `append` into a shared array, `range` copies the element, shadowing with `:=`, writing to a nil map, map iteration order, closing a channel twice, copying a mutex. Not repeated: defer in loops (defer4), the nil-interface gotcha (interfaces5), closure capture (closures3, closures4). `append` forgetting its result is already a compiler error, so it is not an exercise.
 - [x] Solutions tree: a verified solution for every exercise, used by CI to prove each exercise is solvable.
 
 ## Phase 6 — Quality and release

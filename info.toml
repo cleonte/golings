@@ -1173,6 +1173,69 @@ Checking a flag and then setting it are two steps, and other goroutines can get 
 For more information: https://pkg.go.dev/sync/atomic#Bool.CompareAndSwap"""
 
 [[exercises]]
+name = "pitfalls1"
+path = "exercises/pitfalls/pitfalls1/main_test.go"
+mode = "test"
+hint = """
+A slice is a small header (a pointer to an array, a length and a capacity). `append` writes into the same array when there is room left (length below capacity), so two slices made with `append` from the same base can end up sharing, and overwriting, the same element. To get a slice of your own, copy into a new one (`slices.Clone`, or `make` and `copy`), or cap the capacity so `append` has to allocate: `base[:len(base):len(base)]`.
+
+For more information: https://go.dev/blog/slices-intro"""
+
+[[exercises]]
+name = "pitfalls2"
+path = "exercises/pitfalls/pitfalls2/main_test.go"
+mode = "test"
+hint = """
+In `for _, p := range players`, `p` is a copy of the element, so changing it changes nothing in the slice. To change the elements, go through the index: `for i := range players { players[i].Score += 10 }`, or take a pointer to the element: `p := &players[i]`. The same is true for arrays and for maps of structs.
+
+For more information: https://go.dev/ref/spec#For_range"""
+
+[[exercises]]
+name = "pitfalls3"
+path = "exercises/pitfalls/pitfalls3/main_test.go"
+mode = "test"
+hint = """
+`:=` declares new variables, and inside an `if` or a `for` that means new ones that hide the outer ones with the same name (they "shadow" them). `count, err := strconv.Atoi(text)` in an inner block makes an inner `count` and `err`, and when the block ends the function still has the outer ones, untouched. Use `=` to assign to the ones that already exist.
+
+For more information: https://go.dev/ref/spec#Declarations_and_scope"""
+
+[[exercises]]
+name = "pitfalls4"
+path = "exercises/pitfalls/pitfalls4/main_test.go"
+mode = "test"
+hint = """
+The zero value of a map is `nil`. Reading from a nil map is fine, you get the zero value, but writing to one panics with `assignment to entry in nil map`. Make the map before you write: `make(map[string]int)` or a literal `map[string]int{}`. The same is not true of slices: appending to a nil slice works.
+
+For more information: https://go.dev/blog/maps"""
+
+[[exercises]]
+name = "pitfalls5"
+path = "exercises/pitfalls/pitfalls5/main_test.go"
+mode = "test"
+hint = """
+A map has no order, and Go makes the order of `range` over a map different on purpose, so nobody relies on it. When the output has to be the same every time (a report, a test, a log line), get the keys, sort them, and go through the sorted keys. `slices.Sorted(maps.Keys(m))` does that in one line.
+
+For more information: https://go.dev/blog/maps#iteration-order"""
+
+[[exercises]]
+name = "pitfalls6"
+path = "exercises/pitfalls/pitfalls6/main_test.go"
+mode = "test"
+hint = """
+Closing a channel that is already closed panics (`close of closed channel`), and so does sending on a closed one. When a method that closes a channel can be called more than once, make the close happen once: `sync.Once` runs a function exactly one time, however many times `Do` is called, from however many goroutines.
+
+For more information: https://pkg.go.dev/sync#Once"""
+
+[[exercises]]
+name = "pitfalls7"
+path = "exercises/pitfalls/pitfalls7/main_test.go"
+mode = "test"
+hint = """
+A `sync.Mutex` (and everything that holds one) must not be copied after it is first used: the copy has its own lock state. A method with a value receiver, `func (c Counter) Inc()`, gets a copy of the whole struct on every call, so it locks and changes a copy and the real counter never changes. Use a pointer receiver, and pass such structs by pointer. `go vet` finds this with its `copylocks` check.
+
+For more information: https://pkg.go.dev/sync#Mutex"""
+
+[[exercises]]
 name = "go127_1"
 path = "exercises/go127/go127_1/main_test.go"
 mode = "test"
