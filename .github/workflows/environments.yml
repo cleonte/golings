@@ -1,0 +1,89 @@
+# What learners have: no C compiler (so no race detector), Windows, macOS, and a
+# binary installed with `go install`. The main workflow (test.yml) tests the
+# project on Linux with the race detector.
+name: learner environments
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  no-race:
+    name: no race detector (Linux, CGO_ENABLED=0)
+    runs-on: ubuntu-latest
+    env:
+      # Without cgo there is no race detector on Linux. The two tests that look at
+      # a machine like that only run when the second variable is set.
+      CGO_ENABLED: "0"
+      GOLINGS_EXPECT_NO_RACE: "1"
+    steps:
+    - uses: actions/checkout@v7
+
+    - uses: actions/setup-go@v7
+      with:
+        go-version: "1.26"
+        cache: true
+
+    - name: Test
+      run: cd golings && go test -v $(go list ./... | grep -v fixtures/error1)
+
+    - name: The exercises that need the race detector are skipped, not failed
+      run: |
+        cd golings
+        go test -count=1 -v ./exercises -run 'TestSolutions/(concurrent2|concurrent10)$' | tee skips.txt
+        skipped=$(grep -c -- '--- SKIP: TestSolutions/concurrent' skips.txt || true)
+        if [ "$skipped" -ne 2 ] || grep -q -- '--- FAIL' skips.txt; then
+          echo "expected concurrent2 and concurrent10 to be skipped, and nothing to fail"
+          exit 1
+        fi
+
+    - name: Smoke test
+      run: EXPECT_NO_RACE=1 scripts/smoke.sh
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v7
+
+    - uses: actions/setup-go@v7
+      with:
+        go-version: stable
+        cache: true
+
+    - name: Build
+      run: cd golings && go build -v $(go list ./... | grep -v fixtures/error1)
+
+    - name: Test
+      run: cd golings && go test $(go list ./... | grep -v fixtures/error1)
+
+  smoke:
+    name: go install smoke test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - uses: actions/checkout@v7
+
+    - uses: actions/setup-go@v7
+      with:
+        go-version: stable
+        cache: true
+
+    - name: Install golings, create the exercises, run the first commands
+      run: scripts/smoke.sh

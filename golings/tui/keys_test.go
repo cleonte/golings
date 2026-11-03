@@ -53,7 +53,7 @@ func withExercise(t *testing.T, mutate ...func(*Config)) (*Model, string) {
 		t.Fatal(err)
 	}
 	// the same manifest, with the paths the embedded copy would have
-	embeddedManifest := strings.ReplaceAll(string(manifest), filepath.Join(root, "exercises"), "exercises")
+	embeddedManifest := strings.ReplaceAll(string(manifest), filepath.ToSlash(filepath.Join(root, "exercises")), "exercises")
 	embeddedManifest = strings.Replace(embeddedManifest, `hint = ""`, `hint = "Think about the return value.\nThen about the arguments."`, 1)
 	if err := os.WriteFile(info, []byte(embeddedManifest), 0o644); err != nil {
 		t.Fatal(err)

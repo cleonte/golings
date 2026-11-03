@@ -38,7 +38,7 @@ func newWorkspace(t *testing.T, specs ...string) string {
 		if err := os.WriteFile(file, []byte(source), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		fmt.Fprintf(&info, "[[exercises]]\nname = %q\npath = %q\nmode = \"compile\"\nhint = \"\"\n\n", filepath.Base(spec), file)
+		fmt.Fprintf(&info, "[[exercises]]\nname = %q\npath = %q\nmode = \"compile\"\nhint = \"\"\n\n", filepath.Base(spec), filepath.ToSlash(file))
 	}
 	infoFile := filepath.Join(root, "info.toml")
 	if err := os.WriteFile(infoFile, []byte(info.String()), 0o644); err != nil {

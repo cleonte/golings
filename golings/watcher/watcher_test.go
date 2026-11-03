@@ -2,8 +2,10 @@ package watcher_test
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 	"time"
 
@@ -11,7 +13,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-const quiet = 100 * time.Millisecond
+// quiet is long enough that a slow machine does not split five quick writes into two reports.
+const quiet = 250 * time.Millisecond
 
 // start watches a fresh folder holding exercises/a/main.go.
 func start(t *testing.T) (root, file string, changes <-chan []string, stop context.CancelFunc) {
@@ -153,4 +156,49 @@ func TestFailsForAFolderThatDoesNotExist(t *testing.T) {
 	_, err := watcher.Watch(context.Background(), filepath.Join(t.TempDir(), "nope"), quiet)
 
 	g.Expect(err).To(HaveOccurred())
+}
+
+// Events that arrive while the folders are being added must not stop Watch (the
+// Windows backend of fsnotify used to deadlock when nobody was reading them yet).
+func TestWatchStartsWhileFilesAreBeingWritten(t *testing.T) {
+	root := t.TempDir()
+	for i := range 150 {
+		if err := os.MkdirAll(filepath.Join(root, "topic", fmt.Sprintf("exercise%d", i)), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	stop := make(chan struct{})
+	var wg sync.WaitGroup
+	wg.Go(func() {
+		for i := 0; ; i++ {
+			select {
+			case <-stop:
+				return
+			default:
+				_ = os.WriteFile(filepath.Join(root, "topic", fmt.Sprintf("exercise%d", i%150), "main.go"), []byte("package main\n"), 0o644)
+			}
+		}
+	})
+	defer func() {
+		close(stop)
+		wg.Wait()
+	}()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	started := make(chan error, 1)
+	go func() {
+		_, err := watcher.Watch(ctx, root, quiet)
+		started <- err
+	}()
+
+	select {
+	case err := <-started:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(20 * time.Second):
+		t.Fatal("Watch did not return while files were being written")
+	}
 }

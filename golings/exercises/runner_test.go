@@ -9,10 +9,22 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// tempDirHere makes a folder inside the working directory, removed after the
+// test: the runner is given paths relative to it, and on Windows the temporary
+// folder of the system can be on another drive, where no relative path exists.
+func tempDirHere() string {
+	dir, err := os.MkdirTemp(".", "tmp-")
+	Expect(err).NotTo(HaveOccurred())
+	DeferCleanup(os.RemoveAll, dir)
+	abs, err := filepath.Abs(dir)
+	Expect(err).NotTo(HaveOccurred())
+	return abs
+}
+
 // writeExercise creates a throwaway exercise and returns it with a path
 // relative to the working directory, which is how the runner is invoked.
 func writeExercise(mode, name, source string) exercises.Exercise {
-	dir := GinkgoT().TempDir()
+	dir := tempDirHere()
 	file := filepath.Join(dir, name)
 	Expect(os.WriteFile(file, []byte(source), 0o644)).To(Succeed())
 

@@ -3,6 +3,7 @@ package exercises_test
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/cleonte/golings/golings/exercises"
 	. "github.com/onsi/ginkgo/v2"
@@ -49,6 +50,9 @@ var _ = Describe("Marking an exercise as done", func() {
 		Expect(exercises.Exercise{Path: "does/not/exist.go"}.MarkDone()).To(HaveOccurred())
 	})
 	It("keeps the permissions of the file", func() {
+		if runtime.GOOS == "windows" {
+			Skip("Windows has no file permissions to keep")
+		}
 		ex := write("// I AM NOT DONE\npackage main\n", 0o600)
 
 		Expect(ex.MarkDone()).To(Succeed())
