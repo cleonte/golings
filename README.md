@@ -101,7 +101,7 @@ $env:CGO_ENABLED=1
 golings watch
 ```
 
-This opens a full-screen view: your progress at the top and the result of the current exercise below. Every time you save a file it runs the exercise again. Keys: `h` hint, `s` solution (asks first, it spoils the exercise), `r` reset the exercise (asks first), `n` move on to the next exercise once this one works (it takes out the `// I AM NOT DONE` marker for you), `c` check all the exercises (runs every one of them and lists which work, without changing any file), `l` list every exercise to open any of them (type `/` to filter by name or topic; `n` then goes back to the first pending one), `↑`/`↓` scroll, `esc` go back, `q` quit.
+This opens a full-screen view: your progress at the top and the result of the current exercise below. Every time you save a file it runs the exercise again. Keys: `h` hint, `s` solution (asks first, it spoils the exercise), `r` reset the exercise (asks first), `n` move on to the next exercise once this one works (it takes out the `// I AM NOT DONE` marker for you), `c` check all the exercises (runs every one of them and lists which work, without changing any file), `l` list every exercise to open any of them (type `/` to filter by name or topic; `n` then goes back to the first pending one), `f` show all of the output of a failure that was shortened (a data race report or a panic is cut down to the lines in your exercise; the note under the failure says when that happened), `↑`/`↓` scroll, `esc` go back, `q` quit.
 
 If you prefer plain line-by-line output, or when input or output is not a terminal (for example when piping), use `golings watch --plain`. There you can type `hint` or `list` and press Enter, and `exit` to quit.
 
@@ -117,6 +117,12 @@ If you want to run a single exercise:
 
 ```sh
 golings run variables1
+```
+
+A data race report or a panic is cut down to the accesses and the lines in your exercise, without addresses and the frames of the runtime. If you want to see all of it, add `--verbose` (it works with `run`, `verify` and `watch --plain`; in the full-screen view press `f`):
+
+```sh
+golings run concurrent2 --verbose
 ```
 
 In case you are stuck and need a hint:
