@@ -1,6 +1,6 @@
-# What learners have: no C compiler (so no race detector), Windows, macOS, and a
-# binary installed with `go install`. The main workflow (test.yml) tests the
-# project on Linux with the race detector.
+# What learners have: no C compiler (so no race detector), Windows, and a binary
+# installed with `go install`. The main workflow (test.yml) tests the project on
+# Linux with the race detector. macOS has its own workflow (macos-smoke.yml).
 name: learner environments
 
 on:
@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ ubuntu-latest, windows-latest ]
     defaults:
       run:
         shell: bash

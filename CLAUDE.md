@@ -16,7 +16,7 @@ Upstream is Apache-2.0: keep LICENSE, keep attribution to the original author in
 - `solutions/<topic>/<name>/` — a verified solution for every exercise.
 - `info.toml` — the exercise manifest: `name`, `path`, `mode` (`compile` or `test`), `hint`, and optionally `go_version` and `race`. Every exercise must be listed here, in learning order.
 - `Makefile` — `make test`, `make watch`, `make run`, `make smoke`. `scripts/` — `smoke.sh` and `release-notes.sh`.
-- `.github/workflows/` — `test.yml` (Linux, Go 1.26, 1.27 and stable), `environments.yml` (no race detector, Windows, the `go install` smoke test), `lint.yml` and `release.yml` (GoReleaser on a `v*` tag; the release body is the section of `CHANGELOG.md`).
+- `.github/workflows/` — `test.yml` (Linux, Go 1.26, 1.27 and stable), `environments.yml` (no race detector, Windows, the `go install` smoke test on Linux and Windows), `macos-smoke.yml` (the same smoke test on macOS, weekly and on demand: not part of the checks of a pull request), `lint.yml` and `release.yml` (GoReleaser on a `v*` tag; the release body is the section of `CHANGELOG.md`).
 - Inspect one existing exercise and its `info.toml` entry before writing new ones, and copy that format exactly.
 
 ## Commands

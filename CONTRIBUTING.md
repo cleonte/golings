@@ -43,7 +43,7 @@ If you have `make` installed it is easy as running `make test`. It runs every ex
 
 `make smoke` installs golings into a temporary folder and runs the first commands a learner types (`init`, `list`, `doctor`, `run` on the first exercise), checking the exit codes.
 
-Learners have other machines than yours, and CI covers them (`.github/workflows/environments.yml`): Linux without the race detector (`CGO_ENABLED=0`, where the tests that look at that machine run, because `GOLINGS_EXPECT_NO_RACE=1` is set), Windows, and macOS for the smoke test. So tests must not assume Linux or macOS: no `/tmp`, no relative path from a folder on another drive (make the folder in the working directory), forward slashes in the paths of a manifest, and no file permissions.
+Learners have other machines than yours, and CI covers them (`.github/workflows/environments.yml`): Linux without the race detector (`CGO_ENABLED=0`, where the tests that look at that machine run, because `GOLINGS_EXPECT_NO_RACE=1` is set) and Windows, plus the smoke test on Linux and Windows. macOS runs the smoke test every week and on demand (`macos-smoke.yml`), because GitHub's macOS runners are often not available and a pull request must not wait for them. So tests must not assume Linux or macOS: no `/tmp`, no relative path from a folder on another drive (make the folder in the working directory), forward slashes in the paths of a manifest, and no file permissions.
 
 ## Issues and pull requests
 
