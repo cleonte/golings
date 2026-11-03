@@ -48,9 +48,12 @@ type Diagnostic struct {
 // Failure is the learner-facing interpretation of a failed Result.
 type Failure struct {
 	Kind        FailureKind
-	Diagnostics []Diagnostic  // only for CompileFailure
-	Output      string        // everything else worth showing, with toolchain noise removed
-	Timeout     time.Duration // for TimeoutFailure: how long the exercise was given
+	Diagnostics []Diagnostic // only for CompileFailure
+	Output      string       // everything else worth showing, with toolchain noise removed
+	// Full is the output as it was before data race reports and panics were
+	// shortened. It is only set when Output is shorter than it.
+	Full    string
+	Timeout time.Duration // for TimeoutFailure: how long the exercise was given
 }
 
 // Compiler messages start at the beginning of a line; indented file:line
@@ -73,11 +76,17 @@ func (r Result) Failure() Failure {
 	}
 
 	// What the program printed comes first, then the panic, as it happened.
-	ran := condensePanics(cleanOutput(r.Out + "\n" + r.Err))
+	full := cleanOutput(r.Out + "\n" + r.Err)
+	ran, _ := condenseRaces(full, r.Exercise.Path)
+	ran = condensePanics(ran)
+	f := Failure{Kind: RuntimeFailure, Output: ran}
 	if r.Exercise.Mode == "test" {
-		return Failure{Kind: TestFailure, Output: ran}
+		f.Kind = TestFailure
 	}
-	return Failure{Kind: RuntimeFailure, Output: ran}
+	if ran != full {
+		f.Full = full
+	}
+	return f
 }
 
 func parseDiagnostics(output string) ([]Diagnostic, string) {

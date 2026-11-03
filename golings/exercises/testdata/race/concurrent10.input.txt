@@ -1,0 +1,64 @@
+=== RUN   TestSettingsLoadOnlyOnce
+==================
+WARNING: DATA RACE
+Read at 0x00c0000141f0 by goroutine 12:
+  command-line-arguments_test.(*Settings).Get()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:22 +0x80
+  command-line-arguments_test.TestSettingsLoadOnlyOnce.func1()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:42 +0x114
+
+Previous write at 0x00c0000141f0 by goroutine 10:
+  command-line-arguments_test.(*Settings).Get()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:25 +0xf8
+  command-line-arguments_test.TestSettingsLoadOnlyOnce.func1()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:42 +0x114
+
+Goroutine 12 (running) created at:
+  command-line-arguments_test.TestSettingsLoadOnlyOnce()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:40 +0x98
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2195 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2260 +0x34
+
+Goroutine 10 (finished) created at:
+  command-line-arguments_test.TestSettingsLoadOnlyOnce()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:40 +0x98
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2195 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2260 +0x34
+==================
+==================
+WARNING: DATA RACE
+Read at 0x00c0000141e0 by goroutine 8:
+  command-line-arguments_test.(*Settings).Get()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:27 +0x108
+  command-line-arguments_test.TestSettingsLoadOnlyOnce.func1()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:42 +0x114
+
+Previous write at 0x00c0000141e0 by goroutine 10:
+  command-line-arguments_test.(*Settings).Get()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:23 +0x90
+  command-line-arguments_test.TestSettingsLoadOnlyOnce.func1()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:42 +0x114
+
+Goroutine 8 (running) created at:
+  command-line-arguments_test.TestSettingsLoadOnlyOnce()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:40 +0x98
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2195 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2260 +0x34
+
+Goroutine 10 (finished) created at:
+  command-line-arguments_test.TestSettingsLoadOnlyOnce()
+      /home/learner/golings-exercises/exercises/concurrent/concurrent10/main_test.go:40 +0x98
+  testing.tRunner()
+      /usr/local/go/src/testing/testing.go:2195 +0x164
+  testing.(*T).Run.gowrap1()
+      /usr/local/go/src/testing/testing.go:2260 +0x34
+==================
+    testing.go:1867: race detected during execution of test
+--- FAIL: TestSettingsLoadOnlyOnce (0.00s)
+FAIL
