@@ -56,3 +56,7 @@ go install ./golings
 vhs demo-tui.tape   # misc/demo-tui.gif: the full-screen `golings watch`
 vhs demo.tape       # misc/demo.gif: `golings run`
 ```
+
+## Releasing
+
+Pushing a tag `vX.Y.Z` runs the release workflow, which builds the archives with GoReleaser and publishes the release. The body of the release is the section of `CHANGELOG.md` for that version (`scripts/release-notes.sh vX.Y.Z` prints it, and fails when there is none, in which case GoReleaser writes the notes from the commits). So before tagging: move what is under "Unreleased" into a section `## [X.Y.Z] - date` and add its link at the bottom.
