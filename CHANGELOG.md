@@ -12,7 +12,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Changed
 
-- The project needs **Go 1.26** or newer (it was Go 1.19), and every dependency is current. CI tests Go 1.26, 1.27 and the latest stable release, on Linux (with and without the race detector), Windows and macOS.
+- The project needs **Go 1.26** or newer (it was Go 1.19), and every dependency is current. CI tests Go 1.26, 1.27 and the latest stable release, on Linux (with and without the race detector) and Windows, and runs a `go install` smoke test on Linux, Windows and (every week) macOS.
 - The Go module is `github.com/cleonte/golings`; install it with `go install github.com/cleonte/golings/golings@latest`.
 - Only the exercises that depend on the race detector are built with `-race` (`concurrent2` and `concurrent10`); the other test exercises run anywhere Go runs.
 - Failures are easier to read: compile errors show the source line with a caret under the column, panics and data race reports are cut down to the lines in your exercise (`f` in the full-screen view and `--verbose` show everything), and a test that runs for more than 30 seconds is stopped with a message.
