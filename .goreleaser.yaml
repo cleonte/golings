@@ -31,6 +31,15 @@ checksum:
   name_template: 'checksums.txt'
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
+# The body of a release is its section of CHANGELOG.md (the release workflow
+# passes it with --release-notes). The generated changelog below is only what a
+# tag without a section gets.
+release:
+  footer: |
+    ## Install
+
+    `go install github.com/cleonte/golings/golings@{{ .Tag }}`, or download the archive for your system below and put `golings` on your PATH. Then run `golings init` and `golings watch`.
+
 changelog:
   sort: asc
   filters:
