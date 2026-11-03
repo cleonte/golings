@@ -2,6 +2,7 @@ package doctor_test
 
 import (
 	"errors"
+	"os"
 	"testing"
 
 	"github.com/cleonte/golings/golings/doctor"
@@ -154,4 +155,20 @@ func TestMissingRaceDetectorNamesTheExercisesItAffects(t *testing.T) {
 	c := find(g, checks, "Race detector")
 	g.Expect(c.Detail).To(And(ContainSubstring("1 will be skipped: race1"), Not(ContainSubstring("test1"))))
 	g.Expect(doctor.Failed(checks)).To(BeFalse(), "a warning, not a failure")
+}
+
+// TestDoctorWithoutTheRaceDetector runs doctor on the real machine and the real
+// manifest, on a machine that has no race detector (CGO_ENABLED=0): it has to
+// warn, and name the exercises that will be skipped. Like the same test of the
+// exercises package, it only runs when GOLINGS_EXPECT_NO_RACE is set.
+func TestDoctorWithoutTheRaceDetector(t *testing.T) {
+	if os.Getenv("GOLINGS_EXPECT_NO_RACE") == "" {
+		t.Skip("set GOLINGS_EXPECT_NO_RACE=1 on a machine without the race detector (CGO_ENABLED=0) to run this")
+	}
+	g := NewWithT(t)
+
+	c := find(g, doctor.Run("../../info.toml", doctor.DefaultEnv()), "Race detector")
+
+	g.Expect(c.Status).To(Equal(doctor.Warn))
+	g.Expect(c.Detail).To(And(ContainSubstring("will be skipped"), ContainSubstring("concurrent2"), ContainSubstring("concurrent10")))
 }
