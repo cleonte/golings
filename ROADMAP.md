@@ -64,9 +64,9 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] Gating: `TestSolutions` skips them on a Go that is too old (the tests pass on 1.26 and 1.27); a manifest test requires `go_version` for any exercise that uses a Go 1.27 feature or API; specs show them skipped on 1.26 and running on 1.27.
 - [x] `strings.CutLast`: split a file name and a path on the last separator (go127_1).
 - [x] `uuid`: generate and parse (go127_2).
-- [ ] Struct literal keys that are promoted fields (go127_3).
-- [ ] Generic methods: a method with its own type parameter, `rand.Rand.N` as the reference (go127_4).
-- [ ] The limit of generic methods: they can't satisfy interface methods (go127_5).
+- [x] Struct literal keys that are promoted fields (go127_3).
+- [x] Generic methods: a method with its own type parameter, `rand.Rand.N` as the reference (go127_4).
+- [x] The limit of generic methods: they can't satisfy interface methods (go127_5).
 - [ ] `encoding/json/v2`: `Marshal` and `Unmarshal`, and where v2 differs from v1 (go127_6).
 - [ ] `synctest.Sleep` (concurrent13).
 
