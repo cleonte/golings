@@ -18,7 +18,7 @@ You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you 
 > * A full-screen `watch` (hint, solution, reset, next, list, check all), and the commands `init`, `reset`, `solution` and `doctor`.
 > * Exercises that need a newer Go, or the race detector, are skipped with a message instead of failing, and the output of failures is shortened to the lines that matter.
 
-**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release). The exercises of the `go127` topic, and `concurrent13`, are about Go 1.27: with an older Go they are skipped, with a message, and the rest of the course runs as usual..
+**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release). The exercises of the `go127` topic, and `concurrent13`, are about Go 1.27: with an older Go they are skipped, with a message, and the rest of the course runs as usual.
 
 After setting up all the tools required to run `golings` you have the task to fix tiny go programs.
 
