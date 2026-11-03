@@ -13,6 +13,7 @@ import (
 	"github.com/fatih/color"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/spf13/cobra"
 )
 
 // captureColor redirects the colored output of the commands into the returned buffer.
@@ -26,6 +27,31 @@ func captureColor() *bytes.Buffer {
 
 // writeBrokenPendingInfo creates a pending exercise that does not compile and
 // returns the path of an info file listing it.
+// writePanickingPendingInfo is a pending exercise that panics: its failure
+// output is shortened, so --verbose has something to show.
+func writePanickingPendingInfo() string {
+	dir := GinkgoT().TempDir()
+	Expect(os.WriteFile(filepath.Join(dir, "main.go"), []byte(`// I AM NOT DONE
+package main
+
+func main() { panic("boom") }
+`), 0o644)).To(Succeed())
+
+	wd, err := os.Getwd()
+	Expect(err).NotTo(HaveOccurred())
+	rel, err := filepath.Rel(wd, filepath.Join(dir, "main.go"))
+	Expect(err).NotTo(HaveOccurred())
+
+	info := filepath.Join(dir, "info.toml")
+	Expect(os.WriteFile(info, []byte(`[[exercises]]
+name = "panics"
+path = "`+rel+`"
+mode = "compile"
+hint = "do not panic"
+`), 0o644)).To(Succeed())
+	return info
+}
+
 func writeBrokenPendingInfo() string {
 	dir := GinkgoT().TempDir()
 	Expect(os.WriteFile(filepath.Join(dir, "main.go"), []byte(`// I AM NOT DONE
@@ -187,6 +213,28 @@ var _ = Describe("More commands", func() {
 			verify := cmd.VerifyCmd("../fixtures/info404.toml")
 
 			Expect(verify.Execute()).To(HaveOccurred())
+		})
+	})
+
+	Describe("--verbose", func() {
+		It("is a flag of run, verify and watch", func() {
+			for _, c := range []*cobra.Command{cmd.RunCmd("x"), cmd.VerifyCmd("x"), cmd.WatchCmd("x")} {
+				Expect(c.Flags().Lookup("verbose")).NotTo(BeNil(), c.Name())
+			}
+		})
+		It("shortens a failure and says how to see all of it", func() {
+			cmd.RunNextExerciseWith(writePanickingPendingInfo(), false)
+
+			Expect(out.String()).To(ContainSubstring("panic: boom"))
+			Expect(out.String()).NotTo(ContainSubstring("[running]"))
+			Expect(out.String()).To(ContainSubstring("Some of the output was shortened. Run again with --verbose"))
+		})
+		It("shows all of the output of a failure", func() {
+			cmd.RunNextExerciseWith(writePanickingPendingInfo(), true)
+
+			Expect(out.String()).To(ContainSubstring("panic: boom"))
+			Expect(out.String()).To(ContainSubstring("[running]"))
+			Expect(out.String()).NotTo(ContainSubstring("shortened"))
 		})
 	})
 

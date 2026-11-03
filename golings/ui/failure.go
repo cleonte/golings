@@ -22,10 +22,26 @@ func write(w io.Writer, c *color.Color, format string, args ...any) {
 	_, _ = c.Fprintf(w, format, args...)
 }
 
+// Options changes what PrintFailureWith shows.
+type Options struct {
+	// Full shows the output as the toolchain printed it, instead of the
+	// shortened data race reports and panics.
+	Full bool
+	// ShortenedNote is printed after output that was shortened, to say how to
+	// see all of it. Nothing is printed when it is empty.
+	ShortenedNote string
+}
+
 // PrintFailure explains why an exercise failed. Compiler errors are shown with
 // the offending source line and a caret under the column.
 func PrintFailure(w io.Writer, ex exercises.Exercise, f exercises.Failure) {
+	PrintFailureWith(w, ex, f, Options{})
+}
+
+// PrintFailureWith is PrintFailure with some options.
+func PrintFailureWith(w io.Writer, ex exercises.Exercise, f exercises.Failure, opts Options) {
 	cyan, red, white := color.New(color.FgCyan), color.New(color.FgRed), color.New(color.FgWhite)
+	dim := color.New(color.FgHiBlack)
 
 	switch f.Kind {
 	case exercises.CompileFailure:
@@ -49,13 +65,21 @@ func PrintFailure(w io.Writer, ex exercises.Exercise, f exercises.Failure) {
 		write(w, nil, "\n")
 	}
 
-	if f.Output != "" {
+	output := f.Output
+	shortened := f.Full != ""
+	if opts.Full && shortened {
+		output = f.Full
+	}
+	if output != "" {
 		if f.Kind != exercises.CompileFailure {
 			write(w, white, "Output:\n")
 			write(w, nil, "\n")
 		}
-		write(w, red, "%s\n", f.Output)
+		write(w, red, "%s\n", output)
 		write(w, nil, "\n")
+	}
+	if shortened && !opts.Full && opts.ShortenedNote != "" {
+		write(w, dim, "%s\n\n", opts.ShortenedNote)
 	}
 }
 

@@ -61,6 +61,7 @@ const (
 	modeConfirmReset
 	modeCheck // the result of checking every exercise
 	modeList  // every exercise, to jump to one
+	modeFull  // the output of the failed run, with nothing shortened
 )
 
 type Model struct {
@@ -99,6 +100,9 @@ type Model struct {
 	cancel context.CancelFunc
 	result exercises.Result
 	runErr error
+	// fullAvailable is set when the failure on screen was shortened (a data race
+	// report, a panic), so the f key has more to show.
+	fullAvailable bool
 }
 
 type startMsg struct{}
@@ -174,6 +178,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case runDoneMsg:
 		if msg.id == m.runID {
 			m.status, m.result, m.runErr = statusFinished, msg.result, msg.err
+			m.fullAvailable = m.runErr != nil && !exercises.IsSkipped(m.runErr) && m.result.Failure().Full != ""
 		}
 
 	default:
@@ -238,6 +243,8 @@ func (m *Model) handleKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		return m, m.startCheck()
 	case "l":
 		m.openList()
+	case "f":
+		m.toggleFull()
 	case "down", "j":
 		m.scroll = min(m.scroll+1, m.maxScroll())
 	case "up", "k":
@@ -355,7 +362,7 @@ func (m *Model) startRun() tea.Cmd {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	m.cancel = cancel
-	m.status, m.result, m.runErr = statusRunning, exercises.Result{}, nil
+	m.status, m.result, m.runErr, m.fullAvailable = statusRunning, exercises.Result{}, nil, false
 
 	id, run := m.runID, m.cfg.Run
 	return func() tea.Msg {
@@ -465,6 +472,8 @@ func (m *Model) lines() []string {
 		return m.checkLines()
 	case modeList:
 		return m.listLines()
+	case modeFull:
+		return m.failureLines(true)
 	case modeHint:
 		return m.hintLines()
 	case modeSolution:
@@ -552,12 +561,48 @@ func (m *Model) footer() string {
 		return dimStyle.Render("enter apply filter   esc cancel")
 	case m.mode == modeList:
 		return dimStyle.Render("enter open   / filter   ↑↓ move   esc back   q quit")
+	case m.mode == modeFull:
+		return dimStyle.Render("esc back   f shortened   ↑↓ scroll   q quit")
 	case m.mode != modeResult:
 		return dimStyle.Render("esc back   ↑↓ scroll   q quit")
 	case m.hasExercise():
-		return dimStyle.Render("h hint   s solution   r reset   n next   l list   c check all   ↑↓ scroll   q quit")
+		keys := []string{"h hint", "s solution", "r reset", "n next", "l list", "c check all"}
+		if m.fullAvailable {
+			keys = append(keys, "f full")
+		}
+		keys = append(keys, "q quit")
+		// The scroll hint goes in front of "q quit", unless there is no room.
+		withScroll := slices.Insert(slices.Clone(keys), len(keys)-1, "↑↓ scroll")
+		line := strings.Join(withScroll, "   ")
+		if lipgloss.Width(line) > m.width {
+			line = strings.Join(keys, "   ")
+		}
+		return dimStyle.Render(line)
 	}
 	return dimStyle.Render("q quit")
+}
+
+// failureLines is the failure of the run on screen: shortened as usual, or with
+// the output exactly as the toolchain printed it.
+func (m *Model) failureLines(full bool) []string {
+	opts := ui.Options{Full: full, ShortenedNote: "Some of the output was shortened: press f to see all of it."}
+	var out bytes.Buffer
+	ui.PrintFailureWith(&out, m.exercise, m.result.Failure(), opts)
+	return strings.Split(strings.TrimRight(out.String(), "\n"), "\n")
+}
+
+// toggleFull switches between the shortened failure and all of its output.
+func (m *Model) toggleFull() {
+	switch {
+	case m.mode == modeFull:
+		m.mode, m.scroll = modeResult, 0
+	case m.status != statusFinished || m.runErr == nil || exercises.IsSkipped(m.runErr):
+		// there is no failure on screen
+	case !m.fullAvailable:
+		m.notice = "Nothing was shortened: this is all of the output."
+	default:
+		m.mode, m.scroll = modeFull, 0
+	}
 }
 
 func (m *Model) resultLines() []string {
@@ -568,10 +613,10 @@ func (m *Model) resultLines() []string {
 		lines = append(lines, warnStyle.Render(m.runErr.Error()))
 
 	case m.runErr != nil:
-		var out bytes.Buffer
-		ui.PrintFailure(&out, m.exercise, m.result.Failure())
-		lines = append(lines, strings.Split(strings.TrimRight(out.String(), "\n"), "\n")...)
-		lines = append(lines, "", dimStyle.Render("Stuck? Type `golings hint "+m.exercise.Name+"` in another terminal."))
+		lines = append(lines, m.failureLines(false)...)
+		if m.mode == modeResult {
+			lines = append(lines, "", dimStyle.Render("Stuck? Type `golings hint "+m.exercise.Name+"` in another terminal."))
+		}
 
 	default:
 		lines = append(lines, okStyle.Render("✔ "+m.exercise.Name+" works!"), "")

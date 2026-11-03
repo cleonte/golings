@@ -1,0 +1,15 @@
+starting the counter
+=== RUN   TestCounter
+Data race: two goroutines use the same variable without synchronization
+  read            main_test.go:28  in updateCounter.func1  (goroutine 12)
+  previous write  main_test.go:28  in updateCounter.func1  (goroutine 8)
+Data race: two goroutines use the same variable without synchronization
+  write           main_test.go:28  in updateCounter.func1  (goroutine 15)
+  previous write  main_test.go:28  in updateCounter.func1  (goroutine 17)
+    main_test.go:15: Counter should be 100, but got 93
+    main_test.go:16: and a second message
+printed by the program
+
+    race detected during execution of test
+--- FAIL: TestCounter (0.00s)
+FAIL

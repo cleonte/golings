@@ -12,7 +12,9 @@ import (
 )
 
 func VerifyCmd(infoFile string) *cobra.Command {
-	return &cobra.Command{
+	var verbose bool
+
+	verifyCmd := &cobra.Command{
 		Use:           "verify",
 		Short:         "Verify all exercises",
 		SilenceUsage:  true,
@@ -57,7 +59,7 @@ func VerifyCmd(infoFile string) *cobra.Command {
 
 				if err != nil {
 					fmt.Print("\n\n")
-					ui.PrintFailure(color.Output, exercise, result.Failure())
+					ui.PrintFailureWith(color.Output, exercise, result.Failure(), failureOptions(verbose))
 					return errors.New("verification failed")
 				}
 			}
@@ -67,4 +69,7 @@ func VerifyCmd(infoFile string) *cobra.Command {
 			return nil
 		},
 	}
+	verifyCmd.Flags().BoolVar(&verbose, "verbose", false, verboseFlagHelp)
+
+	return verifyCmd
 }

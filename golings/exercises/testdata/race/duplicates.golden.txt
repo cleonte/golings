@@ -1,0 +1,9 @@
+=== RUN   TestSettingsLoadOnlyOnce
+Data race (×3): two goroutines use the same variable without synchronization
+  read            main_test.go:22  in (*Settings).Get
+  previous write  main_test.go:25  in (*Settings).Get
+Data race: two goroutines use the same variable without synchronization
+  read            main_test.go:27  in (*Settings).Get  (goroutine 8)
+  previous write  main_test.go:23  in (*Settings).Get  (goroutine 10)
+    race detected during execution of test
+--- FAIL: TestSettingsLoadOnlyOnce (0.00s)

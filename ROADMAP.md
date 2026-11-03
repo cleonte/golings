@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 136 exercises in 29 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4b are done; the open work is the rest of Phase 5, condensing the data race report in the TUI and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 136 exercises in 29 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 4b are done; the open work is the rest of Phase 5 and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -33,7 +33,7 @@ Go version policy: the project floor is **Go 1.26** (latest deps such as x/sys, 
 - [x] Key: `n` to move on to the next exercise (takes out the marker once the exercise works).
 - [x] Key: `c` to check all (runs every exercise four at a time, lists which work, which do not and which were skipped, and flags finished exercises that broke).
 - [x] Key: `l` lists every exercise (Bubbles list, with a filter by name or topic) and opens the one picked; `n` goes back to the first pending one.
-- [ ] Condense the data race report like panics are condensed (the `WARNING: DATA RACE` block is long and has absolute paths).
+- [x] Condense the data race report like panics are condensed: the two accesses (kind, goroutine, line and function in the exercise file), the same pair of lines once with a count, anything unplaced left as printed. `f` in the full-screen view and `--verbose` on `run`, `verify` and `watch --plain` show the whole output.
 
 ## Phase 3 — Missing core topics (done)
 Added in learning order, each with hints, a `// TODO:` at the fix site and verified solutions.

@@ -21,7 +21,7 @@ import (
 const debounce = 150 * time.Millisecond
 
 func WatchCmd(infoFile string) *cobra.Command {
-	var plain bool
+	var plain, verbose bool
 
 	watchCmd := &cobra.Command{
 		Use:   "watch",
@@ -30,7 +30,8 @@ func WatchCmd(infoFile string) *cobra.Command {
 
 In a terminal this opens a full-screen view. Use --plain for simple line-by-line
 output; that is also what you get when input or output is not a terminal, for
-example when piping.`,
+example when piping. Data race reports and panics are shortened; --verbose shows
+them in full (in the full-screen view the f key does).`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx, cancel := context.WithCancel(cmd.Context())
 			defer cancel()
@@ -54,7 +55,7 @@ example when piping.`,
 			}
 
 			watchLoop(cmd.InOrStdin(), changes, watchActions{
-				run:  func() { RunNextExercise(infoFile) },
+				run:  func() { RunNextExerciseWith(infoFile, verbose) },
 				list: func() { PrintList(infoFile) },
 				hint: func() { PrintHint(infoFile) },
 			})
@@ -62,6 +63,7 @@ example when piping.`,
 		},
 	}
 	watchCmd.Flags().BoolVar(&plain, "plain", false, "print plain lines instead of the full-screen view")
+	watchCmd.Flags().BoolVar(&verbose, "verbose", false, verboseFlagHelp+" (in the full-screen view, press f instead)")
 
 	return watchCmd
 }

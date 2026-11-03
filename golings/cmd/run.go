@@ -12,7 +12,9 @@ import (
 )
 
 func RunCmd(infoFile string) *cobra.Command {
-	return &cobra.Command{
+	var verbose bool
+
+	runCmd := &cobra.Command{
 		Use:   "run next | <exercise name>",
 		Short: "Run a single exercise",
 		Long: `example next pending exercise : golings run next
@@ -46,7 +48,7 @@ example specific exercise : golings run variables1`,
 			}
 
 			if err != nil {
-				printFailure(result)
+				printFailure(result, verbose)
 			} else {
 				color.Green("✅ Successfully tested %s!\n\n", result.Exercise.Path)
 				color.Green("Congratulations!\n\n")
@@ -61,6 +63,9 @@ example specific exercise : golings run variables1`,
 			return err
 		},
 	}
+	runCmd.Flags().BoolVar(&verbose, "verbose", false, verboseFlagHelp)
+
+	return runCmd
 }
 
 func RunSpinner(exercise string) *progressbar.ProgressBar {

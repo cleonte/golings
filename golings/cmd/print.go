@@ -62,6 +62,12 @@ func currentTopicLine(infoFile string, exercise exercises.Exercise) string {
 }
 
 func RunNextExercise(infoFile string) {
+	RunNextExerciseWith(infoFile, false)
+}
+
+// RunNextExerciseWith runs the next pending exercise; verbose shows the whole
+// output of a failure, with nothing shortened.
+func RunNextExerciseWith(infoFile string, verbose bool) {
 	ClearScreen()
 
 	progress, done, total, err := exercises.Progress(infoFile)
@@ -109,7 +115,7 @@ func RunNextExercise(infoFile string) {
 		return
 	}
 	if err != nil {
-		printFailure(result)
+		printFailure(result, verbose)
 	} else {
 		color.Green("Congratulations!\n\n")
 		color.Green("Here is the output of your program:\n\n")
@@ -150,7 +156,16 @@ func skipReasons(skipped []exercises.Exercise) string {
 }
 
 // printFailure explains why the exercise failed and where to find help.
-func printFailure(result exercises.Result) {
-	ui.PrintFailure(color.Output, result.Exercise, result.Failure())
+func printFailure(result exercises.Result, verbose bool) {
+	ui.PrintFailureWith(color.Output, result.Exercise, result.Failure(), failureOptions(verbose))
 	color.Yellow("If you feel stuck, ask a hint by executing `golings hint %s`", result.Exercise.Name)
 }
+
+// failureOptions are the options for printing a failure on the command line:
+// with --verbose, all of the output; without it, a note about the shortened one.
+func failureOptions(verbose bool) ui.Options {
+	return ui.Options{Full: verbose, ShortenedNote: "Some of the output was shortened. Run again with --verbose to see all of it."}
+}
+
+// verboseFlagHelp is the help of the --verbose flag of the commands that run exercises.
+const verboseFlagHelp = "show the whole output of a failure: data race reports and panics are not shortened"
