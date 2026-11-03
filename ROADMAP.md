@@ -71,7 +71,7 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] `synctest.Sleep` (concurrent13).
 
 ## Phase 5 — Concurrency and pitfalls (done)
-- [x] Concurrency from 3 to 10 exercises: goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
+- [x] Concurrency from 3 to 10 exercises (18 in all, with `concurrent11` to `18` from Phase 4 and below): goroutines, `WaitGroup`, `Mutex`, unbuffered and buffered channels and deadlocks, `select` with a timeout, `context` cancellation, worker pool, fan-in, `sync.Once`, and the race detector.
 - [x] More concurrency (concurrent14 to 18): `context.WithTimeout`, a limit on how many tasks run at once (a channel as a semaphore), an `errgroup`-style pattern with the standard library only, `RWMutex`, `sync/atomic` (`CompareAndSwap`).
 - [x] "Pitfalls" track (pitfalls, 7): `append` into a shared array, `range` copies the element, shadowing with `:=`, writing to a nil map, map iteration order, closing a channel twice, copying a mutex. Not repeated: defer in loops (defer4), the nil-interface gotcha (interfaces5), closure capture (closures3, closures4). `append` forgetting its result is already a compiler error, so it is not an exercise.
 - [x] Solutions tree: a verified solution for every exercise, used by CI to prove each exercise is solvable.

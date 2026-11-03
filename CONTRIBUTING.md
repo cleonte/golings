@@ -14,8 +14,8 @@ Here is an example of an exercise being added:
 
 ```toml
 [[exercises]]
-name = "compile1"
-path = "compile/compile1.go"
+name = "variables1"
+path = "exercises/variables/variables1/main.go"
 mode = "compile"
 hint = "hints are cool"
 ```
@@ -28,7 +28,7 @@ Set `race = true` (test mode only) on an exercise that is only wrong because of 
 
 Say what the learner has to do in a `// TODO:` comment at the spot that needs fixing, one sentence, without giving the answer away (the solution does not keep the comment). The header comment of the file names the exercise and says whether to make it compile or make the tests pass.
 
-Every exercise also needs a solution in `solutions/<topic>/<name>/`, using the same file name as the exercise (`main.go` or `main_test.go`) and without the `I AM NOT DONE` marker. `go test ./...` in `golings/` runs each exercise through the real runner and checks that the unsolved version fails and the solution passes, and that no solution is left without an exercise. Solutions are embedded in the binary and only shown by `golings solution`; `golings init` never writes them.
+Every exercise also needs a solution in `solutions/<topic>/<name>/`, using the same file name as the exercise (`main.go` or `main_test.go`) and without the `I AM NOT DONE` marker. `make test` runs each exercise through the real runner and checks that the unsolved version fails and the solution passes, and that no solution is left without an exercise. Solutions are embedded in the binary and only shown by `golings solution`; `golings init` never writes them.
 
 Exercises and `info.toml` are embedded in the binary (see `embed.go`), which is what `golings init` and `golings reset` use, so a new exercise needs no extra registration. Files whose names start with `.` or `_` are not embedded.
 
@@ -36,10 +36,14 @@ Exercises and `info.toml` are embedded in the binary (see `embed.go`), which is 
 
 ```sh
 cd golings
-go test -coverprofile=coverage.out -v $$(go list ./... | grep -v fixtures/error1)
+go test -coverprofile=coverage.out -v $(go list ./... | grep -v fixtures/error1)
 ```
 
-If you have `make` installed it is easy as running `make test`
+If you have `make` installed it is easy as running `make test`. It runs every exercise through the real runner, so it takes a minute or two; `go test -short` skips that.
+
+`make smoke` installs golings into a temporary folder and runs the first commands a learner types (`init`, `list`, `doctor`, `run` on the first exercise), checking the exit codes.
+
+Learners have other machines than yours, and CI covers them (`.github/workflows/environments.yml`): Linux without the race detector (`CGO_ENABLED=0`, where the tests that look at that machine run, because `GOLINGS_EXPECT_NO_RACE=1` is set), Windows, and macOS for the smoke test. So tests must not assume Linux or macOS: no `/tmp`, no relative path from a folder on another drive (make the folder in the working directory), forward slashes in the paths of a manifest, and no file permissions.
 
 ## Issues and pull requests
 
