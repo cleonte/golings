@@ -1128,6 +1128,51 @@ hint = """
 For more information: https://pkg.go.dev/testing/synctest#Sleep"""
 
 [[exercises]]
+name = "concurrent14"
+path = "exercises/concurrent/concurrent14/main_test.go"
+mode = "test"
+hint = """
+`context.WithTimeout(parent, d)` returns a context that is cancelled by itself after `d`, and a `cancel` function. Call `cancel` when you are done (`defer cancel()`) so the timer is released. Code that waits on `ctx.Done()` stops, and `ctx.Err()` says why: `context.DeadlineExceeded` for a timeout, `context.Canceled` after a call to `cancel`. `context.WithDeadline` does the same with a point in time instead of a duration.
+
+For more information: https://pkg.go.dev/context#WithTimeout"""
+
+[[exercises]]
+name = "concurrent15"
+path = "exercises/concurrent/concurrent15/main_test.go"
+mode = "test"
+hint = """
+Starting a goroutine for every task is fine until there are thousands of them, or each one opens a connection. A buffered channel makes a simple limit, a semaphore: send to it before starting a task (this blocks while the channel is full) and receive from it when the task is done to free the slot. The capacity is the number of tasks that may run at once.
+
+For more information: https://go.dev/wiki/BoundingResourceUse"""
+
+[[exercises]]
+name = "concurrent16"
+path = "exercises/concurrent/concurrent16/main_test.go"
+mode = "test"
+hint = """
+Running tasks together and stopping them all when one fails is what `golang.org/x/sync/errgroup` does, and you can build it from the standard library. A context made with `context.WithCancelCause` is given to every task; the first task that fails stores its error and cancels the context, so the others, which wait on `ctx.Done()`, stop early. `sync.Once` makes "remember the first error only" safe when several tasks fail at the same time, and `sync.WaitGroup` waits for all of them.
+
+For more information: https://pkg.go.dev/context#WithCancelCause"""
+
+[[exercises]]
+name = "concurrent17"
+path = "exercises/concurrent/concurrent17/main_test.go"
+mode = "test"
+hint = """
+A `sync.Mutex` lets one goroutine in at a time, even when they only read. `sync.RWMutex` has two kinds of lock: `RLock` and `RUnlock` for readers, any number of which can hold it together, and `Lock` and `Unlock` for a writer, which waits until nobody holds it and keeps everybody else out. It pays off when there are many more reads than writes, and the reads are not tiny.
+
+For more information: https://pkg.go.dev/sync#RWMutex"""
+
+[[exercises]]
+name = "concurrent18"
+path = "exercises/concurrent/concurrent18/main_test.go"
+mode = "test"
+hint = """
+Checking a flag and then setting it are two steps, and other goroutines can get in between. The `sync/atomic` package does read-modify-write in one step: `Add` for counters, and `CompareAndSwap(old, new)`, which sets the value to `new` only if it is still `old` and tells you whether it did. When many goroutines call `CompareAndSwap(false, true)`, exactly one gets `true`.
+
+For more information: https://pkg.go.dev/sync/atomic#Bool.CompareAndSwap"""
+
+[[exercises]]
 name = "go127_1"
 path = "exercises/go127/go127_1/main_test.go"
 mode = "test"
