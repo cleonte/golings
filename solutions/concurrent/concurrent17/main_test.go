@@ -5,6 +5,7 @@ package main_test
 
 import (
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 )
@@ -13,13 +14,20 @@ import (
 type Cache struct {
 	mu   sync.RWMutex
 	data map[string]string
+
+	// How many readers are inside Get, and the most there ever were. This only
+	// serves the test: leave it as it is.
+	active, most atomic.Int32
 }
 
 func (c *Cache) Get(key string) string {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
-	time.Sleep(100 * time.Millisecond) // a slow read
+	c.countReader()
+	defer c.active.Add(-1)
+
+	time.Sleep(50 * time.Millisecond) // a slow read, long enough for readers to overlap
 	return c.data[key]
 }
 
@@ -30,23 +38,36 @@ func (c *Cache) Set(key, value string) {
 	c.data[key] = value
 }
 
-func TestReadersDoNotWaitForEachOther(t *testing.T) {
+// countReader notes that one more reader is inside Get, and the highest number
+// of readers seen at the same time.
+func (c *Cache) countReader() {
+	now := c.active.Add(1)
+	for {
+		seen := c.most.Load()
+		if now <= seen || c.most.CompareAndSwap(seen, now) {
+			return
+		}
+	}
+}
+
+func TestReadersCanRunTogether(t *testing.T) {
 	cache := &Cache{data: map[string]string{"a": "1"}}
-	start := time.Now()
+	start := make(chan struct{})
 
 	var wg sync.WaitGroup
 	for range 5 {
 		wg.Go(func() {
+			<-start // all the readers begin together
 			if got := cache.Get("a"); got != "1" {
 				t.Errorf("Get(a) = %q, want 1", got)
 			}
 		})
 	}
+	close(start)
 	wg.Wait()
 
-	// Together the five reads take about 100ms, one after the other 500ms.
-	if elapsed := time.Since(start); elapsed > 300*time.Millisecond {
-		t.Errorf("5 reads took %v, want about 100ms: they should run together", elapsed.Round(10*time.Millisecond))
+	if most := cache.most.Load(); most < 2 {
+		t.Errorf("only one reader at a time (at most %d); reads should be able to run together", most)
 	}
 }
 
