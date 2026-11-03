@@ -11,9 +11,14 @@ You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you 
 
 `golings` has the very same idea, but for the [Go programming language](https://go.dev/)
 
-> **Fork notice:** this is a modernized fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings), created by Mauricio Abreu and released under the Apache-2.0 license. The upstream project is no longer actively maintained; this fork updates it for current Go and adds new topics. Credit for the original idea and exercises goes to the upstream author and contributors.
+> **About this fork:** this is an independent, maintained fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings). The idea and the first exercises are by Mauricio Abreu and the upstream contributors, and the project is released under the Apache-2.0 license, which this fork keeps (see [LICENSE](LICENSE)). Upstream has not had a commit since March 2025, so this fork is maintained on its own. What it adds:
+>
+> * Current Go (1.26 and newer) and current dependencies, CI on Go 1.26, 1.27 and the latest stable release, and release binaries for Linux, macOS and Windows.
+> * 148 exercises in 30 topics, where upstream has 43 in 13 (strings, pointers, methods, interfaces, errors, closures, defer, packages, testing, iterators, slog, concurrency, pitfalls, Go 1.27 and more), each with a hint, a `// TODO:` at the spot to fix and a verified solution.
+> * A full-screen `watch` (hint, solution, reset, next, list, check all), and the commands `init`, `reset`, `solution` and `doctor`.
+> * Exercises that need a newer Go, or the race detector, are skipped with a message instead of failing, and the output of failures is shortened to the lines that matter.
 
-**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release). The exercises of the `go127` topic, and `concurrent13`, are about Go 1.27: with an older Go they are skipped, with a message, and the rest of the course runs as usual..
+**Supported Go versions:** Go 1.26 or newer (CI tests 1.26, 1.27 and the latest stable release). The exercises of the `go127` topic, and `concurrent13`, are about Go 1.27: with an older Go they are skipped, with a message, and the rest of the course runs as usual.
 
 After setting up all the tools required to run `golings` you have the task to fix tiny go programs.
 
