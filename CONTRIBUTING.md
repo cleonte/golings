@@ -47,7 +47,7 @@ Learners have other machines than yours, and CI covers them (`.github/workflows/
 
 ## Issues and pull requests
 
-There are specific templates that will guide you through opening issues or pull requests.
+There are specific templates that will guide you through opening issues or pull requests. Found a problem with an exercise? Open an issue with the Exercise problem template.
 
 Thank you! ❤️
 

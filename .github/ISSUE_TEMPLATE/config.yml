@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: How to use golings
+    url: https://github.com/cleonte/golings#doing-exercises
+    about: The README explains how to install golings and do the exercises.

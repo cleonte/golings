@@ -1,0 +1,67 @@
+name: Bug in the tool
+description: golings itself misbehaves (commands, watch, TUI, install).
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: input
+    id: command
+    attributes:
+      label: Command or key
+      placeholder: golings watch, then n
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: golings doctor output
+      render: shell
+  - type: input
+    id: golings-version
+    attributes:
+      label: golings version
+      description: Output of `golings --version`.
+    validations:
+      required: true
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: Output of `go version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: terminal
+    attributes:
+      label: Terminal
+      description: Helps with full-screen view issues.
+      placeholder: iTerm2, Windows Terminal, VS Code
