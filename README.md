@@ -11,7 +11,7 @@ You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you 
 
 `golings` has the very same idea, but for the [Go programming language](https://go.dev/)
 
-> **About this fork:** this is an independent, maintained fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings). The idea and the first exercises are by Mauricio Abreu and the upstream contributors, and the project is released under the Apache-2.0 license, which this fork keeps (see [LICENSE](LICENSE)). Upstream has not had a commit since March 2025, so this fork is maintained on its own. What it adds:
+> **About this project:** golings started as a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings) and is now maintained independently. The idea and the first exercises are by Mauricio Abreu and the upstream contributors, and the project is released under the Apache-2.0 license, which this project keeps (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). Upstream has not had a commit since March 2025, so this project is maintained on its own. What it adds:
 >
 > * Current Go (1.26 and newer) and current dependencies, CI on Go 1.26, 1.27 and the latest stable release, and release binaries for Linux, macOS and Windows.
 > * 148 exercises in 30 topics, where upstream has 43 in 13 (strings, pointers, methods, interfaces, errors, closures, defer, packages, testing, iterators, slog, concurrency, pitfalls, Go 1.27 and more), each with a hint, a `// TODO:` at the spot to fix and a verified solution.
@@ -34,7 +34,7 @@ There are several ways to install `golings`
 go install github.com/cleonte/golings/golings@latest
 ```
 
-Or build from a checkout of this fork:
+Or build from a checkout of this repository:
 
 ```sh
 git clone https://github.com/cleonte/golings.git
@@ -194,6 +194,6 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Credits
 
-golings was created by [Mauricio Abreu](https://github.com/mauricioabreu/golings), and this fork builds on his work.
+golings was created by [Mauricio Abreu](https://github.com/mauricioabreu/golings), and this project builds on his work.
 
 The dancing gopher is pixel art by [Egon Elbre](https://github.com/egonelbre/gophers) (CC0), exported from his `dance.ase` at 8x, based on the Go gopher designed by [Renée French](https://reneefrench.blogspot.com/) (CC BY 4.0).
