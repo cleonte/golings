@@ -1,0 +1,73 @@
+name: Exercise problem
+description: Something is wrong or unclear in an exercise.
+title: "[exercise] "
+labels: ["exercise", "triage"]
+body:
+  - type: input
+    id: exercise
+    attributes:
+      label: Exercise name
+      placeholder: concurrent10
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Problem type
+      options:
+        - Instructions or TODO unclear
+        - Hint unclear or wrong
+        - Exercise passes without fixing it
+        - Correct solution is rejected
+        - Too hard or too easy for its place
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+      description: Paste the output from golings.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: textarea
+    id: code
+    attributes:
+      label: Your code or fix, if any
+      render: go
+  - type: input
+    id: golings-version
+    attributes:
+      label: golings version
+      description: Output of `golings --version`.
+    validations:
+      required: true
+  - type: input
+    id: go-version
+    attributes:
+      label: Go version
+      description: Output of `go version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I ran `golings doctor` and it shows no errors.

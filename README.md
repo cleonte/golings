@@ -181,6 +181,8 @@ A demo running the command `golings run <exercise name>`
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
+Found a problem with an exercise? Open an issue with the Exercise problem template.
+
 ## Learning resources
 
 * [Golang official tutorial](https://go.dev/doc/tutorial/)
