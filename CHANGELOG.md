@@ -8,7 +8,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-11-03
+## [1.0.0] - 2026-11-04
 
 ### Changed
 
