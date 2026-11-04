@@ -82,9 +82,20 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] Releases with binaries on every `v*` tag.
 - [x] Decide: open PRs back to upstream (small, per-topic) or keep the fork independent. Decided: the fork stays independent (see Decided).
 
+## Phase 7 — More topics after 1.0 (planned)
+Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:` at the fix site and a verified solution, added to `info.toml` in learning order, one small PR per topic. Everything stays in memory or in `t.TempDir()`, so no network is needed.
+- [ ] `context` (5–6): cancel, timeout and deadline, `WithValue` and when not to use it, `WithCancelCause`, `AfterFunc`, `ctx` as the first argument.
+- [ ] `time` (5–6): durations, the reference layout of `Format` and `Parse`, `Truncate`, monotonic against wall clock, timers and tickers (the Go 1.23 change), `testing/synctest`.
+- [ ] `io` and `bufio` (5–6): `Reader` and `Writer`, `io.Copy`, `TeeReader`, `bufio.Scanner` and its token limit, `strings.NewReader`, `io.Pipe`.
+- [ ] `os` and `io/fs` (5): `os.ReadFile`, `os.Root` (1.24), `fstest.MapFS`, `filepath.WalkDir`, `embed`.
+- [ ] `net/http` (5–6): a handler tested with `httptest`, pattern routing (`GET /items/{id}`, 1.22), middleware, client timeouts.
+- [ ] `cmp`, `sort` and `container` (4–5): `cmp.Compare`, `slices.SortFunc` with several keys, `container/heap` and `list`.
+- [ ] Smaller topics, if wanted: `regexp`, `text/template`, `unique`, `weak`, `sync.Pool`, `math/rand/v2`, and `encoding` (`base64`, `hex`, `csv`, `binary`).
+
 ## Ideas, not scheduled
 - Exercises that span several files (modules, `internal`, multi-package), which also needs `init`, `reset` and the embedded copy to handle a folder instead of a file.
-- More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): reading files with `io/fs`, `encoding/json`, `net/http` with `httptest`, `text/template`, `time` with `testing/synctest`, `reflect`.
+- More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` is done; `reflect` is left.
+- Not planned: `cgo` and `unsafe`, because they need a C compiler, which the supported setups do not all have.
 - Fuzzing as a testing exercise.
 - A web version, as the upstream README mentions.
 
