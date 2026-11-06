@@ -20,6 +20,8 @@ mode = "compile"
 hint = "hints are cool"
 ```
 
+Besides `hint` an exercise can have two smaller hints, `nudge` and `stronger`, which `h` in `watch` shows first, one at a time, and `golings hint <name> --level N` prints. The nudge says what the failure means, without saying where to change; the stronger hint says where to change, without the code; the `hint` is the full explanation with a link. Both are optional (a `stronger` needs a `nudge`, and a manifest test checks it), and an exercise with only a `hint` works as before.
+
 The exercise mode is very important. It tells `golings` how to run the exercise. If you are adding an exercise that expects the user to only make it compilable, use `compile` mode. If it has a test suite and you need the user to actually have the tests passing, use `test`.
 
 If the exercise needs a newer Go than the project floor, add an optional `go_version` (for example `go_version = "1.27"`). `golings` then skips the exercise with a warning when the installed Go is older. Exercises for Go 1.27 live in the `go127` topic (or next to the topic they belong to) with `go_version = "1.27"`. The module language version is the floor (1.26), so an exercise that uses a *language* feature of a newer Go (generic methods, say) also needs a `//go:build go1.27` line at the top of its file, before the header comment, which raises the language version of that file. A manifest test fails when an exercise uses something known to need a newer Go (that build line, or the `uuid`, `encoding/json/v2`, `strings.CutLast` and `synctest.Sleep` APIs) without a `go_version` that is high enough: add new such APIs to that test. `TestSolutions` skips the exercises the Go running it is too old for, so the tests pass on 1.26 and 1.27.

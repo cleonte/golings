@@ -88,6 +88,33 @@ hint = "remove the unused variable"
 	return info
 }
 
+// writeHintLevelsInfo creates an exercise with all three hints and returns the
+// path of an info file listing it.
+func writeHintLevelsInfo() string {
+	dir := tempDirHere()
+	Expect(os.WriteFile(filepath.Join(dir, "main.go"), []byte(`// I AM NOT DONE
+package main
+
+func main() { a := 1 }
+`), 0o644)).To(Succeed())
+
+	wd, err := os.Getwd()
+	Expect(err).NotTo(HaveOccurred())
+	rel, err := filepath.Rel(wd, filepath.Join(dir, "main.go"))
+	Expect(err).NotTo(HaveOccurred())
+
+	info := filepath.Join(dir, "info.toml")
+	Expect(os.WriteFile(info, []byte(`[[exercises]]
+name = "levels"
+path = "`+filepath.ToSlash(rel)+`"
+mode = "compile"
+nudge = "what it means"
+stronger = "where to change"
+hint = "the full hint"
+`), 0o644)).To(Succeed())
+	return info
+}
+
 // writeFailingTestInfo creates a test-mode exercise whose test fails and
 // returns the path of an info file listing it.
 func writeFailingTestInfo() string {
@@ -167,6 +194,42 @@ var _ = Describe("More commands", func() {
 		It("prints the hint of a named exercise", func() {
 			hint := cmd.HintCmd("../fixtures/info.toml")
 			hint.SetArgs([]string{"compile1"})
+
+			Expect(hint.Execute()).To(Succeed())
+			Expect(out.String()).To(ContainSubstring("hints are cool"))
+		})
+		It("prints the full hint, and says there are smaller ones", func() {
+			hint := cmd.HintCmd(writeHintLevelsInfo())
+			hint.SetArgs([]string{"levels"})
+
+			Expect(hint.Execute()).To(Succeed())
+			Expect(out.String()).To(ContainSubstring("the full hint"))
+			Expect(out.String()).NotTo(ContainSubstring("what it means"))
+			Expect(out.String()).To(ContainSubstring("golings hint levels --level 1 (up to 2)"))
+		})
+		It("prints the hint of a level", func() {
+			for level, want := range map[string]string{"1": "what it means", "2": "where to change", "3": "the full hint"} {
+				out.Reset()
+				hint := cmd.HintCmd(writeHintLevelsInfo())
+				hint.SetArgs([]string{"levels", "--level", level})
+
+				Expect(hint.Execute()).To(Succeed(), level)
+				Expect(out.String()).To(ContainSubstring(want), level)
+			}
+		})
+		It("fails for a level the exercise does not have", func() {
+			for _, level := range []string{"4", "-1"} {
+				out.Reset()
+				hint := cmd.HintCmd(writeHintLevelsInfo())
+				hint.SetArgs([]string{"levels", "--level", level})
+
+				Expect(hint.Execute()).To(HaveOccurred(), level)
+				Expect(out.String()).To(ContainSubstring("has 3 hint levels, not level "+level), level)
+			}
+		})
+		It("has only the full hint for an exercise without smaller ones", func() {
+			hint := cmd.HintCmd("../fixtures/info.toml")
+			hint.SetArgs([]string{"compile1", "--level", "1"})
 
 			Expect(hint.Execute()).To(Succeed())
 			Expect(out.String()).To(ContainSubstring("hints are cool"))
@@ -304,12 +367,34 @@ var _ = Describe("More commands", func() {
 
 	Describe("PrintHint", func() {
 		It("prints the hint of the next pending exercise", func() {
-			cmd.PrintHint(writeBrokenPendingInfo())
+			cmd.PrintHint(writeBrokenPendingInfo(), &cmd.HintProgress{})
 
 			Expect(out.String()).To(ContainSubstring("remove the unused variable"))
 		})
+		It("shows one more hint each time, and stays on the last", func() {
+			info := writeHintLevelsInfo()
+			progress := &cmd.HintProgress{}
+
+			cmd.PrintHint(info, progress)
+			Expect(out.String()).To(ContainSubstring("what it means"))
+			Expect(out.String()).NotTo(ContainSubstring("where to change"))
+			Expect(out.String()).To(ContainSubstring("Type hint again"))
+
+			out.Reset()
+			cmd.PrintHint(info, progress)
+			Expect(out.String()).To(ContainSubstring("where to change"))
+
+			out.Reset()
+			cmd.PrintHint(info, progress)
+			Expect(out.String()).To(ContainSubstring("the full hint"))
+			Expect(out.String()).NotTo(ContainSubstring("Type hint again"))
+
+			out.Reset()
+			cmd.PrintHint(info, progress)
+			Expect(out.String()).To(ContainSubstring("the full hint"))
+		})
 		It("reports when there is no next exercise", func() {
-			cmd.PrintHint("../fixtures/success1/info.toml")
+			cmd.PrintHint("../fixtures/success1/info.toml", &cmd.HintProgress{})
 
 			Expect(out.String()).To(ContainSubstring("Failed to find next exercises"))
 		})

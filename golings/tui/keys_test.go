@@ -97,6 +97,36 @@ func TestHintOpensAndCloses(t *testing.T) {
 	g.Expect(m.View().Content).To(ContainSubstring("h hint"))
 }
 
+func TestHintStepsThroughTheLevels(t *testing.T) {
+	g := NewWithT(t)
+	m, _ := withExercise(t)
+	m.exercise.Nudge = "It is about the return value."
+	m.exercise.Stronger = "Look at the last line of the function."
+
+	press(m, "h")
+	g.Expect(m.View().Content).To(ContainSubstring("Hint for a1 (1 of 3)"))
+	g.Expect(m.View().Content).To(ContainSubstring("It is about the return value."))
+	g.Expect(m.View().Content).To(ContainSubstring("Press h for more help."))
+	g.Expect(m.View().Content).NotTo(ContainSubstring("Look at the last line"))
+
+	press(m, "h")
+	g.Expect(m.View().Content).To(ContainSubstring("(2 of 3)"))
+	g.Expect(m.View().Content).To(ContainSubstring("Look at the last line of the function."))
+	g.Expect(m.View().Content).NotTo(ContainSubstring("It is about the return value."))
+
+	press(m, "h")
+	g.Expect(m.View().Content).To(ContainSubstring("(3 of 3)"))
+	g.Expect(m.View().Content).To(ContainSubstring("Think about the return value."))
+	g.Expect(m.View().Content).NotTo(ContainSubstring("Press h for more help."))
+
+	press(m, "h")
+	g.Expect(m.View().Content).NotTo(ContainSubstring("Hint for a1"))
+
+	// opening it again starts from the smallest hint
+	press(m, "h")
+	g.Expect(m.View().Content).To(ContainSubstring("(1 of 3)"))
+}
+
 func TestHintWithoutOne(t *testing.T) {
 	g := NewWithT(t)
 	m, _ := withExercise(t)
