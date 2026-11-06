@@ -1188,6 +1188,61 @@ Iterators compose: a function can take an `iter.Seq` and give another one. The s
 For more information: https://pkg.go.dev/slices#Collect"""
 
 [[exercises]]
+name = "sorting1"
+path = "exercises/sorting/sorting1/main_test.go"
+mode = "test"
+nudge = """The people come out sorted by name only: Ann, Bob, Cid, Zoe. The cities are not part of the comparison."""
+stronger = """Compare the cities first, and only when they are equal compare the names. A comparison function returns the first result that is not 0, and the cmp package has a helper that does exactly that for several comparisons."""
+hint = """
+A comparison function for `slices.SortFunc` returns a negative number, zero or a positive number, and `cmp.Compare(a, b)` does that for any ordered type. To sort by several keys, `cmp.Or(first, second, ...)` returns the first of its arguments that is not zero: `cmp.Or(cmp.Compare(a.City, b.City), cmp.Compare(a.Name, b.Name))` compares the names only when the cities are equal.
+
+For more information: https://pkg.go.dev/cmp#Or"""
+
+[[exercises]]
+name = "sorting2"
+path = "exercises/sorting/sorting2/main_test.go"
+mode = "test"
+nudge = """The 4 landed at the end: append adds at the end, whatever the value."""
+stronger = """Ask the slices package where v belongs in the sorted slice (it gives back an index), and insert v at that index with another function of the same package."""
+hint = """
+`slices.BinarySearch(s, v)` returns the index where `v` is, or where it would have to be to keep `s` sorted, and whether it was found. `slices.Insert(s, i, v)` returns the slice with `v` inserted at `i`. Together they keep a slice sorted without sorting it again.
+
+For more information: https://pkg.go.dev/slices#BinarySearch"""
+
+[[exercises]]
+name = "sorting3"
+path = "exercises/sorting/sorting3/main_test.go"
+mode = "test"
+nudge = """"Banana" comes before "apple": strings are compared byte by byte, and capital letters sort before small ones."""
+stronger = """Collect the keys with the variant of Sorted that takes a comparison function, and compare the lowercase forms of the two names."""
+hint = """
+`slices.Sorted(maps.Keys(m))` collects the keys of a map into a sorted slice, but with the plain order of strings. `slices.SortedFunc(seq, cmp)` takes your own comparison; compare `strings.ToLower(a)` with `strings.ToLower(b)` using `cmp.Compare`.
+
+For more information: https://pkg.go.dev/slices#SortedFunc"""
+
+[[exercises]]
+name = "sorting4"
+path = "exercises/sorting/sorting4/main_test.go"
+mode = "test"
+nudge = """The least urgent task came out first: heap.Pop gives the element that Less puts first, and this Less puts the biggest priority number first."""
+stronger = """Change the comparison in Less so that a smaller priority number counts as less."""
+hint = """
+`container/heap` keeps a slice as a heap using the five methods of `heap.Interface` (`Len`, `Less`, `Swap`, `Push`, `Pop`). `heap.Pop` always returns the element for which `Less` says it is smaller than all the others, so for a queue where 1 is the most urgent, `Less(i, j)` is `q[i].priority < q[j].priority`.
+
+For more information: https://pkg.go.dev/container/heap"""
+
+[[exercises]]
+name = "sorting5"
+path = "exercises/sorting/sorting5/main_test.go"
+mode = "test"
+nudge = """The list is still a, b, c: touch doesn't do anything yet."""
+stronger = """Call the method of list.List that moves an element to the front."""
+hint = """
+`container/list` is a doubly linked list. Its methods `MoveToFront`, `MoveToBack`, `MoveBefore` and `MoveAfter` change the place of an element you already have, in constant time and without allocating, which is what makes it a good fit for a least-recently-used cache.
+
+For more information: https://pkg.go.dev/container/list#List.MoveToFront"""
+
+[[exercises]]
 name = "time1"
 path = "exercises/time/time1/main.go"
 mode = "compile"
