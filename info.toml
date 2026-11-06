@@ -885,6 +885,60 @@ hint = """
 For more information: https://go.dev/doc/go1.24#encodingjsonpkgencodingjson"""
 
 [[exercises]]
+name = "io1"
+path = "exercises/io/io1/main_test.go"
+mode = "test"
+hint = """
+A `Read` call fills the buffer with up to `len(buf)` bytes and returns how many it put there; it may return fewer, and returns `io.EOF` only when there is nothing more. To get everything, call `io.ReadAll(r)`, which keeps reading until `io.EOF`.
+
+For more information: https://pkg.go.dev/io#ReadAll"""
+
+[[exercises]]
+name = "io2"
+path = "exercises/io/io2/main_test.go"
+mode = "test"
+hint = """
+`io.Writer` is the interface with one method, `Write([]byte) (int, error)`. Files, network connections, `bytes.Buffer` and `strings.Builder` all implement it. `fmt.Printf(...)` is `fmt.Fprintf(os.Stdout, ...)`; give `Fprintf` your own writer first, and the same code can print, write a file or fill a buffer in a test.
+
+For more information: https://pkg.go.dev/fmt#Fprintf"""
+
+[[exercises]]
+name = "io3"
+path = "exercises/io/io3/main_test.go"
+mode = "test"
+hint = """
+`scanner.Scan()` returns false when it is done, and also when it failed. `scanner.Err()` returns the error, or nil at the end of the input. The default limit for a line is 64 KiB (`bufio.MaxScanTokenSize`); `scanner.Buffer` raises it. Always check `Err()` after the loop.
+
+For more information: https://pkg.go.dev/bufio#Scanner.Err"""
+
+[[exercises]]
+name = "io4"
+path = "exercises/io/io4/main_test.go"
+mode = "test"
+hint = """
+`io.LimitReader(r, n)` returns a reader that gives at most `n` bytes of `r` and then reports `io.EOF`. Combined with `io.Copy(dst, src)`, which copies until the end of `src` and returns the number of bytes, it limits a copy without any loop of your own.
+
+For more information: https://pkg.go.dev/io#LimitReader"""
+
+[[exercises]]
+name = "io5"
+path = "exercises/io/io5/main_test.go"
+mode = "test"
+hint = """
+A reader can be consumed once. Do both things in that one pass: `io.MultiWriter(dst, h)` is a writer that writes to every writer it was given, so `io.Copy(io.MultiWriter(dst, h), src)` copies and hashes together. `io.TeeReader(src, h)` does the same from the reading side. A hash implements `io.Writer`.
+
+For more information: https://pkg.go.dev/io#MultiWriter"""
+
+[[exercises]]
+name = "io6"
+path = "exercises/io/io6/main_test.go"
+mode = "test"
+hint = """
+A `Reader` is any type with `Read(p []byte) (n int, err error)`. A reader that wraps another one calls the inner `Read(p)` and then works on `p[:n]`, only the bytes that were read: the rest of `p` is whatever it held before. Pass on `n` and `err` as they came, so the end of the input and any error reach the caller.
+
+For more information: https://pkg.go.dev/io#Reader"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
