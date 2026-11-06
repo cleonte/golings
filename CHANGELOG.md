@@ -8,11 +8,20 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-06
+
 ### Added
 
+- **18 new exercises in 3 topics**, 166 exercises in 33 topics in all. Each has a hint with a link, a `// TODO:` at the spot to fix and a verified solution, as before.
 - A `context` topic, 6 exercises: stopping work on cancel, `WithTimeout`, typed keys for `WithValue`, `WithCancelCause`, `WithoutCancel` and `AfterFunc`.
 - A `time` topic, 6 exercises, before concurrency: `Duration` arithmetic, format layouts, `ParseInLocation`, `Truncate` in a zone, `Equal` against `==`, and a debounce with `Timer.Reset`.
 - An `io` topic, 6 exercises, before generics: a `Read` that returns less than is left, writing to an `io.Writer`, the error of a `bufio.Scanner`, `LimitReader`, hashing while copying with `MultiWriter`, and a reader of your own.
+- A `NOTICE` file with the attribution to upstream, which the release archives now include next to `LICENSE`.
+
+### Changed
+
+- The test libraries (ginkgo and gomega) are up to date. Nothing in the tool or the exercises changes for learners.
+- The README says the project is independent now, not a GitHub fork. The credit to the original author and the link to the original repository stay.
 
 ## [1.0.0] - 2026-11-04
 
@@ -43,6 +52,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/cleonte/golings/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/cleonte/golings/releases/tag/v1.0.0
 [0.9.0 - 0.18.1]: https://github.com/cleonte/golings/releases/tag/v0.18.1
