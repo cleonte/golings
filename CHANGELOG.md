@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- An `fs` topic, 5 exercises, before generics: `fs.ErrNotExist`, walking an `fs.FS` (`fstest.MapFS` in the tests), `fs.SkipDir`, `os.Root` against paths that leave a folder, and `fs.Sub`.
+
 ## [1.1.0] - 2026-11-06
 
 ### Added
