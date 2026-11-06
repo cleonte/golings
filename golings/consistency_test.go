@@ -41,10 +41,20 @@ func TestDocumentsAgreeOnTheNumberOfExercisesAndTopics(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		released := false
 		for number, line := range strings.Split(string(data), "\n") {
 			// The baseline is what upstream had, for the record.
 			if strings.Contains(line, "Baseline") {
 				continue
+			}
+			// The entries of released versions are history: they keep the numbers of their day.
+			if name == "CHANGELOG.md" {
+				if strings.HasPrefix(line, "## [") && !strings.HasPrefix(line, "## [Unreleased]") {
+					released = true
+				}
+				if released {
+					continue
+				}
 			}
 			for i, pattern := range countPatterns {
 				for _, m := range pattern.FindAllStringSubmatch(line, -1) {

@@ -1173,6 +1173,60 @@ Checking a flag and then setting it are two steps, and other goroutines can get 
 For more information: https://pkg.go.dev/sync/atomic#Bool.CompareAndSwap"""
 
 [[exercises]]
+name = "context1"
+path = "exercises/context/context1/main_test.go"
+mode = "test"
+hint = """
+Sleep can't be interrupted: the goroutine is stuck in it until the second is over, whatever happens to ctx. Wait in a select instead, with one case for the time passing (`<-time.After(time.Second)`) and one for `<-ctx.Done()`; return in the second.
+
+For more information: https://pkg.go.dev/context#Context"""
+
+[[exercises]]
+name = "context2"
+path = "exercises/context/context2/main_test.go"
+mode = "test"
+hint = """
+`context.WithTimeout(parent, d)` returns a child context that ends by itself after `d`, and a `cancel` function. Call `defer cancel()` right away: it releases the timer when `lookup` returns early. Pass the child to `slowLookup`; the error is `context.DeadlineExceeded`.
+
+For more information: https://pkg.go.dev/context#WithTimeout"""
+
+[[exercises]]
+name = "context3"
+path = "exercises/context/context3/main_test.go"
+mode = "test"
+hint = """
+`WithValue` finds a value by comparing keys with `==`, and two strings with the same text are equal, wherever they come from. A key of a type of your own never equals anyone else's: declare `type contextKey int` (not exported) and constants of it, with `iota` if you like, and use them in both the `WithValue` and the `Value` calls.
+
+For more information: https://pkg.go.dev/context#WithValue"""
+
+[[exercises]]
+name = "context4"
+path = "exercises/context/context4/main_test.go"
+mode = "test"
+hint = """
+`context.WithCancelCause(parent)` returns a `CancelCauseFunc`, which takes an error: `cancel(err)`. `ctx.Err()` is still `context.Canceled`, and `context.Cause(ctx)` returns the error that was given.
+
+For more information: https://pkg.go.dev/context#WithCancelCause"""
+
+[[exercises]]
+name = "context5"
+path = "exercises/context/context5/main_test.go"
+mode = "test"
+hint = """
+`context.WithoutCancel(ctx)` returns a context that keeps every value of `ctx` but is never cancelled and has no deadline. It is meant for work that must finish even when the request is over, such as writing an audit entry.
+
+For more information: https://pkg.go.dev/context#WithoutCancel"""
+
+[[exercises]]
+name = "context6"
+path = "exercises/context/context6/main_test.go"
+mode = "test"
+hint = """
+`context.AfterFunc(ctx, f)` arranges for `f` to run in its own goroutine once `ctx` is done, and returns a `stop func() bool`: it reports true if it stopped `f` from being started. A method value such as `c.Close` is a function you can pass.
+
+For more information: https://pkg.go.dev/context#AfterFunc"""
+
+[[exercises]]
 name = "pitfalls1"
 path = "exercises/pitfalls/pitfalls1/main_test.go"
 mode = "test"
