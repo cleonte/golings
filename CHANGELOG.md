@@ -11,6 +11,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 ### Added
 
 - A `context` topic, 6 exercises: stopping work on cancel, `WithTimeout`, typed keys for `WithValue`, `WithCancelCause`, `WithoutCancel` and `AfterFunc`.
+- A `time` topic, 6 exercises, before concurrency: `Duration` arithmetic, format layouts, `ParseInLocation`, `Truncate` in a zone, `Equal` against `==`, and a debounce with `Timer.Reset`.
 
 ## [1.0.0] - 2026-11-04
 

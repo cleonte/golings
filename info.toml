@@ -1001,6 +1001,60 @@ Iterators compose: a function can take an `iter.Seq` and give another one. The s
 For more information: https://pkg.go.dev/slices#Collect"""
 
 [[exercises]]
+name = "time1"
+path = "exercises/time/time1/main.go"
+mode = "compile"
+hint = """
+A `time.Duration` is a count of nanoseconds with its own type, and Go does not mix types in arithmetic: `retries * time.Second` multiplies an `int` by a `Duration`. Convert the number, `time.Duration(retries) * time.Second`. The constants (`time.Second`, `time.Minute`) are typed, so `3 * time.Second` works because `3` is an untyped constant.
+
+For more information: https://pkg.go.dev/time#Duration"""
+
+[[exercises]]
+name = "time2"
+path = "exercises/time/time2/main_test.go"
+mode = "test"
+hint = """
+Go formats times with an example, not with codes: the layout is the reference time `Mon Jan 2 15:04:05 MST 2006` (01/02 03:04:05PM '06 -0700), with the parts you want, written the way they should look. `Mon` is the short weekday, `02` the day with a zero, `Jan` the short month, `2006` the year, `15:04` the 24-hour clock.
+
+For more information: https://pkg.go.dev/time#pkg-constants"""
+
+[[exercises]]
+name = "time3"
+path = "exercises/time/time3/main_test.go"
+mode = "test"
+hint = """
+`time.Parse` has no zone to use when the text has none, and takes UTC. `time.ParseInLocation(layout, text, zone)` reads the same text as a time in `zone`. Then `.UTC()` gives the same instant, written in UTC. A date like the 30th of February is an error from both.
+
+For more information: https://pkg.go.dev/time#ParseInLocation"""
+
+[[exercises]]
+name = "time4"
+path = "exercises/time/time4/main_test.go"
+mode = "test"
+hint = """
+`Truncate(d)` rounds down to a multiple of `d` since the zero time, which is in UTC, so for a day it gives midnight in UTC, not midnight where `t` lives. Take the parts with `year, month, day := t.Date()` and build the time with `time.Date(year, month, day, 0, 0, 0, 0, t.Location())`.
+
+For more information: https://pkg.go.dev/time#Time.Truncate"""
+
+[[exercises]]
+name = "time5"
+path = "exercises/time/time5/main_test.go"
+mode = "test"
+hint = """
+`==` on a `time.Time` compares every field: the instant, the location pointer and the monotonic clock reading. Two values for the same moment in different zones are not `==`. `a.Equal(b)` compares only the instant; `Before` and `After` do too.
+
+For more information: https://pkg.go.dev/time#Time.Equal"""
+
+[[exercises]]
+name = "time6"
+path = "exercises/time/time6/main_test.go"
+mode = "test"
+hint = """
+`time.AfterFunc(d, f)` returns a `*time.Timer` that runs `f` after `d`. Keep it in the struct. `timer.Reset(d)` moves it back to a full `d` from now, which is what makes a burst of triggers one call. The test runs in `synctest.Test`, where the clock is fake: the sleeps cost nothing.
+
+For more information: https://pkg.go.dev/time#Timer.Reset"""
+
+[[exercises]]
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"
