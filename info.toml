@@ -1084,6 +1084,61 @@ for b.Loop() { ... } replaces for i := 0; i < b.N; i++ { ... }. The benchmark fu
 For more information: https://go.dev/blog/testing-b-loop"""
 
 [[exercises]]
+name = "fakes1"
+path = "exercises/fakes/fakes1/main_test.go"
+mode = "test"
+nudge = """Greet returns "smtp: no network in tests": it ignores the Sender field and uses the real network."""
+stronger = """Call g.Sender.Send with the address and the message instead of sendToTheNetwork."""
+hint = """
+Code that depends on a network, a clock or a disk is hard to test unless the dependency comes in from outside: *dependency injection*. Define a small interface for what you need (`Sender`), keep a value of it in a field, and call that. In production the field holds the real sender; in a test it holds a *fake*, a simple type of your own that records what it was asked to do. No library is needed.
+
+For more information: https://go.dev/wiki/TestComments"""
+
+[[exercises]]
+name = "fakes2"
+path = "exercises/fakes/fakes2/main_test.go"
+mode = "test"
+nudge = """The sender was called 1 time, and the retry wanted 3: sendWithRetry stops after the first error."""
+stronger = """Loop up to tries times: return nil as soon as Send succeeds, and keep the error to return when every try fails."""
+hint = """
+A fake is also how you test the paths that are hard to cause for real. `flakySender` fails the first calls and works after that, so a test can see whether the retry logic really retries, how many times, and what it returns when it gives up. Counting calls inside the fake is the simplest kind of *spy*.
+
+For more information: https://pkg.go.dev/errors#Is"""
+
+[[exercises]]
+name = "fakes3"
+path = "exercises/fakes/fakes3/main_test.go"
+mode = "test"
+nudge = """displayName(2) returns an empty name and no error, not "guest": the fake store does not report a missing user."""
+stronger = """In the fake Get, look the id up with the two-value form of the map index and return ErrNotFound when it is missing."""
+hint = """
+A fake is a working, simplified version of the real thing, so it must keep the *contract*: the real store reports a missing user with `ErrNotFound`, so the fake must too, or the tests prove nothing about the code that handles that error. A fake that is too forgiving hides bugs; when the real behavior is complex, run the same tests against the fake and the real store.
+
+For more information: https://go.dev/blog/maps"""
+
+[[exercises]]
+name = "fakes4"
+path = "exercises/fakes/fakes4/main_test.go"
+mode = "test"
+nudge = """The compiler says it cannot use fakeGetter{} as *FileStore: report asks for a concrete type."""
+stronger = """Declare an interface with the Get method, next to report, and make report take that interface instead of *FileStore."""
+hint = """
+"Accept interfaces, return structs": a function should ask for the smallest behavior it needs, and Go interfaces are satisfied without any declaration, so the interface can live next to the code that uses it, not next to the type that implements it. Then `*FileStore` still works in production and any test type with a `Get` works in a test. One-method interfaces are the easiest to fake.
+
+For more information: https://go.dev/wiki/CodeReviewComments#interfaces"""
+
+[[exercises]]
+name = "fakes5"
+path = "exercises/fakes/fakes5/main_test.go"
+mode = "test"
+nudge = """TestTheClockIsBackAfterAnotherTest says the clock still shows the year 2000: the earlier test did not put it back."""
+stronger = """In setClock keep the old now in a variable and register t.Cleanup with a function that assigns it back."""
+hint = """
+When the code uses a package-level variable as a *seam* (`var now = time.Now`), a test replaces it, and must put it back, or every test that runs later sees the fake. `t.Cleanup(f)` runs `f` when the test and its subtests end, even after a failure, in last-in first-out order, so it is the right place to undo what a helper changed (`t.Helper()` makes the failure point to the caller). Prefer injection through a field when you can: a seam is global, and tests that change it can't run in parallel.
+
+For more information: https://pkg.go.dev/testing#T.Cleanup"""
+
+[[exercises]]
 name = "slog1"
 path = "exercises/slog/slog1/main_test.go"
 mode = "test"
