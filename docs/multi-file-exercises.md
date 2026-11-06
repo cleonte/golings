@@ -1,6 +1,6 @@
 # Design note: exercises that span several files and packages
 
-Status: proposal, for review. Nothing in this note is built yet.
+Status: accepted. The decision is to build step 1 and step 2, use them for new exercises in existing topics and a package-layout topic, and leave the capstone for later (nothing here closes that door). Step 3 waits until someone asks for it.
 
 ## Why
 
@@ -87,14 +87,16 @@ Each step starts from the solved previous step, so the exercise folder carries t
 
 ## Open questions
 
-1. Is the capstone worth the maintenance? Each step doubles the files to keep correct.
+1. Is the capstone worth the maintenance? Decided: not now; see Order of work.
 2. Option 2 against option 1 for import paths (the recommendation above).
 3. Should `golings solution` for several files print all of them, or ask which one?
 4. Should a multi-file exercise be done when the main file loses its marker, or only when every file has no `// TODO:` left? Proposal: the marker in the main file, as now; it is the learner's own statement.
 
 ## Order of work
 
-1. Step 1, with a CHANGELOG line under "Changed" and no visible effect for learners (one release, with the `e` key if that is ready).
-2. A first two-file exercise in an existing topic (for example `packages`) to prove the mechanism.
-3. Step 2 and the first capstone steps.
-4. Step 3 after that, if learners ask for it.
+Decided: no capstone for now.
+
+1. Step 1 (an exercise is a folder), with a CHANGELOG line and no visible effect for learners.
+2. Two-file exercises in existing topics (for example `packages`) to prove the mechanism.
+3. Step 2 (sub-packages, one module with a fixed name) and a package-layout topic of independent exercises.
+4. Later, if it is wanted: a one-exercise pilot of the capstone, then the other steps. Step 3 (module exercises) after that.
