@@ -10,6 +10,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
+- A `memory` topic, 4 exercises, before generics: `unique.Make` handles, reusing buffers with `sync.Pool`, a cache that holds its values with `weak.Pointer`, and `runtime.AddCleanup`.
 - A `rand` topic, 4 exercises, before generics: the new names in `math/rand/v2`, a generator made from a seed, `rand.N` for durations, and `crypto/rand.Text` for secrets.
 - An `encoding` topic, 5 exercises, before generics: URL-safe `base64`, the error of `hex.DecodeString`, reading `csv` with quoted fields, the `Flush` of a `csv.Writer`, and big-endian against little-endian in `encoding/binary`.
 - A `template` topic, 5 exercises, before generics: reading fields, `range`, registering a function with `Funcs`, an index and `if` inside a range, and `html/template` against `text/template`.
