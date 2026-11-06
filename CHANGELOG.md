@@ -10,7 +10,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
-- A `reflect` topic, 5 exercises, before generics: kind against type name, reading struct tags, setting a field through a pointer, `reflect.DeepEqual`, and walking a value by kind. 215 exercises in 43 topics in all.
+- A `reflect` topic, 5 exercises, before generics: kind against type name, reading struct tags, setting a field through a pointer, `reflect.DeepEqual`, and walking a value by kind.
+- An `unsafe` topic, 4 exercises, after `reflect`: struct padding and field order with `unsafe.Sizeof`, a string over a slice with `unsafe.String`, bytes over a slice of numbers with `unsafe.Slice`, and `unsafe.Add` for pointer arithmetic. 219 exercises in 44 topics in all.
 
 ## [1.3.0] - 2026-11-06
 
