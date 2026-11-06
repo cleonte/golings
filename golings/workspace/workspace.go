@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 
 	"github.com/cleonte/golings/golings/doctor"
@@ -56,9 +57,10 @@ func write(src fs.FS, dest string) error {
 	return os.WriteFile(filepath.Join(dest, "go.mod"), []byte(goMod), 0o644)
 }
 
-// Reset restores the exercise called name below root to the version in src,
-// which also brings back its "I AM NOT DONE" marker. It returns the path of the
-// restored file, relative to root and with forward slashes.
+// Reset restores the exercise called name below root to the version in src: all
+// the files of its folder, which also brings back its "I AM NOT DONE" marker.
+// It returns the path of the main file, relative to root and with forward
+// slashes.
 func Reset(src fs.FS, root, name string) (string, error) {
 	info, err := fs.ReadFile(src, "info.toml")
 	if err != nil {
@@ -77,15 +79,24 @@ func Reset(src fs.FS, root, name string) (string, error) {
 		if !fs.ValidPath(ex.Path) {
 			return "", fmt.Errorf("exercise %s has an invalid path %q", ex.Name, ex.Path)
 		}
-		original, err := fs.ReadFile(src, ex.Path)
-		if err != nil {
-			return "", err
-		}
-		target := filepath.Join(root, filepath.FromSlash(ex.Path))
-		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-			return "", err
-		}
-		return ex.Path, os.WriteFile(target, original, 0o644)
+		// The folder is the exercise: every file in it comes back, and files
+		// the learner added are left alone.
+		dir := path.Dir(ex.Path)
+		err := fs.WalkDir(src, dir, func(name string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			target := filepath.Join(root, filepath.FromSlash(name))
+			if d.IsDir() {
+				return os.MkdirAll(target, 0o755)
+			}
+			original, err := fs.ReadFile(src, name)
+			if err != nil {
+				return err
+			}
+			return os.WriteFile(target, original, 0o644)
+		})
+		return ex.Path, err
 	}
 
 	return "", exercises.ErrExerciseNotFound

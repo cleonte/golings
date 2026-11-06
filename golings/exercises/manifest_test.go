@@ -129,14 +129,40 @@ var _ = Describe("Repository manifest", func() {
 		}
 
 		for _, ex := range all {
-			for _, file := range []string{ex.Path, ex.SolutionPath()} {
-				data, err := os.ReadFile(filepath.Join("../..", file))
+			// Every Go file of the exercise folder and of the solution folder.
+			var sources []string
+			for _, dir := range []string{ex.Dir(), ex.SolutionDir()} {
+				found, err := filepath.Glob(filepath.Join("../..", dir, "*.go"))
+				Expect(err).NotTo(HaveOccurred())
+				sources = append(sources, found...)
+			}
+			for _, file := range sources {
+				data, err := os.ReadFile(file)
 				Expect(err).NotTo(HaveOccurred())
 				for _, need := range needs {
 					if need.pattern.Match(data) {
 						Expect(ex.GoVersion).NotTo(BeEmpty(), "%s uses %s, which needs Go %s: set go_version", file, need.pattern, need.version)
 						Expect(version.Compare("go"+ex.GoVersion, "go"+need.version)).To(BeNumerically(">=", 0), "%s uses %s, which needs Go %s, but go_version is %s", file, need.pattern, need.version, ex.GoVersion)
 					}
+				}
+			}
+		}
+	})
+
+	It("puts the //go:build line of its go_version at the top of every file of the exercise and its solution", func() {
+		// The folder is built as a package, so the compiler refuses what is newer
+		// than the module unless the file says which Go it is for.
+		for _, ex := range all {
+			if ex.GoVersion == "" {
+				continue
+			}
+			for _, dir := range []string{ex.Dir(), ex.SolutionDir()} {
+				files, err := filepath.Glob(filepath.Join("../..", dir, "*.go"))
+				Expect(err).NotTo(HaveOccurred())
+				for _, file := range files {
+					data, err := os.ReadFile(file)
+					Expect(err).NotTo(HaveOccurred())
+					Expect(string(data)).To(HavePrefix("//go:build go"+ex.GoVersion+"\n"), "%s needs //go:build go%s as its first line", file, ex.GoVersion)
 				}
 			}
 		}

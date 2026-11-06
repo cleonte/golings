@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"testing/fstest"
 
 	"github.com/cleonte/golings/golings/exercises"
 	. "github.com/onsi/ginkgo/v2"
@@ -117,5 +118,40 @@ var _ = Describe("Topics", func() {
 			Expect(total).To(Equal(runnable))
 			Expect(topics[0].Topic).To(Equal("variables"))
 		})
+	})
+})
+
+var _ = Describe("The files of a solution", func() {
+	solutions := fstest.MapFS{
+		"solutions/a/a1/main.go":   {Data: []byte("main")},
+		"solutions/a/a1/helper.go": {Data: []byte("helper")},
+		"solutions/a/a1/z/more.go": {Data: []byte("more")},
+		"solutions/a/a2/main.go":   {Data: []byte("main")},
+		"solutions/a/a10/main.go":  {Data: []byte("other exercise")},
+	}
+
+	It("are all the files of the solution folder, the main file first", func() {
+		ex := exercises.Exercise{Path: "exercises/a/a1/main.go"}
+
+		files, err := ex.SolutionFiles(solutions)
+
+		Expect(err).NotTo(HaveOccurred())
+		Expect(files).To(Equal([]string{
+			"solutions/a/a1/main.go",
+			"solutions/a/a1/helper.go",
+			"solutions/a/a1/z/more.go",
+		}))
+		Expect(ex.SolutionDir()).To(Equal("solutions/a/a1"))
+		Expect(ex.Dir()).To(Equal("exercises/a/a1"))
+	})
+	It("are missing for an exercise that has no solution folder", func() {
+		_, err := exercises.Exercise{Path: "exercises/a/a3/main.go"}.SolutionFiles(solutions)
+
+		Expect(err).To(HaveOccurred())
+	})
+	It("are missing for an exercise outside the exercises folder", func() {
+		_, err := exercises.Exercise{Path: "elsewhere/main.go"}.SolutionFiles(solutions)
+
+		Expect(err).To(HaveOccurred())
 	})
 })

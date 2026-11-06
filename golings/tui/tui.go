@@ -545,12 +545,26 @@ func (m *Model) hintLines() []string {
 
 func (m *Model) solutionLines() []string {
 	lines := []string{titleStyle.Render("Solution for " + m.exercise.Name), ""}
-	source, err := fs.ReadFile(m.cfg.Solutions, m.exercise.SolutionPath())
+	files, err := m.exercise.SolutionFiles(m.cfg.Solutions)
 	if err != nil {
 		return append(lines, errStyle.Render(err.Error()))
 	}
-	source = bytes.ReplaceAll(source, []byte("\t"), []byte("    "))
-	return append(lines, strings.Split(strings.TrimRight(string(source), "\n"), "\n")...)
+	for i, file := range files {
+		source, err := fs.ReadFile(m.cfg.Solutions, file)
+		if err != nil {
+			return append(lines, errStyle.Render(err.Error()))
+		}
+		if len(files) > 1 {
+			// A solution with several files shows the name of each one.
+			if i > 0 {
+				lines = append(lines, "")
+			}
+			lines = append(lines, dimStyle.Render(file), "")
+		}
+		source = bytes.ReplaceAll(source, []byte("\t"), []byte("    "))
+		lines = append(lines, strings.Split(strings.TrimRight(string(source), "\n"), "\n")...)
+	}
+	return lines
 }
 
 func (m *Model) body() string {

@@ -3,6 +3,7 @@ package exercises
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -23,6 +24,17 @@ type Exercise struct {
 	// Race is set for the exercises that only fail with the race detector. They
 	// are built with -race, and skipped where that is not available.
 	Race bool `toml:"race"`
+	// Root is the folder Path is relative to, when it is not the current one.
+	// It is never read from the manifest: tests that build an exercise in a
+	// folder of their own set it.
+	Root string `toml:"-"`
+}
+
+// Dir is the folder of the exercise, relative to Root. The whole folder is the
+// exercise: Path names its main file, the one with the "I AM NOT DONE" marker,
+// and any other Go file in the folder is part of the same package.
+func (e Exercise) Dir() string {
+	return filepath.Dir(e.Path)
 }
 
 // HintLevels returns the hints of the exercise from the smallest to the full

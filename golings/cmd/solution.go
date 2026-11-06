@@ -44,20 +44,30 @@ the solution stays hidden unless you pass --reveal.`,
 				return errSolutionHidden
 			}
 
-			path := exercise.SolutionPath()
-			if path == "" {
-				color.Red("No solution available for %s", exercise.Name)
-				return fs.ErrNotExist
-			}
-			solution, err := fs.ReadFile(src, path)
-			if err != nil {
+			files, err := exercise.SolutionFiles(src)
+			if err != nil || len(files) == 0 {
 				color.Red("No solution available for %s yet", exercise.Name)
+				if err == nil {
+					err = fs.ErrNotExist
+				}
 				return err
 			}
 
-			color.Cyan("Solution for %s (%s):\n\n", exercise.Name, path)
-			// Printed as is: the source is not a format string, it may well contain %d.
-			_, _ = fmt.Fprint(color.Output, string(solution))
+			// A solution may have several files: the main one first, each with its name.
+			for i, file := range files {
+				source, err := fs.ReadFile(src, file)
+				if err != nil {
+					color.Red("No solution available for %s yet", exercise.Name)
+					return err
+				}
+				if i == 0 {
+					color.Cyan("Solution for %s (%s):\n\n", exercise.Name, file)
+				} else {
+					color.Cyan("\n%s:\n\n", file)
+				}
+				// Printed as is: the source is not a format string, it may well contain %d.
+				_, _ = fmt.Fprint(color.Output, string(source))
+			}
 			return nil
 		},
 	}

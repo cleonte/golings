@@ -4,9 +4,11 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
+	"github.com/cleonte/golings/golings/doctor"
 	"github.com/cleonte/golings/golings/exercises"
 )
 
@@ -37,14 +39,12 @@ func TestSolutions(t *testing.T) {
 		}
 		solutionFile := filepath.Join(repoRoot, filepath.FromSlash(solutionPath))
 
-		source, err := os.ReadFile(solutionFile)
-		if os.IsNotExist(err) {
+		if _, err := os.Stat(solutionFile); os.IsNotExist(err) {
 			if allSolutionsRequired {
 				t.Errorf("%s: missing solution %s", ex.Name, solutionPath)
 			}
 			continue
-		}
-		if err != nil {
+		} else if err != nil {
 			t.Errorf("%s: %v", ex.Name, err)
 			continue
 		}
@@ -58,8 +58,18 @@ func TestSolutions(t *testing.T) {
 				t.Skipf("%s %s here", ex.Name, reason)
 			}
 
-			if strings.Contains(string(source), "I AM NOT DONE") {
-				t.Errorf("%s still has the 'I AM NOT DONE' marker", solutionPath)
+			files, err := ex.SolutionFiles(os.DirFS(repoRoot))
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, file := range files {
+				source, err := os.ReadFile(filepath.Join(repoRoot, filepath.FromSlash(file)))
+				if err != nil {
+					t.Fatal(err)
+				}
+				if strings.Contains(string(source), "I AM NOT DONE") {
+					t.Errorf("%s still has the 'I AM NOT DONE' marker", file)
+				}
 			}
 
 			unsolved := ex
@@ -68,13 +78,69 @@ func TestSolutions(t *testing.T) {
 				t.Errorf("the unsolved exercise passes, it should fail:\n%s", result.Out)
 			}
 
-			solved := ex
-			solved.Path = solutionFile
+			solved := inAFolderOfItsOwn(t, ex, files)
 			if result, err := solved.Run(); err != nil {
 				t.Errorf("the solution fails: %v\n%s%s", err, result.Err, result.Out)
 			}
 		})
 	}
+}
+
+// inAFolderOfItsOwn copies the exercise folder to a new module and puts the
+// files of the solution over it, as a learner's folder would look after
+// finishing the exercise, and returns the exercise to run there. The files of a
+// solution replace the files of the exercise with the same name, or add to them.
+func inAFolderOfItsOwn(t *testing.T, ex exercises.Exercise, solutionFiles []string) exercises.Exercise {
+	t.Helper()
+	root := t.TempDir()
+
+	goMod := "module golings-exercises\n\ngo " + doctor.MinGoVersion + "\n"
+	if err := os.WriteFile(filepath.Join(root, "go.mod"), []byte(goMod), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	copyTree := func(from, to string) {
+		err := filepath.WalkDir(from, func(name string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			rel, err := filepath.Rel(from, name)
+			if err != nil {
+				return err
+			}
+			target := filepath.Join(to, rel)
+			if d.IsDir() {
+				return os.MkdirAll(target, 0o755)
+			}
+			data, err := os.ReadFile(name)
+			if err != nil {
+				return err
+			}
+			return os.WriteFile(target, data, 0o644)
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	copyTree(filepath.Join(repoRoot, ex.Dir()), filepath.Join(root, ex.Dir()))
+	for _, file := range solutionFiles {
+		rel := strings.TrimPrefix(file, ex.SolutionDir()+"/")
+		target := filepath.Join(root, ex.Dir(), filepath.FromSlash(rel))
+		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		data, err := os.ReadFile(filepath.Join(repoRoot, filepath.FromSlash(file)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(target, data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	solved := ex
+	solved.Root = root
+	return solved
 }
 
 // TestNoOrphanedSolutions catches solutions left behind after an exercise was
@@ -84,9 +150,11 @@ func TestNoOrphanedSolutions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expected := map[string]bool{}
+	// A solution folder may hold several files, so a file belongs to an
+	// exercise when it is in the solution folder of one.
+	var folders []string
 	for _, ex := range all {
-		expected[ex.SolutionPath()] = true
+		folders = append(folders, ex.SolutionDir()+"/")
 	}
 
 	root := filepath.Join(repoRoot, "solutions")
@@ -98,7 +166,8 @@ func TestNoOrphanedSolutions(t *testing.T) {
 		if err != nil {
 			return err
 		}
-		if rel = filepath.ToSlash(rel); !expected[rel] {
+		rel = filepath.ToSlash(rel)
+		if !slices.ContainsFunc(folders, func(folder string) bool { return strings.HasPrefix(rel, folder) }) {
 			t.Errorf("%s does not belong to any exercise in info.toml", rel)
 		}
 		return nil

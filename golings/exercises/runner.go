@@ -62,6 +62,7 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 	}
 
 	build := exec.CommandContext(ctx, "go", buildArgs(e, binary)...)
+	build.Dir = e.Root
 	var buildOut, buildErr bytes.Buffer
 	build.Stdout, build.Stderr = &buildOut, &buildErr
 	if err := build.Run(); err != nil {
@@ -78,7 +79,7 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 	run := exec.CommandContext(runCtx, binary, runArgs(e)...)
 	if e.Mode == "test" {
 		// `go test` runs the test binary in the package folder.
-		run.Dir = filepath.Dir(e.Path)
+		run.Dir = filepath.Join(e.Root, e.Dir())
 	}
 	// Don't wait for output pipes held open by anything the program started.
 	run.WaitDelay = 2 * time.Second
@@ -100,9 +101,10 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 
 // buildArgs compiles the exercise into the file out: a program for compile
 // mode, a test binary for test mode, with the race detector if the exercise
-// needs it (it needs cgo and a C compiler on most systems).
+// needs it (it needs cgo and a C compiler on most systems). It builds the
+// package in the folder of the exercise, so an exercise may have several files.
 func buildArgs(e Exercise, out string) []string {
-	path := fmt.Sprintf("./%s", e.Path)
+	path := fmt.Sprintf("./%s", e.Dir())
 	switch {
 	case e.Mode == "compile":
 		return []string{"build", "-o", out, path}
