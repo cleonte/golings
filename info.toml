@@ -671,6 +671,61 @@ A package can be spread over as many files as you like, and each file can have i
 For more information: https://go.dev/doc/effective_go#init"""
 
 [[exercises]]
+name = "layout1"
+path = "exercises/layout/layout1/main.go"
+mode = "compile"
+nudge = """The compiler says greet.Hello is undefined: the package greet has a function called hello, with a small h."""
+stronger = """Rename hello to Hello in greet/greet.go."""
+hint = """
+An exercise can have packages of its own: here `greet/` is a folder inside the exercise, and `main.go` imports it by its full path, which starts with the module path. Exporting works as in the `packages` topic: only names that start with a capital letter can be used from another package. The path of an import is a folder path in the module, from the `module` line of `go.mod`.
+
+For more information: https://go.dev/doc/code"""
+
+[[exercises]]
+name = "layout2"
+path = "exercises/layout/layout2/main.go"
+mode = "compile"
+nudge = """Go says that use of the internal package lib/internal/secret is not allowed from tools."""
+stronger = """In tools.go import the package lib instead of the internal one, and use lib.Token()."""
+hint = """
+A folder called `internal` can only be imported by code in the folder that holds it (and below): `lib/internal/secret` is for packages inside `lib/`. The compiler enforces it, so a library can keep its details private and show only an exported API (`lib.Token`) that it is free to change. `internal` is the one rule in Go about packages that is not about capital letters.
+
+For more information: https://go.dev/doc/go1.4#internalpackages"""
+
+[[exercises]]
+name = "layout3"
+path = "exercises/layout/layout3/main.go"
+mode = "compile"
+nudge = """Go says import cycle not allowed: user imports order, and order imports user."""
+stronger = """Keep only the ID of the owner in Order (an int called OwnerID), and drop the import of user in order/order.go."""
+hint = """
+Packages can't import each other, directly or through others: the compiler needs to build one before the other. The usual way out is to look at what one side really needs. Here an order only needs the ID of its owner, not the whole user. When both sides truly need the same type, move it to a third package that both import, or define a small interface on the side that uses it.
+
+For more information: https://go.dev/blog/package-names"""
+
+[[exercises]]
+name = "layout4"
+path = "exercises/layout/layout4/main_test.go"
+mode = "test"
+nudge = """Greet(fr) says there is no greeting for "fr": the french plugin is never imported, so its init never runs."""
+stronger = """Add a second blank import, _ "github.com/cleonte/golings/exercises/layout/layout4/plugins/french", below the english one."""
+hint = """
+An `init` function only runs if its package is part of the program, and a package is part of it when something imports it. A plugin that only registers itself is imported with the blank identifier: `import _ "path"`, which says "I want the side effects of this package, I use no names from it". This is how `database/sql` drivers (`_ "github.com/lib/pq"`) and image formats (`_ "image/png"`) work.
+
+For more information: https://go.dev/ref/spec#Import_declarations"""
+
+[[exercises]]
+name = "layout5"
+path = "exercises/layout/layout5/main.go"
+mode = "compile"
+nudge = """The compiler says v2 is undefined, and that the import was imported as store and not used."""
+stronger = """Call store.New() instead of v2.New(): the package is called store, whatever its folder is called."""
+hint = """
+An import path ends with the name of a folder, but the name you use in code is the one in the `package` clause of the files. Most of the time they are the same; a major version folder like `v2` (`github.com/x/yaml/v3` is package `yaml`) is the usual exception. Go tells you with "imported as store". If you want a different name, or two packages have the same one, give the import an alias.
+
+For more information: https://go.dev/ref/mod#major-version-suffixes"""
+
+[[exercises]]
 name = "pointers1"
 path = "exercises/pointers/pointers1/main.go"
 mode = "compile"

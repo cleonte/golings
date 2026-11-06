@@ -15,6 +15,12 @@ import (
 // MinGoVersion is the oldest Go release golings supports.
 const MinGoVersion = "1.26"
 
+// ExercisesModule is the module path of the folder `golings init` creates. It
+// is the module path of this repository on purpose: an exercise with several
+// packages imports its own packages by path, and the path has to be the same in
+// the repository and in a learner's folder.
+const ExercisesModule = "github.com/cleonte/golings"
+
 type Status int
 
 const (
@@ -36,6 +42,9 @@ type Env struct {
 	CGOEnabled   func() bool
 	HasCCompiler func() bool
 	FileExists   func(path string) bool
+	// ReadFile reads a file, to look at the go.mod of the exercises folder. It
+	// may be nil.
+	ReadFile func(path string) ([]byte, error)
 }
 
 func DefaultEnv() Env {
@@ -49,6 +58,7 @@ func DefaultEnv() Env {
 			_, err := os.Stat(path)
 			return err == nil
 		},
+		ReadFile: os.ReadFile,
 	}
 }
 
@@ -70,6 +80,9 @@ func Run(infoFile string, env Env) []Check {
 	checks = append(checks, Check{Name: "Exercise manifest", Status: OK, Detail: fmt.Sprintf("%s lists %d exercises", infoFile, len(all))})
 
 	checks = append(checks, filesCheck(all, env))
+	if c, ok := moduleCheck(env); ok {
+		checks = append(checks, c)
+	}
 	if local != "" {
 		checks = append(checks, versionGatedCheck(all, local))
 	}
@@ -112,6 +125,33 @@ func filesCheck(all []exercises.Exercise, env Env) Check {
 		return Check{Name: "Exercise files", Status: Fail, Detail: fmt.Sprintf("%d missing: %s", len(missing), strings.Join(missing, ", "))}
 	}
 	return Check{Name: "Exercise files", Status: OK, Detail: "all present"}
+}
+
+// moduleCheck looks at the module path in go.mod: a folder made by golings 1.4
+// or older says "golings-exercises", and exercises with several packages need
+// ExercisesModule to find their own packages. It says nothing when there is no
+// go.mod to read.
+func moduleCheck(env Env) (Check, bool) {
+	if env.ReadFile == nil {
+		return Check{}, false
+	}
+	data, err := env.ReadFile("go.mod")
+	if err != nil {
+		return Check{}, false
+	}
+	c := Check{Name: "Module path"}
+	for _, line := range strings.Split(string(data), "\n") {
+		if path, ok := strings.CutPrefix(strings.TrimSpace(line), "module "); ok {
+			if path = strings.TrimSpace(path); path == ExercisesModule {
+				c.Status, c.Detail = OK, "go.mod says "+path
+			} else {
+				c.Status = Warn
+				c.Detail = fmt.Sprintf("go.mod says %q; exercises with several packages need %q: change the first line of go.mod to `module %s`", path, ExercisesModule, ExercisesModule)
+			}
+			return c, true
+		}
+	}
+	return Check{}, false
 }
 
 func versionGatedCheck(all []exercises.Exercise, local string) Check {

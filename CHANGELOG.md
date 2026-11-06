@@ -10,10 +10,12 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
-- **4 exercises of several files** in the `packages` topic, 247 exercises in 49 topics in all: a file with the wrong package clause, a leftover second `main`, `init` order across files (set values in declarations), and a registry that you extend by adding a new file. For the last one `golings reset` removes the Go file you added.
+- A `layout` topic, 5 exercises, after `packages`, with packages of their own inside the exercise folder: an unexported name, `internal/`, an import cycle, a blank import that registers a plugin, and a package whose name is not its folder (`v2`). 252 exercises in 50 topics in all.
+- **4 exercises of several files** in the `packages` topic, a file with the wrong package clause, a leftover second `main`, `init` order across files (set values in declarations), and a registry that you extend by adding a new file. For the last one `golings reset` removes the Go file you added.
 
 ### Changed
 
+- `golings init` writes `module github.com/cleonte/golings` in the `go.mod` of the exercises folder (it was `golings-exercises`), the module path of this repository, so that an exercise with several packages imports its own packages by the same path everywhere. A folder made by an older version keeps working for every exercise except the `layout` ones; `golings doctor` tells you to change the first line of its `go.mod`.
 - An exercise is now the whole folder, not one file, so an exercise can have several files in the same package. Nothing changes for the exercises that exist: `path` still names the main file, with the `// I AM NOT DONE` marker. `golings reset` restores every file of the folder, removes the Go files you added to it, and `golings solution` shows every file of a solution. This is the first step of the design in `docs/multi-file-exercises.md`.
 
 ## [1.4.0] - 2026-11-06

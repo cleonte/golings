@@ -34,6 +34,8 @@ Every exercise also needs a solution in `solutions/<topic>/<name>/`, using the s
 
 An exercise is the whole folder `exercises/<topic>/<name>/`: usually one file, but it may have several files of the same package (for example the types in one file and the code that uses them in another). `path` names the main file, the one with the `// I AM NOT DONE` marker. Put a `// TODO:` in each file that needs a change. The solution folder holds the files that replace or add to the files of the exercise folder, by name: a solution only needs the files that change. `golings reset` restores every file of the folder and removes the Go files a learner added to it, and `golings solution` shows them all (a solution may have only the files that change or are new).
 
+An exercise may also have packages of its own, in folders inside its folder (`exercises/<topic>/<name>/greet/greet.go`). They are imported by the full path, which starts with the module path of the repository (`github.com/cleonte/golings/exercises/<topic>/<name>/greet`); the `go.mod` that `golings init` writes has the same module path, so the import is the same everywhere. A new package folder needs a file in the exercise (a stub) even if its real code only comes with the solution, so the path resolves in the repository. Tests of such an exercise live in the root package of the exercise; only the root package is built.
+
 Exercises and `info.toml` are embedded in the binary (see `embed.go`), which is what `golings init` and `golings reset` use, so a new exercise needs no extra registration. Files whose names start with `.` or `_` are not embedded.
 
 ## Running the test suite
