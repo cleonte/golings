@@ -528,6 +528,61 @@ func (s *StructHere) doSomething() {
 """
 
 [[exercises]]
+name = "types1"
+path = "exercises/types/types1/main_test.go"
+mode = "test"
+nudge = """East, South and West are all 0: each constant has the value 0 written out."""
+stronger = """Use iota as the value of the first constant of the block, and give the other three lines no value at all: they repeat the line above, and iota grows by one on each line."""
+hint = """
+`iota` is a constant that is 0 on the first line of a `const` block and goes up by one on each following line. A line with no type and no value repeats the previous line's, so `North Direction = iota` followed by `East`, `South` and `West` gives 0, 1, 2 and 3. This is how Go writes enums.
+
+For more information: https://go.dev/ref/spec#Iota"""
+
+[[exercises]]
+name = "types2"
+path = "exercises/types/types2/main_test.go"
+mode = "test"
+nudge = """Every direction prints as "?": the String method returns the same text whatever the value is."""
+stronger = """Keep the names in an array or slice and return the one at the position of d. First check that d is inside the list, and for any other value build the text with fmt.Sprintf using int(d)."""
+hint = """
+A type with a `String() string` method implements `fmt.Stringer`, and `fmt` uses it when it prints a value. An array of names indexed by the constant is the usual lookup. A `Direction` can hold any number, so check the bounds first, and format `int(d)` inside `String`, not `d`, or `String` calls itself forever.
+
+For more information: https://pkg.go.dev/fmt#Stringer"""
+
+[[exercises]]
+name = "types3"
+path = "exercises/types/types3/main_test.go"
+mode = "test"
+nudge = """MB and GB are 1024 like KB: their values were written out and don't grow."""
+stronger = """Start the block with a blank identifier set to iota, give KB a shift by 10 times iota, and let MB and GB repeat that expression: iota is one larger on each line."""
+hint = """
+In a `const` block a line with no expression repeats the one above with `iota` one larger. `_ = iota` throws away the 0, and `1 << (10 * iota)` is 2^10 on the next line, 2^20 on the one after that, and so on: a kibibyte, a mebibyte, a gibibyte.
+
+For more information: https://go.dev/ref/spec#Iota"""
+
+[[exercises]]
+name = "types4"
+path = "exercises/types/types4/main_test.go"
+mode = "test"
+nudge = """UserID and OrderID are the same type as int: an alias is another name for a type, not a new type."""
+stronger = """Remove the = from both declarations. Without it each line defines a new type whose underlying type is int."""
+hint = """
+`type A = B` makes an alias: `A` and `B` are exactly the same type, so a `UserID` can go where an `OrderID` is expected and the compiler won't notice the mistake. `type A B` defines a new type with the representation of `B`, and the compiler keeps the two apart. Use aliases to move code between packages step by step, and defined types for IDs and units.
+
+For more information: https://go.dev/ref/spec#Type_definitions"""
+
+[[exercises]]
+name = "types5"
+path = "exercises/types/types5/main.go"
+mode = "compile"
+nudge = """The compiler says Meters and Feet are mismatched types: both are float64 underneath, but Go treats them as different types."""
+stronger = """Convert extra to Meters, multiplying by 0.3048 (a foot in metres), before adding it to height."""
+hint = """
+Defined types are different types even when their underlying type is the same, so they can't be mixed in an operation. A conversion, `Meters(x)`, turns a value into another type with the same underlying type, and it is the place to apply the factor between two units.
+
+For more information: https://go.dev/ref/spec#Conversions"""
+
+[[exercises]]
 name = "packages1"
 path = "exercises/packages/packages1/main.go"
 mode = "compile"

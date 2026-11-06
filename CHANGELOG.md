@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- A `types` topic, 5 exercises, after structs: `iota` enums, a `String` method for them, `iota` expressions, an alias against a defined type, and conversion between defined types.
+
 ## [1.2.0] - 2026-11-06
 
 ### Added

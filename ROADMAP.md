@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 182 exercises in 36 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 187 exercises in 37 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -90,6 +90,7 @@ Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:
 - [x] `os` and `io/fs` (5, topic `fs`): `os.ReadFile`, `os.Root` (1.24), `fstest.MapFS`, `filepath.WalkDir`, `embed`.
 - [x] `net/http` (6, topic `http`): a handler tested with `httptest`, pattern routing (`GET /items/{id}`, 1.22), middleware, client timeouts.
 - [x] `cmp`, `sort` and `container` (5, topic `sorting`): `cmp.Compare`, `slices.SortFunc` with several keys, `container/heap` and `list`.
+- [x] `types` (5): `iota` enums, a `String` method, `iota` expressions, alias against defined type, conversion between defined types.
 - [ ] Smaller topics, if wanted: `regexp`, `text/template`, `unique`, `weak`, `sync.Pool`, `math/rand/v2`, and `encoding` (`base64`, `hex`, `csv`, `binary`).
 
 ## Phase 8 — Tool features (planned)
@@ -101,7 +102,7 @@ Ideas from reading a similar project, [madhank93/golings](https://github.com/mad
 
 ## Ideas, not scheduled
 - More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` is done; `reflect` is left.
-- Topics seen in the project above that are not in Phase 7 yet: `reflect`, enums with `iota` and type aliases (neither is covered today), testing with fakes and dependency injection, profiling and benchmarks, `net` over loopback (`net.Pipe` first), `unsafe` (pure Go, no C compiler needed).
+- Topics seen in the project above that are not in Phase 7 yet: `reflect`, testing with fakes and dependency injection, profiling and benchmarks, `net` over loopback (`net.Pipe` first), `unsafe` (pure Go, no C compiler needed).
 - Not planned: `cgo` (needs a C compiler, which the supported setups do not all have) and exercises that start other programs (they depend on what is installed).
 - Fuzzing as a testing exercise.
 - A web version, as the upstream README mentions.
