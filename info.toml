@@ -1447,6 +1447,61 @@ hint = """
 For more information: https://pkg.go.dev/html/template"""
 
 [[exercises]]
+name = "encoding1"
+path = "exercises/encoding/encoding1/main_test.go"
+mode = "test"
+nudge = """token is "+/8=" with a + a / and an = in it: the standard base64 alphabet isn't safe in a URL."""
+stronger = """Use the URL alphabet of the base64 package, in its form without padding."""
+hint = """
+`base64.StdEncoding` uses `+` and `/` and pads the end with `=`. `base64.URLEncoding` replaces them with `-` and `_`, and the `Raw` variants (`RawURLEncoding`, `RawStdEncoding`) leave out the padding. `RawURLEncoding` is the usual choice for tokens in a URL or a file name.
+
+For more information: https://pkg.go.dev/encoding/base64#pkg-variables"""
+
+[[exercises]]
+name = "encoding2"
+path = "exercises/encoding/encoding2/main_test.go"
+mode = "test"
+nudge = """fromHex("zz") returned no error: the error from DecodeString is thrown away."""
+stronger = """Return what hex.DecodeString returns, the bytes and the error, as they are."""
+hint = """
+`hex.DecodeString` returns an error for a character that isn't a hex digit and for a text with an odd length. When a function can fail, pass its error on (or handle it): replacing it with `nil` makes the failure look like a success, and the caller gets wrong data.
+
+For more information: https://pkg.go.dev/encoding/hex#DecodeString"""
+
+[[exercises]]
+name = "encoding3"
+path = "exercises/encoding/encoding3/main_test.go"
+mode = "test"
+nudge = """The field "Doe, John" was cut in two at its comma: splitting a line at every comma doesn't know about quotes."""
+stronger = """Read the text with a csv.Reader made from a strings.NewReader, and return all of its records."""
+hint = """
+CSV is more than commas: fields can be quoted, and a quoted field can have commas, quotes (doubled) and new lines in it. `csv.NewReader(r).ReadAll()` returns every record as a `[]string`, and an error for text that isn't valid CSV, such as a quote that never closes.
+
+For more information: https://pkg.go.dev/encoding/csv#Reader"""
+
+[[exercises]]
+name = "encoding4"
+path = "exercises/encoding/encoding4/main_test.go"
+mode = "test"
+nudge = """writeRecord returns an empty string: the csv.Writer keeps what it is given in a buffer."""
+stronger = """After the Write, flush the writer, and then ask it whether an error happened."""
+hint = """
+`csv.Writer` is buffered, as `bufio.Writer` is: `Write` puts the record in a buffer, and nothing reaches the destination until `Flush` is called. `Flush` returns nothing; call `w.Error()` afterwards to know whether writing failed. The writer quotes the fields that need it, such as one that has a comma.
+
+For more information: https://pkg.go.dev/encoding/csv#Writer.Flush"""
+
+[[exercises]]
+name = "encoding5"
+path = "exercises/encoding/encoding5/main_test.go"
+mode = "test"
+nudge = """encode(256) is [0 1 0 0] instead of [0 0 1 0]: the smallest byte comes first, and network protocols put the biggest byte first."""
+stronger = """Use the big-endian order in both functions, so that PutUint32 and Uint32 agree on it."""
+hint = """
+`binary.BigEndian` and `binary.LittleEndian` read and write integers as bytes in the two orders. Network protocols and many file formats use big-endian ("network order"), where the most significant byte comes first, so 256 is `0 0 1 0`. Both sides must use the same order, or the number you read is not the number that was written.
+
+For more information: https://pkg.go.dev/encoding/binary#ByteOrder"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"

@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 197 exercises in 39 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 202 exercises in 40 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -93,7 +93,8 @@ Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:
 - [x] `types` (5): `iota` enums, a `String` method, `iota` expressions, alias against defined type, conversion between defined types.
 - [x] `regexp` (5): anchors, groups, `ReplaceAllString`, `FindAllString`, `QuoteMeta`.
 - [x] `template` (5): fields, `range`, `Funcs`, variables and `if` in a range, `html/template` against `text/template`.
-- [ ] Smaller topics, if wanted: `unique`, `weak`, `sync.Pool`, `math/rand/v2`, and `encoding` (`base64`, `hex`, `csv`, `binary`).
+- [x] `encoding` (5): URL-safe `base64`, the error of `hex`, reading and writing `csv`, and `binary` byte order.
+- [ ] Smaller topics, if wanted: `unique`, `weak`, `sync.Pool`, `math/rand/v2`.
 
 ## Phase 8 — Tool features (planned)
 Ideas from reading a similar project, [madhank93/golings](https://github.com/madhank93/golings) (another fork of upstream; Apache-2.0). Ideas only: nothing is copied, and every exercise here is written and verified on its own.
