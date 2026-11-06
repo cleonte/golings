@@ -20,7 +20,7 @@ mode = "compile"
 hint = "hints are cool"
 ```
 
-Besides `hint` an exercise can have two smaller hints, `nudge` and `stronger`, which `h` in `watch` shows first, one at a time, and `golings hint <name> --level N` prints. The nudge says what the failure means, without saying where to change; the stronger hint says where to change, without the code; the `hint` is the full explanation with a link. Both are optional (a `stronger` needs a `nudge`, and a manifest test checks it), and an exercise with only a `hint` works as before.
+Besides `hint` an exercise can have two smaller hints, `nudge` and `stronger`, which `h` in `watch` shows first, one at a time, and `golings hint <name> --level N` prints. The nudge says what the failure means, without saying where to change; the stronger hint says where to change, without the code; the `hint` is the full explanation with a link. Every exercise has both, and a manifest test checks it: write them from the real failure of the unsolved version, run it and read what the learner would read.
 
 The exercise mode is very important. It tells `golings` how to run the exercise. If you are adding an exercise that expects the user to only make it compilable, use `compile` mode. If it has a test suite and you need the user to actually have the tests passing, use `test`.
 

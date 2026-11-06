@@ -49,6 +49,13 @@ var _ = Describe("Repository manifest", func() {
 		}
 	})
 
+	It("has all three hint levels for every exercise", func() {
+		for _, ex := range all {
+			Expect(ex.Nudge).NotTo(BeEmpty(), "exercise %s has no nudge: say what the failure means", ex.Name)
+			Expect(ex.Stronger).NotTo(BeEmpty(), "exercise %s has no stronger hint: say where to change", ex.Name)
+		}
+	})
+
 	It("has a nudge before a stronger hint, and smaller hints that differ from the full one", func() {
 		for _, ex := range all {
 			if ex.Stronger != "" {
