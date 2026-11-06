@@ -835,6 +835,8 @@ For more information: https://go.dev/ref/spec#Function_literals"""
 name = "defer1"
 path = "exercises/defer/defer1/main.go"
 mode = "compile"
+nudge = """The compiler says the expression in defer must be a function call: a function literal on its own is only a value."""
+stronger = """Add parentheses after the closing brace of the function literal, so that it is called."""
 hint = """
 defer needs a function call. A function literal on its own is only a value: call it by adding parentheses after the closing brace.
 
@@ -844,6 +846,8 @@ For more information: https://go.dev/ref/spec#Defer_statements"""
 name = "defer2"
 path = "exercises/defer/defer2/main_test.go"
 mode = "test"
+nudge = """The connection was closed after the file, and it has to be closed first: the cleanups run in the reverse of the order they were deferred in."""
+stronger = """Defer the closing of each resource right after the line that opens it, so that the last one opened is the first one closed."""
 hint = """
 Deferred calls run last in, first out. The usual way to get the right order is to defer the clean-up right after the line that needs it: open the file, defer closing it, then open the connection, defer closing that.
 
@@ -853,6 +857,8 @@ For more information: https://go.dev/tour/flowcontrol/13"""
 name = "defer3"
 path = "exercises/defer/defer3/main_test.go"
 mode = "test"
+nudge = """The deferred call printed x = 1 instead of 2: its argument was evaluated when the defer statement ran."""
+stronger = """Defer a function literal that reads x when it runs, and call it."""
 hint = """
 The arguments of a deferred call are evaluated when the defer statement runs, so the deferred call keeps the value x had back then. A deferred function literal is different: it reads x when it runs. Wrap the call in one, and call it.
 
@@ -862,6 +868,8 @@ For more information: https://go.dev/blog/defer-panic-and-recover"""
 name = "defer4"
 path = "exercises/defer/defer4/main_test.go"
 mode = "test"
+nudge = """Both resources are closed at the end, one after the other: a defer inside a loop waits until the whole function returns."""
+stronger = """Move the body of the loop into a function of its own that is called once per item, so its defer runs at the end of each turn."""
 hint = """
 A defer inside a loop waits until the whole function returns, so every resource stays open until then. Move the body of the loop into a function of its own: its deferred call runs when that function returns, which is once per iteration.
 
@@ -871,6 +879,8 @@ For more information: https://go.dev/doc/effective_go#defer"""
 name = "defer5"
 path = "exercises/defer/defer5/main_test.go"
 mode = "test"
+nudge = """The test panics with an integer divide by zero: nothing recovers from it."""
+stronger = """Before the division, defer a function literal that calls recover. When recover returns something, set the named result err to an error."""
 hint = """
 recover only works inside a deferred function. Defer a function literal that calls recover, and when it returns something other than nil assign an error to the named result err. Do the division after the defer statement.
 
@@ -880,6 +890,8 @@ For more information: https://go.dev/blog/defer-panic-and-recover"""
 name = "defer6"
 path = "exercises/defer/defer6/main_test.go"
 mode = "test"
+nudge = """The error comes back without the file name: nothing adds it on the way out."""
+stronger = """Defer a function literal before the work: if err is not nil, replace it with an error that wraps it and includes the file name. This works because err is a named result."""
 hint = """
 Because err is a named result, a deferred function runs after the return statement has set it and can change it again. Defer a function literal that wraps err with fmt.Errorf and %w, only if err is not nil. Do the work after the defer statement.
 
@@ -889,6 +901,8 @@ For more information: https://go.dev/ref/spec#Return_statements"""
 name = "testing1"
 path = "exercises/testing/testing1/main_test.go"
 mode = "test"
+nudge = """The checks ran under the name of the test, not under the name of each case: the cases are not subtests."""
+stronger = """For each case call t.Run with the name of the case and a function that does the check with that case."""
 hint = """
 t.Run(name, func(t *testing.T) { ... }) runs a subtest with that name. Call the check inside it, with the case. The subtest gets its own *testing.T, so a failure is reported under the name of the case.
 
@@ -898,6 +912,8 @@ For more information: https://go.dev/blog/subtests"""
 name = "testing2"
 path = "exercises/testing/testing2/main_test.go"
 mode = "test"
+nudge = """assertEqual(1, 2) did not fail the test, and it doesn't say that it is a helper."""
+stronger = """Call t.Helper() first in assertEqual, and report the difference with a method that marks the test as failed, not one that only logs."""
 hint = """
 t.Helper() tells the testing package that this function is a helper, so a failure is reported at the line of the test that called it. Call it first. Logging is not failing: use t.Errorf to mark the test as failed.
 
@@ -907,6 +923,8 @@ For more information: https://pkg.go.dev/testing#T.Helper"""
 name = "testing3"
 path = "exercises/testing/testing3/main_test.go"
 mode = "test"
+nudge = """The file is still there after the test: a folder made with os.MkdirTemp stays on the disk."""
+stronger = """Ask the testing.T for the folder instead of making it yourself. It removes the folder when the test is over."""
 hint = """
 t.TempDir() returns a new folder for the test and removes it, with everything in it, when the test and its subtests are over. You do not need os.MkdirTemp anymore. Without it, t.Cleanup(func) registers a function to run at the end of the test.
 
@@ -916,6 +934,8 @@ For more information: https://pkg.go.dev/testing#T.TempDir"""
 name = "testing4"
 path = "exercises/testing/testing4/main_test.go"
 mode = "test"
+nudge = """The example printed "Hello, Gopher!", but the Output comment says "Hello, Gopher": the two must be the same."""
+stronger = """Write the exact output in the // Output: comment, one comment line for each line the example prints."""
 hint = """
 go test runs an example and compares what it prints with the comment that starts with Output: at the end of the function. Read the failure: it shows what the example printed and what the comment says. Whitespace around the output is ignored, the rest has to match.
 
@@ -925,6 +945,8 @@ For more information: https://go.dev/blog/examples"""
 name = "testing5"
 path = "exercises/testing/testing5/main_test.go"
 mode = "test"
+nudge = """The benchmark function ran 4 times: with b.N it is called again with a bigger N each time."""
+stronger = """Replace the loop over b.N with a loop whose condition is b.Loop()."""
 hint = """
 for b.Loop() { ... } replaces for i := 0; i < b.N; i++ { ... }. The benchmark function then runs once, so the setup before the loop is not repeated, and the timer only counts the loop.
 
@@ -934,6 +956,8 @@ For more information: https://go.dev/blog/testing-b-loop"""
 name = "slog1"
 path = "exercises/slog/slog1/main_test.go"
 mode = "test"
+nudge = """The user and the attempts are inside the sentence: the log line has no fields of its own."""
+stronger = """Call Info with the fixed message first, then the key and value pairs: each key is a string and is followed by its value."""
 hint = """
 `log/slog` writes structured logs: a message plus key/value pairs, `logger.Info("user logged in", "user", "ana", "attempts", 3)`. Don't build the text with `fmt.Sprintf`: separate fields can be searched and filtered by the tools that read the logs, a sentence can't.
 
@@ -943,6 +967,8 @@ For more information: https://pkg.go.dev/log/slog"""
 name = "slog2"
 path = "exercises/slog/slog2/main_test.go"
 mode = "test"
+nudge = """Only 1 record was written, the debug one is missing, and the output is text: this is the default text handler at level Info."""
+stronger = """Create the logger with the JSON handler, and give it options with a level low enough to let debug records through."""
 hint = """
 A handler decides how records are written and which are kept. `slog.NewJSONHandler` writes one JSON object per record, which is what log collectors expect; `slog.NewTextHandler` writes `key=value` text. Records below the handler's level are dropped, and the default level is Info: set `HandlerOptions.Level` to `slog.LevelDebug` to see debug records.
 
@@ -952,6 +978,8 @@ For more information: https://pkg.go.dev/log/slog#HandlerOptions"""
 name = "slog3"
 path = "exercises/slog/slog3/main_test.go"
 mode = "test"
+nudge = """The order id is missing from the records, and name and vip are not grouped under customer."""
+stronger = """Return a logger that has the id already added to it. Group the two pairs under the name customer with slog.Group."""
 hint = """
 `logger.With("order_id", 7)` returns a new logger that adds those pairs to every record it writes, so you don't repeat them at each call. `slog.Group("customer", "name", "ana")` nests pairs under a name: the text handler writes `customer.name=ana`, the JSON handler an object.
 
@@ -961,6 +989,8 @@ For more information: https://pkg.go.dev/log/slog#Logger.With"""
 name = "slog4"
 path = "exercises/slog/slog4/main_test.go"
 mode = "test"
+nudge = """The time is still logged and the password shows: the handler doesn't change any attribute."""
+stronger = """In the handler's options set a ReplaceAttr function: for the time key return an empty attribute, for the password key return a hidden value, and return the others as they are."""
 hint = """
 `HandlerOptions.ReplaceAttr` is called for every attribute before it is written. It can change the value (to hide a secret), return an empty `slog.Attr{}` to drop the attribute (the time, say), or rename it. The first argument is the group the attribute is in, `a.Key` its key.
 
@@ -970,6 +1000,8 @@ For more information: https://pkg.go.dev/log/slog#HandlerOptions"""
 name = "json1"
 path = "exercises/json/json1/main_test.go"
 mode = "test"
+nudge = """The JSON uses the Go names (ID, Name) and includes the empty Email and the Password: the fields have no tags."""
+stronger = """Add a tag to each field: the lower-case name, the option that leaves out empty values for the email, and the tag that never writes the field for the password."""
 hint = """
 Struct tags say how a field is written by `encoding/json`: `json:"name"` names it (otherwise the Go name `Name` is used, capitalised), `json:"email,omitempty"` leaves it out when it is empty, and `json:"-"` never writes it. Only exported fields are written at all.
 
@@ -979,6 +1011,8 @@ For more information: https://pkg.go.dev/encoding/json#Marshal"""
 name = "json2"
 path = "exercises/json/json2/main_test.go"
 mode = "test"
+nudge = """A time that was never set is still written (year 1): omitempty doesn't treat a struct as empty."""
+stronger = """Use the tag option that leaves out zero values of any kind, structs included, instead of omitempty."""
 hint = """
 `omitempty` leaves out empty values: false, 0, nil, an empty string or slice. But a struct is never "empty", so a `time.Time` that was not set is still written (as year 1). The `omitzero` tag option (Go 1.24) leaves out any field that is the zero value of its type, structs included, and it uses an `IsZero()` method when the type has one, like time.Time.
 
@@ -1175,6 +1209,8 @@ For more information: https://pkg.go.dev/net/http#Client"""
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
+nudge = """The compiler says value is undefined: the function has no parameter called value yet, of any type."""
+stronger = """Add a type parameter in square brackets after the name of the function, constrained with any, and use it as the type of the parameter value."""
 hint = """
 Generic functions prevent code duplication by allowing the same function to handle different types.
 
@@ -1189,6 +1225,8 @@ func FuncName[T any](value T) {
 name = "generics2"
 path = "exercises/generics/generics2/main.go"
 mode = "compile"
+nudge = """The compiler says addNumbers returns no value and T is undefined: the function isn't generic yet and has no result type."""
+stronger = """Declare T in square brackets after the name, with the Number constraint, use T for the parameters and the result, and add the floating-point types to Number."""
 hint = """
 Type mismatches in arithmetic operations are not allowed, but generics enable functions to handle different types while maintaining the same logic.
 
@@ -1201,6 +1239,8 @@ Ensure you include the appropriate type signature.
 name = "generics3"
 path = "exercises/generics/generics3/main.go"
 mode = "compile"
+nudge = """The compiler says T can't use > and that Celsius does not satisfy Number: any allows no comparison, and Number lists float64 but not the types built on it."""
+stronger = """Put ~ before float64 in Number so that types whose underlying type is float64 are accepted, and constrain the function that compares with the constraint for ordered types from the cmp package."""
 hint = """
 A type constraint lists what a type parameter can be. Two things trip people up. `T any` allows every type, so you can't compare values with `>`: use `cmp.Ordered`, which is every type that can be ordered (numbers and strings). And `int | float64` lists exactly those types, not types built on them such as `type Celsius float64`: put a `~` in front to accept every type whose underlying type is that one.
 
@@ -1210,6 +1250,8 @@ For more information: https://pkg.go.dev/cmp#Ordered"""
 name = "generics4"
 path = "exercises/generics/generics4/main_test.go"
 mode = "test"
+nudge = """Pop() returns 0 and false: Push and Pop don't do anything yet."""
+stronger = """Push appends the item to the slice inside the stack. Pop returns the zero value of T and false for an empty stack; otherwise it takes the last item off the slice and returns it with true."""
 hint = """
 A generic struct has type parameters after its name: `Stack[T any]`, and every method repeats them in the receiver: `func (s *Stack[T]) Push(item T)`. Inside, T is a real type. To return "nothing" for a type you don't know, declare a variable of it: `var zero T` is the zero value of T, whatever T is.
 
@@ -1219,6 +1261,8 @@ For more information: https://go.dev/blog/intro-generics"""
 name = "generics5"
 path = "exercises/generics/generics5/main.go"
 mode = "compile"
+nudge = """The compiler says item == target is invalid for incomparable types, and that T is not a valid map key: any allows types that can't be compared."""
+stronger = """Change the constraint of T, in both places, to the built-in constraint for the types that support == and !=."""
 hint = """
 `T any` lets a function take every type, which is why it can't do much with the values: not even `==`, because some types (slices, maps, functions) can't be compared. The `comparable` constraint says T supports `==` and `!=`: use it when you need to find or count equal values, or use T as a map key.
 
@@ -1228,6 +1272,8 @@ For more information: https://go.dev/blog/comparable"""
 name = "generics6"
 path = "exercises/generics/generics6/main.go"
 mode = "compile"
+nudge = """The compiler says T is undefined and Set is not a generic type: the alias has no type parameter."""
+stronger = """Add a type parameter in square brackets after the name of the alias, with a constraint that allows it to be a map key."""
 hint = """
 Since Go 1.24 a type alias can have type parameters. `type Set[T comparable] = map[T]struct{}` makes `Set[string]` another name for `map[string]struct{}`: the two are the same type, so values go from one to the other without a conversion. Without the `[T comparable]` the alias has no T to use.
 
@@ -1237,6 +1283,8 @@ For more information: https://go.dev/blog/go1.24#generic-type-aliases"""
 name = "generics7"
 path = "exercises/generics/generics7/main.go"
 mode = "compile"
+nudge = """The compiler says A is undefined and Adder is not a generic type: neither the interface nor the function declares a type parameter."""
+stronger = """Declare A in square brackets after the name of the interface, with a constraint that refers to Adder[A] itself, and do the same in the function that adds the values."""
 hint = """
 Some constraints talk about the type itself: "A can be added to another A". For that, the constraint of `A` has to name `A`: `type Adder[A Adder[A]] interface { Add(A) A }`. Before Go 1.26 a generic type could not refer to itself in its own type parameter list, you had to work around it; now you can.
 
@@ -1246,6 +1294,8 @@ For more information: https://go.dev/doc/go1.26#language"""
 name = "iterators1"
 path = "exercises/iterators/iterators1/main_test.go"
 mode = "test"
+nudge = """countdown(3) gave nothing: the iterator never calls yield."""
+stronger = """Loop from the starting number down to 1, and call yield with each number."""
 hint = """
 An iterator is a function that gets a `yield` function and calls it once for every value, in order. `iter.Seq[V]` is the type of such a function: `func(yield func(V) bool)`. Write one by looping and passing each value to `yield`. `yield` returns false when whoever is ranging stopped early: then you must return.
 
@@ -1255,6 +1305,8 @@ For more information: https://pkg.go.dev/iter"""
 name = "iterators2"
 path = "exercises/iterators/iterators2/main.go"
 mode = "compile"
+nudge = """The compiler says a range over fruits() permits only one iteration variable: it gives one value per round."""
+stronger = """Remove the first variable from the for statement and keep only the one that holds the fruit."""
 hint = """
 You can range over an iterator like over a slice: `for fruit := range fruits()`. An `iter.Seq[V]` gives one value per round. An `iter.Seq2[K, V]` gives two, like `slices.All` does with the index and the value, and then you write two variables.
 
@@ -1264,6 +1316,8 @@ For more information: https://go.dev/blog/range-functions"""
 name = "iterators3"
 path = "exercises/iterators/iterators3/main_test.go"
 mode = "test"
+nudge = """The result is empty: the iterator never calls yield with the pairs."""
+stronger = """For each name call yield with its number, starting at 1, and the name: this iterator gives two values per round."""
 hint = """
 `iter.Seq2[K, V]` is an iterator that gives two values at a time: its `yield` takes two arguments, `yield(key, value)`. It is what you use for pairs, such as an index and a value, or a key and a value.
 
@@ -1273,6 +1327,8 @@ For more information: https://pkg.go.dev/iter#Seq2"""
 name = "iterators4"
 path = "exercises/iterators/iterators4/main_test.go"
 mode = "test"
+nudge = """The test panics with "range function continued iteration after function for loop body returned false": the iterator went on after the loop had stopped."""
+stronger = """Check what yield returns, and return from the iterator when it is false."""
 hint = """
 `yield` returns false when the loop that is ranging over your iterator has stopped, with `break` or `return`. You have to stop too: `if !yield(value) { return }`. If you keep calling yield, Go panics with "range function continued iteration after function for loop body returned false". This matters most for iterators that never end.
 
@@ -1282,6 +1338,8 @@ For more information: https://go.dev/blog/range-functions"""
 name = "iterators5"
 path = "exercises/iterators/iterators5/main_test.go"
 mode = "test"
+nudge = """evens and evenIDs return empty slices: neither one filters anything yet."""
+stronger = """In evens range over seq and call yield only for the even numbers, returning when yield says false. In evenIDs collect the filtered keys of the map into a sorted slice."""
 hint = """
 Iterators compose: a function can take an `iter.Seq` and give another one. The standard library offers the pieces around it: `slices.Values` turns a slice into an iterator, `maps.Keys` gives the keys of a map, and `slices.Collect` or `slices.Sorted` turn an iterator back into a slice. Writing the middle part, a filter, is a loop over the input that calls `yield` for the values you keep.
 
@@ -1764,6 +1822,8 @@ name = "go127_1"
 path = "exercises/go127/go127_1/main_test.go"
 mode = "test"
 go_version = "1.27"
+nudge = """splitExtension cuts at the first dot ("archive" and "tar.gz") and splitPath at the first slash: Cut always finds the first match."""
+stronger = """Use the new strings function that cuts around the last separator. For the path, when there is no slash the directory is empty and the whole path is the file name."""
 hint = """
 `strings.CutLast(s, sep)` (Go 1.27) splits a string around the last `sep`, like `strings.Cut` does around the first one. It returns the text before, the text after, and whether `sep` was found. When it is not found you get `s, "", false`: the whole string comes back as the "before" part, so check `found` when the other way round makes more sense. It replaces most uses of `strings.LastIndex`.
 
@@ -1774,6 +1834,8 @@ name = "go127_2"
 path = "exercises/go127/go127_2/main_test.go"
 mode = "test"
 go_version = "1.27"
+nudge = """The functions that generate and parse a UUID are not implemented yet."""
+stronger = """Create a random UUID with the New function of the uuid package and return its text form. Parse the text with the Parse function of the same package and return its result and its error."""
 hint = """
 The new `uuid` package (Go 1.27) has the standard library generate and parse UUIDs, RFC 9562 identifiers like `123e4567-e89b-12d3-a456-426614174000`. `uuid.New()` returns a random one, `uuid.NewV7()` one that sorts by creation time, `uuid.Parse(text)` reads the text form and returns an error when it is not a UUID, and `String()` gives the text back. A `uuid.UUID` is an array of 16 bytes, so you can compare two with `==`.
 
@@ -1784,6 +1846,8 @@ name = "go127_3"
 path = "exercises/go127/go127_3/main_test.go"
 mode = "test"
 go_version = "1.27"
+nudge = """Name and the address come back empty: the literal doesn't set the fields of the embedded Address."""
+stronger = """Write Street and City as keys directly in the Person literal, next to Name, without Address{...}: Go 1.27 allows the promoted fields as keys."""
 hint = """
 A struct that embeds another gets the fields of the embedded struct as its own (they are "promoted"): `person.City` is `person.Address.City`. Until Go 1.27 a composite literal could not use them as keys, you had to write the embedded struct out: `Person{Address: Address{City: "Lisbon"}}`. Now the key can be a promoted field: `Person{Name: "Ana", City: "Lisbon"}`. The file needs `//go:build go1.27` at the top, because the module's language version is older; the exercise already has it.
 
@@ -1794,6 +1858,8 @@ name = "go127_4"
 path = "exercises/go127/go127_4/main.go"
 mode = "compile"
 go_version = "1.27"
+nudge = """The compiler says U is undefined: the Map method uses a type U that nobody declared."""
+stronger = """Declare U as a type parameter of the method, in square brackets right after its name."""
 hint = """
 Go 1.27 lets a method declare type parameters of its own, after its name: `func (l List[T]) Map[U any](f func(T) U) List[U]`. Before, you had to write a function and pass the list in. `math/rand/v2` is the standard library example: `(*Rand).N` works for any integer type, `r.N(10 * time.Second)` gives a random Duration. The type parameters of the type (`T`) stay in the receiver, the ones of the method (`U`) go after the name. The file needs `//go:build go1.27` at the top, because the module's language version is older; the exercise already has it.
 
@@ -1804,6 +1870,8 @@ name = "go127_5"
 path = "exercises/go127/go127_5/main.go"
 mode = "compile"
 go_version = "1.27"
+nudge = """The compiler says *MemStore does not implement Store because its Get has a type parameter, and that GetAs doesn't exist: an interface method can't have type parameters."""
+stronger = """Make Get a plain method that returns any, as the interface says, and write GetAs as a generic function (not a method) that calls Get and asserts the type."""
 hint = """
 A generic method has limits. An interface method can't have type parameters, and a method with type parameters can't be the one that makes a type implement an interface: `Get[T any](key string) T` is not the method `Get(key string) any` that the interface asks for. When you need both, keep the interface method plain and put the generic part in a function that takes the interface: `func GetAs[T any](s Store, key string) (T, bool)`. The file needs `//go:build go1.27` at the top; the exercise already has it.
 
@@ -1814,6 +1882,8 @@ name = "go127_6"
 path = "exercises/go127/go127_6/main_test.go"
 mode = "test"
 go_version = "1.27"
+nudge = """Marshal writes "tags":null instead of an empty list, and Unmarshal accepts a repeated name: the old json package has more lenient defaults."""
+stronger = """Change the import to the new package, encoding/json/v2: its defaults write a nil slice as [] and reject repeated names."""
 hint = """
 `encoding/json/v2` (Go 1.27) is a new JSON package with the same two entry points, `json.Marshal(value)` and `json.Unmarshal(data, &value)`, and stricter, more interoperable defaults than the old `encoding/json`. Two differences you can see here: a nil slice (or map) is written as `[]` (or `{}`), where v1 writes `null`; and an object with the same name twice is an error, where v1 quietly keeps the last one. (JSON names are also matched case-sensitively.) `encoding/json` itself is built on v2 now, but keeps its old behavior.
 
