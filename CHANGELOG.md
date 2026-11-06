@@ -8,8 +8,11 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-06
+
 ### Added
 
+- **33 new exercises in 7 topics**, 243 exercises in 49 topics in all, each with the three hint levels, a `// TODO:` and a verified solution. This closes the gap with other Go exercise projects on core library topics.
 - A `reflect` topic, 5 exercises, before generics: kind against type name, reading struct tags, setting a field through a pointer, `reflect.DeepEqual`, and walking a value by kind.
 - An `unsafe` topic, 4 exercises, after `reflect`: struct padding and field order with `unsafe.Sizeof`, a string over a slice with `unsafe.String`, bytes over a slice of numbers with `unsafe.Slice`, and `unsafe.Add` for pointer arithmetic. 
 - A `fakes` topic, 5 exercises, after `testing`: injecting a dependency through an interface, a fake that fails to test a retry, a fake that keeps the contract of the real store, an interface defined where it is used, and `t.Cleanup` to put back a replaced global.
@@ -84,7 +87,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/cleonte/golings/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/cleonte/golings/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cleonte/golings/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cleonte/golings/compare/v1.0.0...v1.1.0
