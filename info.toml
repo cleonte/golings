@@ -1392,6 +1392,61 @@ An `http.Client` has no timeout by default: it waits as long as the server does.
 For more information: https://pkg.go.dev/net/http#Client"""
 
 [[exercises]]
+name = "net1"
+path = "exercises/net/net1/main_test.go"
+mode = "test"
+nudge = """The server sent no reply to PING: handle reads the line and then hangs up without writing."""
+stronger = """Write the bytes of "PONG\n" to conn with conn.Write before the function returns."""
+hint = """
+A `net.Conn` is an `io.Reader` and an `io.Writer`, so everything you know about `bufio` and `fmt.Fprint` works on a connection. `net.Pipe()` makes two connected ends in memory, with no ports and no network: a good way to test a protocol handler. It is synchronous, so a write waits until the other end reads. A deadline (`SetDeadline`) turns a test that would hang into a failure.
+
+For more information: https://pkg.go.dev/net#Pipe"""
+
+[[exercises]]
+name = "net2"
+path = "exercises/net/net2/main_test.go"
+mode = "test"
+nudge = """readMessage = "hel", want "hello": the message came in two pieces and one Read returned only the first."""
+stronger = """Wrap r in a bufio.Reader and use ReadString('\n'), then remove the newline from the end of the line."""
+hint = """
+TCP is a *stream* of bytes, not a list of messages: a `Read` returns what has arrived so far, which can be half a message or two and a half, so the protocol must mark where a message ends (a newline, a length in front, a delimiter). `bufio.Reader.ReadString` and `bufio.Scanner` read until the delimiter and hide the pieces.
+
+For more information: https://pkg.go.dev/bufio#Reader.ReadString"""
+
+[[exercises]]
+name = "net3"
+path = "exercises/net/net3/main_test.go"
+mode = "test"
+nudge = """Still waiting for the end of the data after a second: the server does not close the connection."""
+stronger = """Close the connection after writing the greeting, with defer conn.Close() right after the error check."""
+hint = """
+`io.ReadAll(conn)` reads until the other side closes the connection (it gets `io.EOF`), so a server that writes and never closes leaves the client waiting. Every connection from `Accept` is yours to close, and `defer conn.Close()` is the usual way. Note the address `127.0.0.1:0`: port 0 asks the system for a free port, and `ln.Addr()` tells you which one, so tests never collide on a fixed port.
+
+For more information: https://pkg.go.dev/net#Listener"""
+
+[[exercises]]
+name = "net4"
+path = "exercises/net/net4/main_test.go"
+mode = "test"
+nudge = """isTimeout of a *net.OpError from a read past its deadline = false: the error wraps os.ErrDeadlineExceeded, it is not equal to it."""
+stronger = """Return errors.Is(err, os.ErrDeadlineExceeded): it looks through the *net.OpError and through any %w wrapping."""
+hint = """
+Errors from the network package are wrapped: a failed read is a `*net.OpError` with the operation, the addresses and the cause inside, so `==` fails. `errors.Is(err, os.ErrDeadlineExceeded)` walks the chain and also sees through your own `fmt.Errorf("...: %w", err)`. The other way is `errors.As` with a `net.Error`, whose `Timeout()` method reports the same thing. Setting a deadline in the past is a quick way to cause the error in a test.
+
+For more information: https://pkg.go.dev/net#Conn"""
+
+[[exercises]]
+name = "net5"
+path = "exercises/net/net5/main_test.go"
+mode = "test"
+nudge = """The second client got no answer while the first one was silent: serve handles one connection at a time."""
+stronger = """Start handle in a new goroutine with the go keyword, so the loop goes back to Accept at once."""
+hint = """
+The classic server shape is a loop of `Accept` that starts a goroutine for each connection: goroutines are cheap, and a client that is slow, silent or stuck then only blocks itself. Handling the connection in the loop makes one slow client block every other one, which the kernel hides by accepting the connection and queueing it. For a real server also set deadlines on the connections, so a silent client can't hold a goroutine forever.
+
+For more information: https://pkg.go.dev/net#Listener"""
+
+[[exercises]]
 name = "regexp1"
 path = "exercises/regexp/regexp1/main_test.go"
 mode = "test"
