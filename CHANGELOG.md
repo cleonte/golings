@@ -8,12 +8,15 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-06
+
 ### Added
 
-- Graded hints: an exercise can have a `nudge` and a `stronger` hint besides its `hint`. `h` in `watch` shows them one at a time, `golings hint <name> --level N` prints one, and `hint` in the plain watch steps through them. Exercises without them work as before. Every exercise has both.
-- An `fs` topic, 5 exercises, before generics: `fs.ErrNotExist`, walking an `fs.FS` (`fstest.MapFS` in the tests), `fs.SkipDir`, `os.Root` against paths that leave a folder, and `fs.Sub`.
-- An `http` topic, 6 exercises, before generics, all in memory with `httptest`: the order of status and body, `GET /items/{id}` patterns, a middleware that stops the request, a bad query parameter, `MaxBytesReader`, and a client timeout.
-- A `sorting` topic, 5 exercises, after iterators: sorting by several keys with `cmp.Or`, `BinarySearch` and `Insert`, `SortedFunc` over map keys, a `container/heap` priority queue and `container/list`'s `MoveToFront`.
+- **Graded hints.** Every exercise now has three hints, from small to full: a `nudge` that says what the failure means, a `stronger` hint that says where to change, and the `hint` with the explanation and a link. In `watch`, `h` shows them one at a time (`h` again for the next one, and after the last it closes); `golings hint <name> --level N` prints one (without the flag you get the full hint, as before); and typing `hint` again in the plain watch steps through them.
+- **16 new exercises in 3 topics**, 182 exercises in 36 topics in all, with the hint levels from the start:
+  - `fs` (5), before generics: `fs.ErrNotExist`, walking an `fs.FS` (`fstest.MapFS` in the tests), `fs.SkipDir`, `os.Root` against paths that leave a folder, and `fs.Sub`.
+  - `http` (6), before generics, all in memory with `httptest`: the order of status and body, `GET /items/{id}` patterns, a middleware that stops the request, a bad query parameter, `MaxBytesReader`, and a client timeout.
+  - `sorting` (5), after iterators: sorting by several keys with `cmp.Or`, `BinarySearch` and `Insert`, `SortedFunc` over map keys, a `container/heap` priority queue and `container/list`'s `MoveToFront`.
 
 ## [1.1.0] - 2026-11-06
 
@@ -59,7 +62,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/cleonte/golings/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cleonte/golings/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/cleonte/golings/releases/tag/v1.0.0
 [0.9.0 - 0.18.1]: https://github.com/cleonte/golings/releases/tag/v0.18.1
