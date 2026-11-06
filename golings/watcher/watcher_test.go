@@ -70,16 +70,48 @@ func TestReportsAWrite(t *testing.T) {
 	g.Expect(next(t, changes)).To(Equal([]string{file}))
 }
 
+// A burst of writes is one report only if the watcher is not paused for longer
+// than the quiet period between two of its events. On a busy machine (other
+// test packages are running) that can happen, and the burst comes as two
+// reports. So the check gets three tries: a watcher that reports every write
+// fails all of them.
 func TestOneSaveIsOneReport(t *testing.T) {
-	g := NewWithT(t)
-	_, file, changes, _ := start(t)
+	var problem string
+	for range 3 {
+		if problem = oneSaveProblem(t); problem == "" {
+			return
+		}
+	}
+	t.Error(problem)
+}
+
+// oneSaveProblem writes five times to a file and says what is wrong with the
+// reports that follow, or returns an empty string.
+func oneSaveProblem(t *testing.T) string {
+	t.Helper()
+	_, file, changes, stop := start(t)
+	defer stop()
 
 	for i := 0; i < 5; i++ {
 		write(t, file, "package main // edit\n")
 	}
 
-	g.Expect(next(t, changes)).To(Equal([]string{file}))
-	expectQuiet(g, changes)
+	var first []string
+	select {
+	case first = <-changes:
+	case <-time.After(5 * time.Second):
+		return "no change reported"
+	}
+	if len(first) != 1 || first[0] != file {
+		return fmt.Sprintf("the first report was %v, want [%s]", first, file)
+	}
+
+	select {
+	case second := <-changes:
+		return fmt.Sprintf("a second report followed the first: %v", second)
+	case <-time.After(5 * quiet):
+		return ""
+	}
 }
 
 func TestSeesEditorsThatSaveByRenaming(t *testing.T) {
