@@ -1,0 +1,42 @@
+// template4
+// Make the tests pass!
+
+// I AM NOT DONE
+package main_test
+
+import (
+	"strings"
+	"testing"
+	"text/template"
+)
+
+// join writes the words separated by a comma and a space: "a, b, c".
+func join(words []string) (string, error) {
+	// TODO: Every word is followed by ", ", the last one too. In a range you can take the index as well; write the separator only before the words that are not the first.
+	tmpl, err := template.New("join").Parse("{{range .}}{{.}}, {{end}}")
+	if err != nil {
+		return "", err
+	}
+
+	var out strings.Builder
+	if err := tmpl.Execute(&out, words); err != nil {
+		return "", err
+	}
+	return out.String(), nil
+}
+
+func TestJoin(t *testing.T) {
+	got, err := join([]string{"a", "b", "c"})
+
+	if err != nil || got != "a, b, c" {
+		t.Errorf("join = %q, %v, want %q and no error", got, err, "a, b, c")
+	}
+}
+
+func TestJoinOfOneWord(t *testing.T) {
+	got, err := join([]string{"only"})
+
+	if err != nil || got != "only" {
+		t.Errorf("join = %q, %v, want %q and no error", got, err, "only")
+	}
+}
