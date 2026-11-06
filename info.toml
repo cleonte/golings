@@ -2,6 +2,8 @@
 name = "variables1"
 path = "exercises/variables/variables1/main.go"
 mode = "compile"
+nudge = """The parser stops at the = sign: it expected the name of a variable first."""
+stronger = """Between var and = write the name x, which the lines below already use."""
 hint = """
 Variables must have names."""
 
@@ -9,6 +11,8 @@ Variables must have names."""
 name = "variables2"
 path = "exercises/variables/variables2/main.go"
 mode = "compile"
+nudge = """The compiler says x is undefined: a plain assignment needs a variable that already exists, and nothing declared x."""
+stronger = """Use the short form that declares a variable and gives it a value in one step, on the line that assigns x."""
 hint = """
 It is missing a symbol used to declare and initialize variables."""
 
@@ -16,6 +20,8 @@ It is missing a symbol used to declare and initialize variables."""
 name = "variables3"
 path = "exercises/variables/variables3/main.go"
 mode = "compile"
+nudge = """The parser expected a type after the name: var x on its own doesn't say what kind of value x holds."""
+stronger = """Write the type of the value that x will hold after its name, as in var name type."""
 hint = """
 Could it be missing the variable type?"""
 
@@ -23,6 +29,8 @@ Could it be missing the variable type?"""
 name = "variables4"
 path = "exercises/variables/variables4/main.go"
 mode = "compile"
+nudge = """The compiler won't put a number in x or add 1 to it: outside the block x is still the string."""
+stronger = """Inside the if, declare a new x of its own with the short form. It hides the string only until the block ends."""
 hint = """
 Variables can be redeclared in new blocks, but it is missing something. What is it?"""
 
@@ -30,6 +38,8 @@ Variables can be redeclared in new blocks, but it is missing something. What is 
 name = "variables5"
 path = "exercises/variables/variables5/main.go"
 mode = "compile"
+nudge = """The compiler says Pi has no value: a constant must be given one when it is declared."""
+stronger = """Add an = and a value to the declaration of Pi."""
 hint = """
 Constants need initialization."""
 
@@ -37,6 +47,8 @@ Constants need initialization."""
 name = "variables6"
 path = "exercises/variables/variables6/main.go"
 mode = "compile"
+nudge = """The compiler won't assign to x: a constant can't be changed after it is declared."""
+stronger = """Keep the sum in a new variable and print that one instead of changing x."""
 hint = """
 Constants can't be changed."""
 
@@ -44,6 +56,8 @@ Constants can't be changed."""
 name = "functions1"
 path = "exercises/functions/functions1/main.go"
 mode = "compile"
+nudge = """The compiler says call_me is undefined: main calls it, but no function has that name."""
+stronger = """Write a function called call_me with no parameters and no result, outside of main."""
 hint = """
 The main function is calling another function that it expects to exist.
 It expects a function named `call_me` to exist and receive no arguments."""
@@ -52,6 +66,8 @@ It expects a function named `call_me` to exist and receive no arguments."""
 name = "functions2"
 path = "exercises/functions/functions2/main.go"
 mode = "compile"
+nudge = """num is undefined inside the function: a parameter only exists once it says what type it is."""
+stronger = """Put a type after the parameter name, in the parentheses of the function. Choose one that fits how num is used below."""
 hint = """
 Function parameters need to have their types explicitly declared."""
 
@@ -59,6 +75,8 @@ Function parameters need to have their types explicitly declared."""
 name = "functions3"
 path = "exercises/functions/functions3/main.go"
 mode = "compile"
+nudge = """The compiler says there are not enough arguments: call_me wants an int, and the call passes nothing."""
+stronger = """Put a number between the parentheses of the call."""
 hint = """
 When a function expects arguments, you must pass values to them."""
 
@@ -66,6 +84,8 @@ When a function expects arguments, you must pass values to them."""
 name = "functions4"
 path = "exercises/functions/functions4/main.go"
 mode = "compile"
+nudge = """The compiler says addNumbers returns no value but one is used, and that the return has too many values: the signature has no result type."""
+stronger = """After the parentheses that hold the parameters, write the type of the number the function returns."""
 hint = """
 Functions that return values must have return types declared in the function signature."""
 
@@ -73,18 +93,24 @@ Functions that return values must have return types declared in the function sig
 name = "if1"
 path = "exercises/if/if1/main_test.go"
 mode = "test"
+nudge = """The function doesn't return the bigger number: it says 2 is bigger than 1, but something else came back."""
+stronger = """Compare a and b with an if, and return the one that is larger."""
 hint = "Use an if statement to compare a and b, and return the larger number."
 
 [[exercises]]
 name = "if2"
 path = "exercises/if/if2/main_test.go"
 mode = "test"
+nudge = """Anything that isn't "fizz" still returns "complete me": only the first rule is done."""
+stronger = """Add a branch for "fuzz" that returns "bar" between the if and the else, and make the last else return "baz"."""
 hint = "Implement fooIfFizz function by using if and else statements."
 
 [[exercises]]
 name = "switch1"
 path = "exercises/switch/switch1/main.go"
 mode = "compile"
+nudge = """The compiler says status is not used and that the cases can't be converted to bool: the switch has no value to compare the cases with."""
+stronger = """Put status after the word switch, so that each case is compared with it."""
 hint = """
 Switch flow is missing a variable to evaluate the statement."""
 
@@ -92,6 +118,8 @@ Switch flow is missing a variable to evaluate the statement."""
 name = "switch2"
 path = "exercises/switch/switch2/main.go"
 mode = "compile"
+nudge = """The compiler stops at the last case: it expected an expression, and a bare colon isn't one."""
+stronger = """The branch for everything else has a keyword of its own. Use it instead of case."""
 hint = """
 Switch without a condition is possible, but that case statement needs a boolean evaluation."""
 
@@ -99,30 +127,40 @@ Switch without a condition is possible, but that case statement needs a boolean 
 name = "switch3"
 path = "exercises/switch/switch3/main_test.go"
 mode = "test"
+nudge = """Every day comes out as Sunday: the function returns it without looking at the number."""
+stronger = """Switch on day, with one case for each number from 0 to 6, returning the name of that day."""
 hint = "Ensure that each case statement in a switch block has a condition."
 
 [[exercises]]
 name = "primitive_types1"
 path = "exercises/primitive_types/primitive_types1/main.go"
 mode = "compile"
+nudge = """The compiler says storeIsOpen is not used: the line with only its name on it does nothing."""
+stronger = """Turn that line into an assignment of the new value, since the store has closed."""
 hint = "Update the code to reflect the store closing before the second check."
 
 [[exercises]]
 name = "primitive_types2"
 path = "exercises/primitive_types/primitive_types2/main.go"
 mode = "compile"
+nudge = """The compiler says who is undefined: Printf uses a variable that was never declared."""
+stronger = """Declare who as a string with the name to greet, before the Printf line."""
 hint = "Make sure 'who' is declared and assigned a value before using it."
 
 [[exercises]]
 name = "primitive_types3"
 path = "exercises/primitive_types/primitive_types3/main.go"
 mode = "compile"
+nudge = """The compiler says who and country are undefined: the Printf line uses them before they exist."""
+stronger = """Declare both as strings, each with a value, before the Printf line."""
 hint = "fmt.Printf() can take multiple variables as parameters. Try declaring those variables."
 
 [[exercises]]
 name = "primitive_types4"
 path = "exercises/primitive_types/primitive_types4/main.go"
 mode = "compile"
+nudge = """The compiler says empty rune literal: there is no character between the quotes."""
+stronger = """Put one character between the single quotes. A byte holds characters of the ASCII range."""
 hint = """
 byte can hold values from 0 to 255. Could it store a character?"""
 
@@ -130,6 +168,8 @@ byte can hold values from 0 to 255. Could it store a character?"""
 name = "primitive_types5"
 path = "exercises/primitive_types/primitive_types5/main.go"
 mode = "compile"
+nudge = """The compiler says integer and float are undefined: Go has no types with those names."""
+stronger = """Replace integer with the name of an integer type, and float with the name of a floating-point type. The right names have a size in them."""
 hint = """
 These names seem misleading, no? But they are close to being correct.
 Check this documentation to understand the variety of
@@ -139,6 +179,8 @@ numeric data types: https://go.dev/ref/spec#Numeric_types"""
 name = "strings1"
 path = "exercises/strings/strings1/main.go"
 mode = "compile"
+nudge = """The compiler won't assign to greeting[0]: a string can't be changed in place."""
+stronger = """Make a []byte from greeting, change its first element in the copy, and turn the copy back into a string."""
 hint = """
 A string can't be changed in place. Convert it to a []byte, change that, and convert the result back to a string.
 
@@ -148,6 +190,8 @@ For more information: https://go.dev/blog/strings"""
 name = "strings2"
 path = "exercises/strings/strings2/main_test.go"
 mode = "test"
+nudge = """countCharacters("héllo") is 6 instead of 5: len counts bytes, and é takes two of them."""
+stronger = """Count the runes of the text: convert it to a []rune, or use the function of unicode/utf8 that counts them."""
 hint = """
 len counts bytes, and a character like é or 世 takes more than one. Count runes instead: look at the unicode/utf8 package, or convert the text to a []rune first.
 
@@ -157,6 +201,8 @@ For more information: https://pkg.go.dev/unicode/utf8#RuneCountInString"""
 name = "strings3"
 path = "exercises/strings/strings3/main_test.go"
 mode = "test"
+nudge = """reverse returns every text as it is, so nothing is reversed yet."""
+stronger = """Convert the text to a []rune, reverse that slice, and convert it back to a string. Reversing bytes would break é and 世."""
 hint = """
 Reverse runes, not bytes: convert the text to a []rune, reverse that (the slices package has a function for it) and convert it back to a string.
 
@@ -166,6 +212,8 @@ For more information: https://pkg.go.dev/slices#Reverse"""
 name = "strings4"
 path = "exercises/strings/strings4/main_test.go"
 mode = "test"
+nudge = """The first test passes, but the second counts memory allocations: 398 for 200 words, where 20 or fewer are allowed. Each += makes a new string."""
+stronger = """Declare a strings.Builder, call WriteString on it in the loop instead of +=, and return what its String method gives."""
 hint = """
 The first test already passes: the second one counts how often the function allocates memory. Every += builds a new string. A strings.Builder appends to a buffer instead: use WriteString, then String at the end.
 
@@ -175,6 +223,8 @@ For more information: https://pkg.go.dev/strings#Builder"""
 name = "strings5"
 path = "exercises/strings/strings5/main_test.go"
 mode = "test"
+nudge = """wordCount("") is 1 and "  spaced   out  " is 8: splitting on a single space gives empty pieces, and tabs and new lines don't split at all. normalize returns the name untouched."""
+stronger = """For wordCount, use the strings function that splits around runs of any whitespace, and count the pieces. For normalize, trim the whitespace around the name, then make it lower case."""
 hint = """
 Splitting on a single space gives empty parts when there are several spaces in a row. strings.Fields splits around any amount of whitespace. For normalize, combine strings.TrimSpace and strings.ToLower.
 
@@ -184,6 +234,8 @@ For more information: https://pkg.go.dev/strings#Fields"""
 name = "strings6"
 path = "exercises/strings/strings6/main.go"
 mode = "compile"
+nudge = """The compiler says SplitSeq needs two arguments, and that a range over strings.Lines can have only one variable."""
+stronger = """Pass the separator as the second argument of SplitSeq. In the loop over Lines, drop the index and keep a counter of your own."""
 hint = """
 strings.SplitSeq takes the separator as its second argument, like strings.Split. An iterator over a sequence of strings, like the one strings.Lines returns, gives one value per loop: there is no index, so count the lines yourself.
 
@@ -193,6 +245,8 @@ For more information: https://pkg.go.dev/strings#SplitSeq and https://pkg.go.dev
 name = "arrays1"
 path = "exercises/arrays/arrays1/main.go"
 mode = "compile"
+nudge = """The compiler expected something inside the brackets: the index is missing."""
+stronger = """Put an index in each pair of brackets. The first element is at index 0, and the last one is at the length of the array minus one."""
 hint = """
 Arrays use zero-based indexing."""
 
@@ -200,6 +254,8 @@ Arrays use zero-based indexing."""
 name = "arrays2"
 path = "exercises/arrays/arrays2/main.go"
 mode = "compile"
+nudge = """The compiler won't put the number 10 in the array: its elements are strings."""
+stronger = """Change the 10 in the array literal to a string, in quotes, like the other elements."""
 hint = """
 Unlike languages like Python or Ruby, Go does not allow arrays with mixed data types."""
 
@@ -207,6 +263,8 @@ Unlike languages like Python or Ruby, Go does not allow arrays with mixed data t
 name = "slices1"
 path = "exercises/slices/slices1/main.go"
 mode = "compile"
+nudge = """The parser finds a comma right after make( where it expected something else: make needs the type of the slice first."""
+stronger = """The first argument of make is the type, a slice of ints. The length and the capacity come after it."""
 hint = """
 Slices can be created with the `make` function and must have a specified type."""
 
@@ -214,6 +272,8 @@ Slices can be created with the `make` function and must have a specified type.""
 name = "slices2"
 path = "exercises/slices/slices2/main.go"
 mode = "compile"
+nudge = """The parser expected an index inside the brackets: the slice expression has a hole."""
+stronger = """Slice the array from the position of the second-to-last name to its end: a low index, a colon, and a high index (or none)."""
 hint = """
 Slices can be created from arrays using the [low:high] syntax."""
 
@@ -221,6 +281,8 @@ Slices can be created from arrays using the [low:high] syntax."""
 name = "slices3"
 path = "exercises/slices/slices3/main.go"
 mode = "compile"
+nudge = """The compiler says append has no arguments: it needs the slice and what to add to it."""
+stronger = """Pass the slice and the new name to append, and assign the result back to the slice."""
 hint = """
 Use the `append` function to add elements to an existing slice.
 Check the output after adding some elements.
@@ -231,6 +293,8 @@ For more on the `append` function, refer to: https://go.dev/ref/spec#Appending_a
 name = "slices4"
 path = "exercises/slices/slices4/main_test.go"
 mode = "test"
+nudge = """firstName is wrong, and one of the slices goes beyond the capacity ("slice bounds out of range [:10] with capacity 4"): the indexes are wrong."""
+stronger = """Use a slice expression with a low and a high index for each of the three. The high index is not included, and the last two names start two positions before the end."""
 hint = """
 Check the slice indices to ensure they fall within the bounds of the names slice.
 
@@ -240,6 +304,8 @@ For more information: https://go.dev/ref/spec#Appending_and_copying_slices"""
 name = "maps1"
 path = "exercises/maps/maps1/main.go"
 mode = "compile"
+nudge = """The parser fails at the type of the map and at the lookups: a map type needs a key type and a value type, and a lookup takes the key."""
+stronger = """Write the map type with the type of the names as keys and the type of the ages as values. Then look the ages up by key."""
 hint = """
 Maps have types for both keys and values.
 
@@ -253,6 +319,8 @@ Check the spec for more info: https://go.dev/ref/spec#Map_types"""
 name = "maps2"
 path = "exercises/maps/maps2/main.go"
 mode = "compile"
+nudge = """The parser expected [ after map: the type of the keys is missing."""
+stronger = """Write the type of the map before the braces that hold the entries: the type of the names as the key, the type of the ages as the value."""
 hint = """
 Similar to `maps1`, but you can initialize a new map in the same line using a different syntax."""
 
@@ -260,6 +328,8 @@ Similar to `maps1`, but you can initialize a new map in the same line using a di
 name = "maps3"
 path = "exercises/maps/maps3/main_test.go"
 mode = "test"
+nudge = """The phone comes back empty, Laura isn't there and nobody is removed: three things are still to do."""
+stronger = """Look a contact up with its name as the key. Add one by assigning to a new key. Remove one with the built-in delete, which takes the map and the key."""
 hint = """
 Verify that the keys used to access map values match the keys defined in the phoneBook map."""
 
@@ -267,6 +337,8 @@ Verify that the keys used to access map values match the keys defined in the pho
 name = "range1"
 path = "exercises/range/range1/main.go"
 mode = "compile"
+nudge = """The parser is confused by the for line: it has no range clause, so the braces after it make no sense."""
+stronger = """Write the loop as for, then a variable, := range and the slice of even numbers, and use the variable in the body."""
 hint = """
 Use the `range` keyword to iterate over collections like arrays, slices, and maps."""
 
@@ -274,6 +346,8 @@ Use the `range` keyword to iterate over collections like arrays, slices, and map
 name = "range2"
 path = "exercises/range/range2/main.go"
 mode = "compile"
+nudge = """The parser stops at the :=: the for line has nothing to range over."""
+stronger = """Put range and the phone book after the :=, and name two variables before it: the name first, then the phone."""
 hint = """
 Use the `range` keyword to iterate over map values. Unlike arrays and slices, maps are iterated over by keys and values."""
 
@@ -281,6 +355,8 @@ Use the `range` keyword to iterate over map values. Unlike arrays and slices, ma
 name = "range3"
 path = "exercises/range/range3/main_test.go"
 mode = "test"
+nudge = """evenNumbers is empty: the loop never keeps a number."""
+stronger = """Go through the numbers with range, test each one with the remainder of a division by 2, and append the even ones to evenNumbers."""
 hint = """
 Use a `for` loop with `range` to check if each number is even and append it to the `evenNumbers` slice."""
 
@@ -288,6 +364,8 @@ Use a `for` loop with `range` to check if each number is even and append it to t
 name = "range4"
 path = "exercises/range/range4/main.go"
 mode = "compile"
+nudge = """The parser expected an expression where the loop's braces start: for needs something to repeat over."""
+stronger = """Write for with range and the number 3, which repeats the body three times."""
 hint = """
 Since Go 1.22 you can range over an integer: `for i := range 3` runs the body three times, with `i` going 0, 1, 2. It replaces the `for i := 0; i < 3; i++` loop when you only need to repeat something.
 
@@ -297,6 +375,8 @@ For more information: https://go.dev/blog/go1.22"""
 name = "builtins1"
 path = "exercises/builtins/builtins1/main.go"
 mode = "compile"
+nudge = """The compiler says max and min are called without arguments: they need the values to compare."""
+stronger = """Pass the temperatures to max and to min: both take two or more values of the same type."""
 hint = """
 `min` and `max` are built into the language (Go 1.21): no import and no loop. They take two or more values of one ordered type, numbers or strings, and return the smallest or the largest.
 
@@ -306,6 +386,8 @@ For more information: https://go.dev/ref/spec#Min_and_max"""
 name = "builtins2"
 path = "exercises/builtins/builtins2/main_test.go"
 mode = "test"
+nudge = """The cache still has 3 entries: nothing empties the map itself."""
+stronger = """Call the built-in that removes every entry of a map, on the map itself and not on a copy or a new variable."""
 hint = """
 `clear(m)` removes every entry of a map and keeps the map itself, so everybody who holds the same map sees it empty. Setting your own variable to `nil` only changes that variable.
 
@@ -315,6 +397,8 @@ For more information: https://go.dev/ref/spec#Clear"""
 name = "builtins3"
 path = "exercises/builtins/builtins3/main_test.go"
 mode = "test"
+nudge = """secret[0] is 104 instead of 0: the bytes are still there."""
+stronger = """Call the built-in clear on the slice: it sets every element to zero and keeps the length."""
 hint = """
 On a slice, `clear` sets every element to its zero value and leaves the length alone: nothing is removed. That is useful to wipe a secret from memory. `s = s[:0]` would only hide the elements, they would still be in the array.
 
@@ -324,6 +408,8 @@ For more information: https://go.dev/ref/spec#Clear"""
 name = "slices_package1"
 path = "exercises/slices_package/slices_package1/main_test.go"
 mode = "test"
+nudge = """sortNames and ranking return the slices in their original order: nothing sorts them yet."""
+stronger = """Call slices.Sort on the names. For the ranking, call slices.SortFunc with a function that puts the higher score first and the name first when the scores are equal; cmp.Compare compares two values."""
 hint = """
 `slices.Sort` sorts a slice of numbers or strings in place. For anything else, `slices.SortFunc` takes a compare function that returns a negative number, zero or a positive number. `cmp.Compare` does that for any ordered type, and `cmp.Or` returns the first of its arguments that is not zero, which is how you sort by one field and then by another.
 
@@ -333,6 +419,8 @@ For more information: https://pkg.go.dev/slices#SortFunc and https://pkg.go.dev/
 name = "slices_package2"
 path = "exercises/slices_package/slices_package2/main_test.go"
 mode = "test"
+nudge = """find returns 0 and false every time: it doesn't look in the slice."""
+stronger = """Call slices.BinarySearch with the slice and the value, and return both of its results."""
 hint = """
 `slices.BinarySearch` looks for a value in a slice that is already sorted, much faster than going through every element. It returns the position and whether the value is there. When it is not, the position is where the value would have to be inserted to keep the slice sorted.
 
@@ -342,6 +430,8 @@ For more information: https://pkg.go.dev/slices#BinarySearch"""
 name = "slices_package3"
 path = "exercises/slices_package/slices_package3/main.go"
 mode = "compile"
+nudge = """The compiler says there are not enough arguments in the calls to slices.Contains and slices.Index: they take the slice and the value."""
+stronger = """In both calls pass the slice of guests first and the name to look for second."""
 hint = """
 `slices.Contains(s, v)` says whether a value is in the slice. `slices.Index(s, v)` gives its position, or -1 when it is not there. `slices.IndexFunc` does the same with a function that says what a match is. Both go through the slice one by one, so the slice doesn't have to be sorted.
 
@@ -351,6 +441,8 @@ For more information: https://pkg.go.dev/slices#Contains"""
 name = "slices_package4"
 path = "exercises/slices_package/slices_package4/main_test.go"
 mode = "test"
+nudge = """None of the three functions changes anything: insertAt, removeRange and withoutRepeats return the slice as it came."""
+stronger = """Use slices.Insert to add the name at a position, slices.Delete to remove a range of positions, and slices.Compact to remove repeated neighbours. Each one returns the new slice."""
 hint = """
 The slices package changes slices without you writing the loops: `slices.Insert(s, i, v...)` adds values at a position, `slices.Delete(s, i, j)` removes `s[i:j]`, and `slices.Compact(s)` removes runs of equal neighbours. They return the new slice, so keep the result: `s = slices.Delete(s, 1, 3)`.
 
@@ -360,6 +452,8 @@ For more information: https://pkg.go.dev/slices#Insert"""
 name = "slices_package5"
 path = "exercises/slices_package/slices_package5/main_test.go"
 mode = "test"
+nudge = """The caller's slice was sorted too: it is [10 20 30] instead of [30 10 20]. Sorting changes the slice that was passed in."""
+stronger = """Make a copy of the slice with the slices package first, then sort the copy and return it."""
 hint = """
 A slice is a window on an array, so `a := b` or passing it to a function shares the elements: sorting it sorts the caller's slice too. `slices.Clone` makes a copy with its own array, which you can change freely.
 
@@ -369,6 +463,8 @@ For more information: https://pkg.go.dev/slices#Clone"""
 name = "maps_package1"
 path = "exercises/maps_package/maps_package1/main_test.go"
 mode = "test"
+nudge = """names returns an empty slice: the keys are never collected."""
+stronger = """Take the keys of the map as an iterator with the maps package, and collect them into a sorted slice with the slices package."""
 hint = """
 `maps.Keys(m)` gives an iterator over the keys of a map, in no particular order: Go makes map order random on purpose. `slices.Sorted` takes an iterator, collects the values and sorts them, so `slices.Sorted(maps.Keys(m))` is the usual way to get the keys in order.
 
@@ -378,6 +474,8 @@ For more information: https://pkg.go.dev/maps#Keys"""
 name = "maps_package2"
 path = "exercises/maps_package/maps_package2/main_test.go"
 mode = "test"
+nudge = """The defaults were changed: the function writes the overrides into the map it was given."""
+stronger = """Make a copy of the defaults with the maps package, copy the overrides into the copy, and return the copy."""
 hint = """
 A map is a reference: `copy := original` is the same map. `maps.Clone` makes a separate one, and `maps.Copy(dst, src)` adds all the entries of one map to another. `maps.Equal` compares two maps by their contents.
 
@@ -387,6 +485,8 @@ For more information: https://pkg.go.dev/maps#Clone"""
 name = "maps_package3"
 path = "exercises/maps_package/maps_package3/main_test.go"
 mode = "test"
+nudge = """4 sessions are left instead of 2: nothing deletes the expired ones."""
+stronger = """Call the function of the maps package that deletes the entries for which a function you give returns true. Your function compares the end time with now."""
 hint = """
 `maps.DeleteFunc(m, f)` deletes every entry for which `f(key, value)` returns true. Deleting while ranging over a map is allowed in Go, but this says what you mean in one line.
 
