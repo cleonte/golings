@@ -8,10 +8,13 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-06
+
 ### Added
 
+- **9 new exercises**, 252 exercises in 50 topics in all, and exercises that are more than one file: an exercise can now have several files and packages of its own, and the first ones are here.
 - A `layout` topic, 5 exercises, after `packages`, with packages of their own inside the exercise folder: an unexported name, `internal/`, an import cycle, a blank import that registers a plugin, and a package whose name is not its folder (`v2`). 252 exercises in 50 topics in all.
-- **4 exercises of several files** in the `packages` topic, a file with the wrong package clause, a leftover second `main`, `init` order across files (set values in declarations), and a registry that you extend by adding a new file. For the last one `golings reset` removes the Go file you added.
+- **4 exercises of several files** in the `packages` topic: a file with the wrong package clause, a leftover second `main`, `init` order across files (set values in declarations), and a registry that you extend by adding a new file. For the last one `golings reset` removes the Go file you added.
 
 ### Changed
 
@@ -97,7 +100,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/cleonte/golings/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cleonte/golings/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/cleonte/golings/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cleonte/golings/compare/v1.1.0...v1.2.0
