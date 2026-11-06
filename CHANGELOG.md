@@ -14,7 +14,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 - An `unsafe` topic, 4 exercises, after `reflect`: struct padding and field order with `unsafe.Sizeof`, a string over a slice with `unsafe.String`, bytes over a slice of numbers with `unsafe.Slice`, and `unsafe.Add` for pointer arithmetic. 
 - A `fakes` topic, 5 exercises, after `testing`: injecting a dependency through an interface, a fake that fails to test a retry, a fake that keeps the contract of the real store, an interface defined where it is used, and `t.Cleanup` to put back a replaced global.
 - A `net` topic, 5 exercises, after `http`: answering on a `net.Pipe`, reading a message that arrives in pieces, closing a connection so the client sees the end, recognizing a timeout with `errors.Is`, and a goroutine for each connection. Everything stays on the loopback interface.
-- A `bench` topic, 5 exercises, after `fakes`: `strings.Join` against `+=`, preallocating a slice, both checked with `testing.AllocsPerRun`, a CPU profile that has to be stopped, the heap profile by name, and the loop of a benchmark (`b.Loop`). 234 exercises in 47 topics in all.
+- A `bench` topic, 5 exercises, after `fakes`: `strings.Join` against `+=`, preallocating a slice, both checked with `testing.AllocsPerRun`, a CPU profile that has to be stopped, the heap profile by name, and the loop of a benchmark (`b.Loop`).
+- A `fuzz` topic, 4 exercises, after `bench`: a property over runes, no panic on bad input, seeds of the right types for `f.Add`, and an escape round trip. The exercises run on their seeds, so they are fast and the same every time. 238 exercises in 48 topics in all.
 
 ## [1.3.0] - 2026-11-06
 

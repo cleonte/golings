@@ -1194,6 +1194,50 @@ A benchmark is a function `BenchmarkXxx(b *testing.B)` in a `_test.go` file. Sin
 For more information: https://pkg.go.dev/testing#B.Loop"""
 
 [[exercises]]
+name = "fuzz1"
+path = "exercises/fuzz/fuzz1/main_test.go"
+mode = "test"
+nudge = """Reverse("héllo, 世界") is not valid UTF-8: reversing the bytes tore apart the characters that take several bytes."""
+stronger = """Convert the string to a []rune, reverse that (slices.Reverse), and convert it back to a string."""
+hint = """
+A fuzz test states a *property* that must hold for any input (here: the result is valid text, and reversing twice gives back the original) instead of checking one answer. A normal `go test` only runs the seeds you add with `f.Add`; `go test -fuzz FuzzReverse` also invents inputs, looks for ones that break the property, and saves them in `testdata/fuzz/` so they run as regression tests from then on. A Go string is bytes, and a character (a rune) can take up to four of them: reverse runes, not bytes.
+
+For more information: https://go.dev/doc/security/fuzz/"""
+
+[[exercises]]
+name = "fuzz2"
+path = "exercises/fuzz/fuzz2/main_test.go"
+mode = "test"
+nudge = """The test panics with "index out of range [1] with length 1" on the seed "novalue": ParseKV assumes there is always an =."""
+stronger = """Use strings.Cut(s, "="), which also says whether the separator was found, and return errNoEquals when it was not."""
+hint = """
+The first thing a fuzzer finds is the input the author did not think of: a panic. The rule for a function that takes outside data is that bad input is an error, never a panic. `strings.Cut` returns `before, after, found`, which is the safe way to split on one separator; indexing the result of `strings.Split` is a bug waiting for an input with fewer parts. When fuzzing finds a failing input it saves it in `testdata/fuzz`, so keep that file once the bug is fixed.
+
+For more information: https://pkg.go.dev/strings#Cut"""
+
+[[exercises]]
+name = "fuzz3"
+path = "exercises/fuzz/fuzz3/main_test.go"
+mode = "test"
+nudge = """go vet says the types in f.Add are [string string string] and the fuzz function expects [int int int]."""
+stronger = """Write the seeds as numbers, f.Add(5, 0, 10), without quotes: the types must match the parameters after t."""
+hint = """
+`f.Fuzz` takes a function whose first parameter is `*testing.T` and whose other parameters (strings, byte slices, integers, floats, bools) are the inputs. Every `f.Add` must give values of exactly those types, in that order, or the corpus entry makes no sense; `go vet` (which `go test` runs) catches it. Good seeds are the edges of the problem: here a value inside the range, below it and above it. Skip inputs that don't make sense with `t.Skip()` instead of failing.
+
+For more information: https://pkg.go.dev/testing#F.Add"""
+
+[[exercises]]
+name = "fuzz4"
+path = "exercises/fuzz/fuzz4/main_test.go"
+mode = "test"
+nudge = """Unescape(Escape("a literal \\n in the text")) gives a real newline: Escape did not escape the backslash, so the text was read back as an escape."""
+stronger = """Make Escape replace both the backslash (with two) and the newline in one pass: strings.NewReplacer(`\\`, `\\\\`, "\\n", `\\n`).Replace(s)."""
+hint = """
+A *round trip* (`Unescape(Escape(s)) == s`) is the best-known property for fuzzing: it needs no expected values and finds the cases where encoder and decoder disagree. Escaping is only correct if the escape character itself is escaped, and if it is done in one pass: replacing the newline first and the backslash after would escape the new backslashes again. `strings.NewReplacer` does all the pairs at once, from left to right.
+
+For more information: https://pkg.go.dev/strings#NewReplacer"""
+
+[[exercises]]
 name = "slog1"
 path = "exercises/slog/slog1/main_test.go"
 mode = "test"
