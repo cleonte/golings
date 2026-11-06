@@ -8,9 +8,13 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- **4 exercises of several files** in the `packages` topic, 247 exercises in 49 topics in all: a file with the wrong package clause, a leftover second `main`, `init` order across files (set values in declarations), and a registry that you extend by adding a new file. For the last one `golings reset` removes the Go file you added.
+
 ### Changed
 
-- An exercise is now the whole folder, not one file, so an exercise can have several files in the same package. Nothing changes for the exercises that exist: `path` still names the main file, with the `// I AM NOT DONE` marker. `golings reset` restores every file of the folder and `golings solution` shows every file of a solution. This is the first step of the design in `docs/multi-file-exercises.md`.
+- An exercise is now the whole folder, not one file, so an exercise can have several files in the same package. Nothing changes for the exercises that exist: `path` still names the main file, with the `// I AM NOT DONE` marker. `golings reset` restores every file of the folder, removes the Go files you added to it, and `golings solution` shows every file of a solution. This is the first step of the design in `docs/multi-file-exercises.md`.
 
 ## [1.4.0] - 2026-11-06
 

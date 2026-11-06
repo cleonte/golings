@@ -627,6 +627,50 @@ Two imports that end in the same name cannot both be called rand. Put a name bef
 For more information: https://go.dev/ref/spec#Import_declarations"""
 
 [[exercises]]
+name = "packages5"
+path = "exercises/packages/packages5/main.go"
+mode = "compile"
+nudge = """go build says it found packages helpers and main in one folder."""
+stronger = """Change the package clause of helpers.go to package main, the same as main.go."""
+hint = """
+All the Go files in a folder belong to one package, and every one of them starts with the same `package` clause (the tests of a package may use the same name with `_test` added). That is also why `main.go` can call `shout` from `helpers.go` without an import: files of one package share their names, exported or not. The compiler (`go build`) refuses a folder that holds two packages.
+
+For more information: https://go.dev/ref/spec#Packages"""
+
+[[exercises]]
+name = "packages6"
+path = "exercises/packages/packages6/main.go"
+mode = "compile"
+nudge = """The compiler says main is redeclared in this block, and points at the other declaration in banner.go."""
+stronger = """Delete the func main from banner.go. The program starts in main.go."""
+hint = """
+A package is the sum of its files, so a name can be declared only once in all of them: a second `main` (or a second type or function of the same name, a classic after copying a file) is an error even when the two declarations are in different files. The message names both places.
+
+For more information: https://go.dev/ref/spec#Declarations_and_scope"""
+
+[[exercises]]
+name = "packages7"
+path = "exercises/packages/packages7/main_test.go"
+mode = "test"
+nudge = """server is "listening on ", without the port: a_server.go ran its init before b_config.go gave config a value."""
+stronger = """In b_config.go replace the init function with the value in the declaration: var config = ":8080"."""
+hint = """
+Files are given to the compiler sorted by name, and the `init` functions run in that order, so `a_server.go` comes before `b_config.go`. Do not depend on it. What you can depend on: all package-level variables are initialized first (in the order their dependencies need, whatever the file), and only then do the `init` functions run. So set values in declarations, and use `init` for what a declaration can't express.
+
+For more information: https://go.dev/ref/spec#Package_initialization"""
+
+[[exercises]]
+name = "packages8"
+path = "exercises/packages/packages8/main_test.go"
+mode = "test"
+nudge = """Greet(fr) says there is no greeting for "fr": no file of the package registers French yet."""
+stronger = """Create greeting_fr.go with package greetings and an init function that calls register("fr", "Bonjour"), like greeting_en.go."""
+hint = """
+A package can be spread over as many files as you like, and each file can have its own `init` functions: a common pattern is a registry that the files fill when the package loads (this is how `database/sql` drivers and `image` decoders register themselves). Adding a feature then means adding a file, with no change to the code that looks things up. `golings reset` removes a Go file that you added to the folder, to start the exercise over.
+
+For more information: https://go.dev/doc/effective_go#init"""
+
+[[exercises]]
 name = "pointers1"
 path = "exercises/pointers/pointers1/main.go"
 mode = "compile"

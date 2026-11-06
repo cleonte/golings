@@ -4,6 +4,8 @@ Every Go file starts with `package name`, and the files of one folder form one p
 
 Go has no `public` or `private` keyword. A name that starts with an upper case letter, like `Pi` or `Println`, is exported: other packages can use it. A name that starts with a lower case letter stays inside its package.
 
+A package can have many files: the files of one folder share all their names, so a type in one file is used in another with no import, and every file starts with the same `package` clause. Adding a file to the folder adds to the package.
+
 When a package is loaded, its package-level variables are initialized first, in the order their dependencies need, and then its `init` functions run. A program can have many `init` functions, in any file. They run before `main` (or before the tests) and cannot be called by hand.
 
 If two imports have the same package name, or you want a shorter one, give one of them an alias: `import cryptorand "crypto/rand"`.

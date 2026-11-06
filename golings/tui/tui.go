@@ -293,7 +293,7 @@ func (m *Model) askToShowSolution() {
 }
 
 func (m *Model) showSolution() {
-	if _, err := fs.Stat(m.cfg.Solutions, m.exercise.SolutionPath()); err != nil {
+	if files, err := m.exercise.SolutionFiles(m.cfg.Solutions); err != nil || len(files) == 0 {
 		m.notice = "No solution available for " + m.exercise.Name + " yet."
 		return
 	}

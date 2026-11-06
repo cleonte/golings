@@ -58,7 +58,8 @@ func write(src fs.FS, dest string) error {
 }
 
 // Reset restores the exercise called name below root to the version in src: all
-// the files of its folder, which also brings back its "I AM NOT DONE" marker.
+// the files of its folder come back, the Go files added to the folder go, and
+// the "I AM NOT DONE" marker is back.
 // It returns the path of the main file, relative to root and with forward
 // slashes.
 func Reset(src fs.FS, root, name string) (string, error) {
@@ -79,9 +80,10 @@ func Reset(src fs.FS, root, name string) (string, error) {
 		if !fs.ValidPath(ex.Path) {
 			return "", fmt.Errorf("exercise %s has an invalid path %q", ex.Name, ex.Path)
 		}
-		// The folder is the exercise: every file in it comes back, and files
-		// the learner added are left alone.
+		// The folder is the exercise: every file in it comes back, and the Go
+		// files the learner added to it go, so the exercise starts over.
 		dir := path.Dir(ex.Path)
+		restored := map[string]bool{}
 		err := fs.WalkDir(src, dir, func(name string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -94,7 +96,17 @@ func Reset(src fs.FS, root, name string) (string, error) {
 			if err != nil {
 				return err
 			}
+			restored[target] = true
 			return os.WriteFile(target, original, 0o644)
+		})
+		if err != nil {
+			return ex.Path, err
+		}
+		err = filepath.WalkDir(filepath.Join(root, filepath.FromSlash(dir)), func(name string, d fs.DirEntry, err error) error {
+			if err != nil || d.IsDir() || restored[name] || filepath.Ext(name) != ".go" {
+				return err
+			}
+			return os.Remove(name)
 		})
 		return ex.Path, err
 	}
