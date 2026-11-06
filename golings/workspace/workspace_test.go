@@ -44,7 +44,7 @@ func TestInitWritesExercisesAndGoMod(t *testing.T) {
 	g.Expect(read("exercises/a/a1/main.go")).To(Equal(unsolved))
 	g.Expect(read("exercises/a/README.md")).To(Equal("# a"))
 	g.Expect(read("info.toml")).To(ContainSubstring(`name = "a1"`))
-	g.Expect(read("go.mod")).To(Equal("module golings-exercises\n\ngo " + doctor.MinGoVersion + "\n"))
+	g.Expect(read("go.mod")).To(Equal("module " + doctor.ExercisesModule + "\n\ngo " + doctor.MinGoVersion + "\n"))
 }
 
 func TestInitRefusesExistingPathAndLeavesItAlone(t *testing.T) {

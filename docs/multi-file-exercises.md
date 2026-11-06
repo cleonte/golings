@@ -100,3 +100,12 @@ Decided: no capstone for now.
 2. Two-file exercises in existing topics (for example `packages`) to prove the mechanism.
 3. Step 2 (sub-packages, one module with a fixed name) and a package-layout topic of independent exercises.
 4. Later, if it is wanted: a one-exercise pilot of the capstone, then the other steps. Step 3 (module exercises) after that.
+
+## Decision on the import path (step 2, as built)
+
+Option 2 as written (`golings-exercises/...`) turned out not to work: `go mod tidy` in the repository (and so Dependabot) fails on an import path that does not resolve. What was built is a variant of option 3, with the reasons for rejecting it answered:
+
+- `golings init` writes `module github.com/cleonte/golings`, the module path of the repository, so the import path of a package of an exercise is the same in the repository and in a learner's folder, and `go mod tidy`, the editor and the tests all see a resolvable path.
+- The worry about claiming our import path is small: the folder has no dependencies to download, and nothing imports it.
+- `golings doctor` warns about a folder made by an older golings (`module golings-exercises`) and says to change the first line of `go.mod`. Only the exercises with packages of their own need it.
+- `TestSolutions` still copies the exercise folder and the solution into a module of its own, with the same module path.

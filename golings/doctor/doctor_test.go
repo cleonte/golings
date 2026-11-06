@@ -172,3 +172,41 @@ func TestDoctorWithoutTheRaceDetector(t *testing.T) {
 	g.Expect(c.Status).To(Equal(doctor.Warn))
 	g.Expect(c.Detail).To(And(ContainSubstring("will be skipped"), ContainSubstring("concurrent2"), ContainSubstring("concurrent10")))
 }
+
+func modFile(content string, err error) func(string) ([]byte, error) {
+	return func(name string) ([]byte, error) {
+		if name != "go.mod" {
+			return nil, errors.New("unexpected file " + name)
+		}
+		return []byte(content), err
+	}
+}
+
+func TestTheModulePathOfTheExercisesFolderIsChecked(t *testing.T) {
+	g := NewWithT(t)
+	env := healthyEnv()
+
+	env.ReadFile = modFile("module "+doctor.ExercisesModule+"\n\ngo 1.26\n", nil)
+	g.Expect(find(g, doctor.Run(testsInfo, env), "Module path").Status).To(Equal(doctor.OK))
+
+	// A folder made by golings 1.4 or older.
+	env.ReadFile = modFile("module golings-exercises\n\ngo 1.26\n", nil)
+	c := find(g, doctor.Run(testsInfo, env), "Module path")
+	g.Expect(c.Status).To(Equal(doctor.Warn))
+	g.Expect(c.Detail).To(ContainSubstring("module " + doctor.ExercisesModule))
+	g.Expect(doctor.Failed(doctor.Run(testsInfo, env))).To(BeFalse(), "a warning, not a failure")
+}
+
+func TestNoModulePathCheckWithoutAGoMod(t *testing.T) {
+	g := NewWithT(t)
+	env := healthyEnv()
+
+	env.ReadFile = modFile("", os.ErrNotExist)
+	for _, c := range doctor.Run(testsInfo, env) {
+		g.Expect(c.Name).NotTo(Equal("Module path"))
+	}
+	env.ReadFile = nil
+	for _, c := range doctor.Run(testsInfo, env) {
+		g.Expect(c.Name).NotTo(Equal("Module path"))
+	}
+}

@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 247 exercises in 49 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done except the multi-file exercises, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features, which includes the multi-file design) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 252 exercises in 50 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done except the multi-file exercises, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features, which includes the multi-file design) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 

@@ -53,7 +53,7 @@ func write(src fs.FS, dest string) error {
 		return err
 	}
 
-	goMod := fmt.Sprintf("module golings-exercises\n\ngo %s\n", doctor.MinGoVersion)
+	goMod := fmt.Sprintf("module %s\n\ngo %s\n", doctor.ExercisesModule, doctor.MinGoVersion)
 	return os.WriteFile(filepath.Join(dest, "go.mod"), []byte(goMod), 0o644)
 }
 

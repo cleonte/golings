@@ -86,7 +86,7 @@ func inAFolderOfItsOwn(t *testing.T, ex exercises.Exercise, solutionFiles []stri
 	t.Helper()
 	root := t.TempDir()
 
-	goMod := "module golings-exercises\n\ngo " + doctor.MinGoVersion + "\n"
+	goMod := "module " + doctor.ExercisesModule + "\n\ngo " + doctor.MinGoVersion + "\n"
 	if err := os.WriteFile(filepath.Join(root, "go.mod"), []byte(goMod), 0o644); err != nil {
 		t.Fatal(err)
 	}
