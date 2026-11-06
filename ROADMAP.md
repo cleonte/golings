@@ -102,7 +102,7 @@ Ideas from reading a similar project, [madhank93/golings](https://github.com/mad
 - [x] Graded hints, the tool: besides `hint`, optional `nudge` (what the error means) and `stronger` (where to change it) in `info.toml`; `h` in `watch` shows them one at a time, then the full hint; `golings hint --level N`; `hint` in the plain watch steps through them. Exercises without them keep working as now.
 - [x] Graded hints, the content (all 182 exercises): `nudge` and `stronger` for every exercise, written from the real failure of the unsolved version. A manifest test requires them.
 - [ ] A key in `watch` to open the exercise in `$VISUAL` or `$EDITOR`.
-- [ ] Exercises that span several files and packages (modules, `internal`, multi-package layouts). Needs `init`, `reset`, the embedded copy and `TestSolutions` to handle a folder, and an exercise with its own `go.mod`. Design first, as a short note, before any exercise.
+- [ ] Exercises that span several files and packages (modules, `internal`, multi-package layouts). Needs `init`, `reset`, the embedded copy and `TestSolutions` to handle a folder, and an exercise with its own `go.mod`. Design first, as a short note, before any exercise. The design note is in [docs/multi-file-exercises.md](docs/multi-file-exercises.md) (proposal, for review).
 
 ## Phase 9 — Closing the gap with other projects
 Topics a similar project ([madhank93/golings](https://github.com/madhank93/golings)) has and this one lacks. Same format as Phase 7, one PR per topic, released together.
