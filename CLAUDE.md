@@ -12,7 +12,7 @@ Upstream is Apache-2.0: keep LICENSE, keep attribution to the original author in
 ## Repo layout
 - `golings/` — the CLI (Go module `github.com/cleonte/golings`, the `go.mod` is at the root): `golings.go` (main), `cmd/`, `exercises/` (the manifest, the runner, how failures are shortened), `tui/` (the full-screen `watch`), `ui/`, `watcher/`, `workspace/` (`init` and `reset`), `doctor/`, `fixtures/`.
 - `embed.go` (package `golings`, at the root) — embeds `info.toml`, `exercises/` and `solutions/` in the binary.
-- `exercises/<topic>/<name>/` — the learner-facing exercises (38 topics, 192 exercises), with a `README.md` per topic.
+- `exercises/<topic>/<name>/` — the learner-facing exercises (39 topics, 197 exercises), with a `README.md` per topic.
 - `solutions/<topic>/<name>/` — a verified solution for every exercise.
 - `info.toml` — the exercise manifest: `name`, `path`, `mode` (`compile` or `test`), `hint`, and optionally `go_version` and `race`. Every exercise must be listed here, in learning order.
 - `Makefile` — `make test`, `make watch`, `make run`, `make smoke`. `scripts/` — `smoke.sh` and `release-notes.sh`.

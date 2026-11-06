@@ -1392,6 +1392,61 @@ Text that comes from outside must not be compiled as a pattern as it is: `+`, `.
 For more information: https://pkg.go.dev/regexp#QuoteMeta"""
 
 [[exercises]]
+name = "template1"
+path = "exercises/template/template1/main_test.go"
+mode = "test"
+nudge = """The template fails with "can't evaluate field name in type greeting": the field is called Name, and a template reads fields by their exact, exported name."""
+stronger = """In the template text, use the name of the field of greeting exactly as it is written in the struct."""
+hint = """
+In a template, `{{.Name}}` reads the field `Name` of the data (the dot). Only exported fields, those that start with a capital letter, can be read, and the case matters: `.name` is a different, missing field. A template that fails to run returns the reason from `Execute`, so always check that error.
+
+For more information: https://pkg.go.dev/text/template"""
+
+[[exercises]]
+name = "template2"
+path = "exercises/template/template2/main_test.go"
+mode = "test"
+nudge = """list writes the slice as it is, "[milk eggs]", on one line: the template doesn't go through the items."""
+stronger = """Replace {{.Items}} with a range over the items: inside it the dot is the current item, and the range ends with {{end}}."""
+hint = """
+`{{range .Items}} ... {{end}}` repeats its body for each element, and inside the body the dot is the current element. An empty or nil slice repeats it zero times, so nothing is written. Put the text you want for each item, with its newline, inside the range.
+
+For more information: https://pkg.go.dev/text/template#hdr-Actions"""
+
+[[exercises]]
+name = "template3"
+path = "exercises/template/template3/main_test.go"
+mode = "test"
+nudge = """The template fails with "function \"upper\" not defined": a template only knows the functions that were registered for it, and a few built-in ones."""
+stronger = """Register upper in a FuncMap on the template before calling Parse, using strings.ToUpper as the function."""
+hint = """
+`template.New(name).Funcs(template.FuncMap{"upper": strings.ToUpper})` registers functions the template can call as `{{upper .}}`. It has to be done before `Parse`, because the parser checks that every function exists. A function can take arguments and return one value, or a value and an error.
+
+For more information: https://pkg.go.dev/text/template#Template.Funcs"""
+
+[[exercises]]
+name = "template4"
+path = "exercises/template/template4/main_test.go"
+mode = "test"
+nudge = """join writes "a, b, c, " with a separator after the last word too, and "only, " for one word."""
+stronger = """Take the index in the range, and write the separator only when the index is not 0, before the word."""
+hint = """
+`{{range $i, $word := .}}` gives the index and the element in variables. `{{if $i}}` is false for the number 0, so `{{if $i}}, {{end}}` writes the separator before every element except the first, and the list has no trailing separator.
+
+For more information: https://pkg.go.dev/text/template#hdr-Variables"""
+
+[[exercises]]
+name = "template5"
+path = "exercises/template/template5/main_test.go"
+mode = "test"
+nudge = """page writes the comment's <script> as it is: text/template doesn't know the text goes into a web page."""
+stronger = """Change the import to the package with the same API that escapes its data for HTML."""
+hint = """
+`text/template` writes the data as it is. `html/template` has the same functions and methods, but it escapes the data for the place where it appears in the page (as HTML text, inside an attribute, in a URL or in JavaScript), which prevents cross-site scripting. For anything that becomes a web page, use `html/template`.
+
+For more information: https://pkg.go.dev/html/template"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
