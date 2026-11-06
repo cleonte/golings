@@ -124,4 +124,4 @@ Topics a similar project ([madhank93/golings](https://github.com/madhank93/golin
 - The fork stays independent. No pull requests back to upstream: it has had no commit since March 2025, and the changes (Go 1.26 floor, a new manifest field, the TUI, 105 more exercises) are too large to send in small pieces. Upstream gets a friendly issue saying a maintained fork exists; the README credits Mauricio Abreu and keeps the Apache-2.0 license.
 - Module path: `github.com/cleonte/golings`.
 - Where solutions live: a top-level `solutions/` tree that mirrors `exercises/`, embedded in the binary separately so `golings init` never writes it, shown only by `golings solution`.
-- Exercise format: one file per exercise (`main.go` for compile mode, `main_test.go` for test mode), a manifest entry in `info.toml` in learning order, a `// TODO:` at the spot to fix.
+- Exercise format: one folder per exercise, usually one file (`main.go` for compile mode, `main_test.go` for test mode), and any other files of the same package; `path` names the main file, a manifest entry in `info.toml` in learning order, a `// TODO:` at the spot to fix.

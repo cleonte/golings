@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Changed
+
+- An exercise is now the whole folder, not one file, so an exercise can have several files in the same package. Nothing changes for the exercises that exist: `path` still names the main file, with the `// I AM NOT DONE` marker. `golings reset` restores every file of the folder and `golings solution` shows every file of a solution. This is the first step of the design in `docs/multi-file-exercises.md`.
+
 ## [1.4.0] - 2026-11-06
 
 ### Added

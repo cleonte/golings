@@ -61,19 +61,14 @@ func TestStuck(t *testing.T) {
 `, pidFile)
 	}
 
-	file := filepath.Join(dir, name)
-	if err := os.WriteFile(file, []byte(source), 0o644); err != nil {
+	// The exercise is built as a folder, so it needs a module of its own here.
+	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module stuck\n\ngo 1.26\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	wd, err := os.Getwd()
-	if err != nil {
+	if err := os.WriteFile(filepath.Join(dir, name), []byte(source), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	rel, err := filepath.Rel(wd, file)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return exercises.Exercise{Name: "stuck", Path: rel, Mode: mode}, pidFile
+	return exercises.Exercise{Name: "stuck", Path: name, Mode: mode, Root: dir}, pidFile
 }
 
 func processGone(t *testing.T, pidFile string) bool {

@@ -522,6 +522,20 @@ var _ = Describe("More commands", func() {
 			Expect(solution.Execute()).To(Succeed())
 			Expect(out.String()).To(ContainSubstring(solutionSource))
 		})
+		It("shows every file of a solution, the main one first, each with its name", func() {
+			several := fstest.MapFS{
+				"solutions/a/a1/helper.go": {Data: []byte("package main // helper\n")},
+				"solutions/a/a1/main.go":   {Data: []byte("package main // main\n")},
+			}
+			solution := cmd.SolutionCmd(writeTopicInfo("a/a1"), several)
+			solution.SetArgs([]string{"a1"})
+
+			Expect(solution.Execute()).To(Succeed())
+			text := out.String()
+			Expect(text).To(ContainSubstring("Solution for a1 (solutions/a/a1/main.go)"))
+			Expect(text).To(ContainSubstring("solutions/a/a1/helper.go:"))
+			Expect(strings.Index(text, "// main")).To(BeNumerically("<", strings.Index(text, "// helper")))
+		})
 		It("says so when the exercise has no solution yet", func() {
 			solution := cmd.SolutionCmd(writeTopicInfo("a/a1"), fstest.MapFS{})
 			solution.SetArgs([]string{"a1"})

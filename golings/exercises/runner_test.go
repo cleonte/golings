@@ -36,7 +36,57 @@ func writeExercise(mode, name, source string) exercises.Exercise {
 	return exercises.Exercise{Name: "tmp", Path: rel, Mode: mode}
 }
 
+// writeFolderExercise creates a throwaway exercise of several files, named by
+// file name, and returns it with the first as its main file.
+func writeFolderExercise(mode string, files map[string]string, main string) exercises.Exercise {
+	dir := tempDirHere()
+	for name, source := range files {
+		Expect(os.WriteFile(filepath.Join(dir, name), []byte(source), 0o644)).To(Succeed())
+	}
+	wd, err := os.Getwd()
+	Expect(err).NotTo(HaveOccurred())
+	rel, err := filepath.Rel(wd, filepath.Join(dir, main))
+	Expect(err).NotTo(HaveOccurred())
+	return exercises.Exercise{Name: "tmp", Path: rel, Mode: mode}
+}
+
 var _ = Describe("Running exercises", func() {
+	Describe("an exercise of several files", func() {
+		It("builds all the files of the folder as one package", func() {
+			ex := writeFolderExercise("compile", map[string]string{
+				"main.go":  "package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(greeting()) }\n",
+				"greet.go": "package main\n\nfunc greeting() string { return \"from another file\" }\n",
+			}, "main.go")
+
+			result, err := ex.Run()
+
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.Out).To(ContainSubstring("from another file"))
+		})
+		It("reports an error in a file that is not the main one", func() {
+			ex := writeFolderExercise("compile", map[string]string{
+				"main.go":  "package main\n\nfunc main() { greeting() }\n",
+				"greet.go": "package main\n\nfunc greeting() { a := 1 }\n",
+			}, "main.go")
+
+			result, err := ex.Run()
+
+			Expect(err).To(HaveOccurred())
+			Expect(result.BuildFailed).To(BeTrue())
+			Expect(result.Err).To(ContainSubstring("greet.go"))
+		})
+		It("runs the tests of a folder with the code in another file", func() {
+			ex := writeFolderExercise("test", map[string]string{
+				"x_test.go": "package x\n\nimport \"testing\"\n\nfunc TestIt(t *testing.T) {\n\tif double(2) != 4 {\n\t\tt.Fatal(\"wrong\")\n\t}\n}\n",
+				"x.go":      "package x\n\nfunc double(n int) int { return n * 2 }\n",
+			}, "x_test.go")
+
+			_, err := ex.Run()
+
+			Expect(err).NotTo(HaveOccurred())
+		})
+	})
+
 	Describe("Run", func() {
 		It("captures the output of a compile-mode exercise that works", func() {
 			ex := writeExercise("compile", "main.go", `package main

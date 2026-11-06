@@ -107,6 +107,29 @@ func TestResetRestoresTheOriginalIncludingTheMarker(t *testing.T) {
 	g.Expect(exercises.Exercise{Path: file}.State()).To(Equal(exercises.Pending))
 }
 
+func TestResetRestoresEveryFileOfTheFolderAndKeepsTheLearnersOwn(t *testing.T) {
+	g := NewWithT(t)
+	root := t.TempDir()
+	src := sampleFS()
+	src["exercises/a/a1/helper.go"] = &fstest.MapFile{Data: []byte("package main\n\nfunc helper() {}\n")}
+	folder := filepath.Join(root, "exercises", "a", "a1")
+	g.Expect(os.MkdirAll(folder, 0o755)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(folder, "main.go"), []byte("package main\n"), 0o644)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(folder, "helper.go"), []byte("changed"), 0o644)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(folder, "notes.go"), []byte("package main\n"), 0o644)).To(Succeed())
+
+	path, err := workspace.Reset(src, root, "a1")
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(path).To(Equal("exercises/a/a1/main.go"))
+	helper, _ := os.ReadFile(filepath.Join(folder, "helper.go"))
+	g.Expect(string(helper)).To(Equal("package main\n\nfunc helper() {}\n"))
+	main, _ := os.ReadFile(filepath.Join(folder, "main.go"))
+	g.Expect(string(main)).To(Equal(unsolved))
+	notes, _ := os.ReadFile(filepath.Join(folder, "notes.go"))
+	g.Expect(string(notes)).To(Equal("package main\n"), "a file the learner added stays")
+}
+
 func TestResetRecreatesADeletedExercise(t *testing.T) {
 	g := NewWithT(t)
 	root := t.TempDir()

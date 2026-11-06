@@ -1,7 +1,10 @@
 package exercises
 
 import (
+	"io/fs"
+	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -30,6 +33,44 @@ func (e Exercise) SolutionPath() string {
 		}
 	}
 	return ""
+}
+
+// SolutionDir is the folder of the solution, laid out like the folder of the
+// exercise: `solutions/slices/slices1`. It is empty when SolutionPath is.
+func (e Exercise) SolutionDir() string {
+	if p := e.SolutionPath(); p != "" {
+		return path.Dir(p)
+	}
+	return ""
+}
+
+// SolutionFiles lists the files of the solution in src, as paths relative to
+// the root of the solutions, with the main file first and the rest in order.
+// A solution has the files that replace or add to the files of the exercise
+// folder with the same names.
+func (e Exercise) SolutionFiles(src fs.FS) ([]string, error) {
+	dir, main := e.SolutionDir(), e.SolutionPath()
+	if dir == "" {
+		return nil, fs.ErrNotExist
+	}
+	var files []string
+	err := fs.WalkDir(src, dir, func(name string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			files = append(files, name)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	slices.Sort(files)
+	if i := slices.Index(files, main); i > 0 {
+		files = slices.Insert(slices.Delete(files, i, i+1), 0, main)
+	}
+	return files, nil
 }
 
 type TopicProgress struct {

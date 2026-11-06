@@ -1,3 +1,5 @@
+//go:build go1.27
+
 // go127_6
 // Make the tests pass!
 
