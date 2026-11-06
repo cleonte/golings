@@ -8,6 +8,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func hintLevelsText(n int) string {
+	if n == 1 {
+		return "1 hint level"
+	}
+	return fmt.Sprintf("%d hint levels", n)
+}
+
 func HintCmd(infoFile string) *cobra.Command {
 	var level int
 
@@ -40,7 +47,7 @@ func HintCmd(infoFile string) *cobra.Command {
 				return nil
 			}
 			if level < 1 || level > len(levels) {
-				err := fmt.Errorf("%s has %d hint levels, not %d", exercise.Name, len(levels), level)
+				err := fmt.Errorf("%s has %s, not level %d", exercise.Name, hintLevelsText(len(levels)), level)
 				color.Red(err.Error())
 				return err
 			}

@@ -224,7 +224,7 @@ var _ = Describe("More commands", func() {
 				hint.SetArgs([]string{"levels", "--level", level})
 
 				Expect(hint.Execute()).To(HaveOccurred(), level)
-				Expect(out.String()).To(ContainSubstring("has 3 hint levels"), level)
+				Expect(out.String()).To(ContainSubstring("has 3 hint levels, not level "+level), level)
 			}
 		})
 		It("has only the full hint for an exercise without smaller ones", func() {

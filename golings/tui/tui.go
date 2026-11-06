@@ -265,18 +265,6 @@ func (m *Model) hasExercise() bool {
 	return m.status == statusRunning || m.status == statusFinished
 }
 
-func (m *Model) toggle(target mode) {
-	if !m.hasExercise() {
-		return
-	}
-	m.scroll = 0
-	if m.mode == target {
-		m.mode = modeResult
-		return
-	}
-	m.mode = target
-}
-
 // nextHint opens the smallest hint of the exercise. Pressing h again shows the
 // next one, and after the last it closes the hint.
 func (m *Model) nextHint() {
