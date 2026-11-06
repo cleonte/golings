@@ -10,6 +10,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
+- A `regexp` topic, 5 exercises, before generics: anchors in a pattern, groups with `FindStringSubmatch`, `ReplaceAllString` against the literal version, `FindAllString`, and `QuoteMeta`.
 - A `types` topic, 5 exercises, after structs: `iota` enums, a `String` method for them, `iota` expressions, an alias against a defined type, and conversion between defined types.
 
 ## [1.2.0] - 2026-11-06

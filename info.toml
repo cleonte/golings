@@ -1337,6 +1337,61 @@ An `http.Client` has no timeout by default: it waits as long as the server does.
 For more information: https://pkg.go.dev/net/http#Client"""
 
 [[exercises]]
+name = "regexp1"
+path = "exercises/regexp/regexp1/main_test.go"
+mode = "test"
+nudge = """isZip("a12345b") is true: the pattern finds five digits anywhere in the text, they don't have to be all of it."""
+stronger = """Add the two anchors to the pattern: the one that means the start of the text, and the one that means the end."""
+hint = """
+`MatchString` reports whether the pattern matches *anywhere* in the text. To require that the whole text matches, anchor the pattern: `^` is the start of the text and `$` the end, so `^[0-9]{5}$` accepts exactly five digits. In Go, write patterns as raw strings (between backquotes), so the backslashes don't need doubling.
+
+For more information: https://pkg.go.dev/regexp/syntax"""
+
+[[exercises]]
+name = "regexp2"
+path = "exercises/regexp/regexp2/main_test.go"
+mode = "test"
+nudge = """year is the whole date, and month and day are empty: FindString gives the whole match only, without the groups."""
+stronger = """Use the method that returns the whole match followed by the text of each group in parentheses, check that it found something, and return groups 1, 2 and 3."""
+hint = """
+`FindStringSubmatch` returns a slice: element 0 is the whole match, and elements 1, 2, 3 are the groups, in the order of their opening parentheses. It returns nil when the pattern doesn't match, so check that before indexing. `FindString` returns only element 0.
+
+For more information: https://pkg.go.dev/regexp#Regexp.FindStringSubmatch"""
+
+[[exercises]]
+name = "regexp3"
+path = "exercises/regexp/regexp3/main_test.go"
+mode = "test"
+nudge = """The result contains the text "${2} ${1}" itself: the groups were not expanded."""
+stronger = """Replace ReplaceAllLiteralString with the method of Regexp whose replacement text expands $1, $2 and ${name}."""
+hint = """
+In `ReplaceAllString` the replacement can refer to groups: `$1`, `${1}` or `${name}`. Write `${1}` with braces when a letter or digit follows, because `$1x` means the group called `1x`. `ReplaceAllLiteralString` uses the replacement exactly as it is, which is right for plain text.
+
+For more information: https://pkg.go.dev/regexp#Regexp.ReplaceAllString"""
+
+[[exercises]]
+name = "regexp4"
+path = "exercises/regexp/regexp4/main_test.go"
+mode = "test"
+nudge = """Only the first hashtag was found: FindString stops at the first match."""
+stronger = """Use the method that finds all the matches, and pass -1 as the limit, which means no limit."""
+hint = """
+`FindString` returns the first match, and `FindAllString(s, n)` returns up to `n` matches (a negative `n` means all of them), or nil when there is none. Most of the `Find` methods come in pairs like that, and in variants that return the positions (`Index`) or the groups (`Submatch`).
+
+For more information: https://pkg.go.dev/regexp#Regexp.FindAllString"""
+
+[[exercises]]
+name = "regexp5"
+path = "exercises/regexp/regexp5/main_test.go"
+mode = "test"
+nudge = """containsLiteral("1+1=2", "1+1") is false and "a.b" matches "axb": the needle is taken as a pattern, where + and . have a meaning."""
+stronger = """Before compiling, turn the needle into a pattern that matches exactly that text, with the function of the regexp package that escapes the special characters."""
+hint = """
+Text that comes from outside must not be compiled as a pattern as it is: `+`, `.`, `(` and the others are operators, and a pattern like `(` is not even valid. `regexp.QuoteMeta(s)` returns `s` with every special character escaped, so the pattern matches that text literally. (To only search for text, `strings.Contains` is simpler.)
+
+For more information: https://pkg.go.dev/regexp#QuoteMeta"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
