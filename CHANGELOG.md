@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- A `reflect` topic, 5 exercises, before generics: kind against type name, reading struct tags, setting a field through a pointer, `reflect.DeepEqual`, and walking a value by kind. 215 exercises in 43 topics in all.
+
 ## [1.3.0] - 2026-11-06
 
 ### Added
