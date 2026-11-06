@@ -1139,6 +1139,61 @@ When the code uses a package-level variable as a *seam* (`var now = time.Now`), 
 For more information: https://pkg.go.dev/testing#T.Cleanup"""
 
 [[exercises]]
+name = "bench1"
+path = "exercises/bench/bench1/main_test.go"
+mode = "test"
+nudge = """join allocates more than twice per call: += makes a new string for every word."""
+stronger = """Use strings.Join(words, ","), or a strings.Builder with Grow called before the loop."""
+hint = """
+A string is immutable, so `result += word` allocates a new string and copies the old one every time: for 50 words that is about 100 allocations. A `strings.Builder` appends into one buffer that grows (call `Grow(n)` first when you know the size to avoid regrowing), and `strings.Join` does the whole job with one allocation. `testing.AllocsPerRun` counts the allocations of a function without a clock, which is why it makes a stable test; `go test -bench . -benchmem` shows the same numbers in a benchmark.
+
+For more information: https://pkg.go.dev/testing#AllocsPerRun"""
+
+[[exercises]]
+name = "bench2"
+path = "exercises/bench/bench2/main_test.go"
+mode = "test"
+nudge = """squares allocates more than once per call: the slice is regrown by append again and again."""
+stronger = """Make the result with make([]int, 0, n) before the loop, so append never has to grow it."""
+hint = """
+`append` doubles the capacity of a full slice by allocating a bigger array and copying, so building a slice of 1000 numbers one at a time allocates about 9 times and copies a lot. When you know the size, `make([]T, 0, n)` allocates once. The same goes for maps (`make(map[K]V, n)`) and for `strings.Builder.Grow`. Don't do it for tiny or unknown sizes: measure first.
+
+For more information: https://go.dev/blog/slices-intro"""
+
+[[exercises]]
+name = "bench3"
+path = "exercises/bench/bench3/main_test.go"
+mode = "test"
+nudge = """The profile has 0 bytes and no gzip header: nothing has been written because the profile was not stopped."""
+stronger = """Call pprof.StopCPUProfile() after work() and before returning the bytes."""
+hint = """
+`pprof.StartCPUProfile(w)` samples the program about 100 times a second and writes to `w` in the background; `StopCPUProfile` stops the sampling and waits until the profile is complete. Before that the output is incomplete or empty. A pprof file is gzip-compressed protobuf: read it with `go tool pprof file`. In tests and benchmarks `-cpuprofile`, `-memprofile` do all this for you, and `net/http/pprof` offers the same for a running server.
+
+For more information: https://pkg.go.dev/runtime/pprof#StartCPUProfile"""
+
+[[exercises]]
+name = "bench4"
+path = "exercises/bench/bench4/main_test.go"
+mode = "test"
+nudge = """The profile starts with "goroutine profile: total 2", not "heap profile:": Lookup was given the wrong name."""
+stronger = """Look up the profile named "heap" instead of "goroutine"."""
+hint = """
+`pprof.Lookup(name)` finds one of the built-in profiles: `goroutine`, `heap`, `allocs`, `threadcreate`, `block` and `mutex`. `heap` shows the memory in use (`allocs` shows all allocations since the start). The `debug` argument of `WriteTo` is 0 for the compressed form that `go tool pprof` reads, and 1 for text you can read yourself, like here. A `goroutine` profile is the quick way to see where goroutines are stuck.
+
+For more information: https://pkg.go.dev/runtime/pprof#Lookup"""
+
+[[exercises]]
+name = "bench5"
+path = "exercises/bench/bench5/main_test.go"
+mode = "test"
+nudge = """The benchmark ran work fewer times than it has rounds: work is called before the loop, not in it."""
+stronger = """Move the work() call into the body of the for b.Loop() loop."""
+hint = """
+A benchmark is a function `BenchmarkXxx(b *testing.B)` in a `_test.go` file. Since Go 1.24 its loop is `for b.Loop() { ... }`: the testing package runs the body more and more times until the timing is stable, and only the loop is measured. Code before the loop is setup and isn't timed; code outside the loop is run once, so measuring it tells you nothing. Run benchmarks with `go test -bench .` (add `-benchmem` for allocations). `testing.Benchmark` runs one from a normal test, as this exercise does, and takes about a second.
+
+For more information: https://pkg.go.dev/testing#B.Loop"""
+
+[[exercises]]
 name = "slog1"
 path = "exercises/slog/slog1/main_test.go"
 mode = "test"
