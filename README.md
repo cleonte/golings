@@ -14,7 +14,7 @@ You may know [rustlings](https://github.com/rust-lang/rustlings), right? If you 
 > **About this project:** golings started as a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golings) and is now maintained independently. The idea and the first exercises are by Mauricio Abreu and the upstream contributors, and the project is released under the Apache-2.0 license, which this project keeps (see [LICENSE](LICENSE) and [NOTICE](NOTICE)). Upstream has not had a commit since March 2025, so this project is maintained on its own. What it adds:
 >
 > * Current Go (1.26 and newer) and current dependencies, CI on Go 1.26, 1.27 and the latest stable release, and release binaries for Linux, macOS and Windows.
-> * 206 exercises in 41 topics, where upstream has 43 in 13 (strings, pointers, methods, interfaces, errors, types, closures, defer, packages, testing, context, time, io, files, http, regexp, template, encoding, rand, iterators, sorting, slog, concurrency, pitfalls, Go 1.27 and more), each with a hint, a `// TODO:` at the spot to fix and a verified solution.
+> * 210 exercises in 42 topics, where upstream has 43 in 13 (strings, pointers, methods, interfaces, errors, types, closures, defer, packages, testing, context, time, io, files, http, regexp, template, encoding, rand, memory, iterators, sorting, slog, concurrency, pitfalls, Go 1.27 and more), each with a hint, a `// TODO:` at the spot to fix and a verified solution.
 > * A full-screen `watch` (hint, solution, reset, next, list, check all), and the commands `init`, `reset`, `solution` and `doctor`.
 > * Exercises that need a newer Go, or the race detector, are skipped with a message instead of failing, and the output of failures is shortened to the lines that matter.
 

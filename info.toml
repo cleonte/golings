@@ -1546,6 +1546,50 @@ hint = """
 For more information: https://pkg.go.dev/crypto/rand#Text"""
 
 [[exercises]]
+name = "memory1"
+path = "exercises/memory/memory1/main_test.go"
+mode = "test"
+nudge = """intern("gopher").Value() is empty, and different strings give equal handles: the handle is always the one of the empty string."""
+stronger = """Make the handle from s itself with unique.Make."""
+hint = """
+`unique.Make(v)` returns a `unique.Handle[T]`: equal values always give equal handles, and comparing two handles compares one pointer instead of the whole value. That saves memory and time when the same long strings come up again and again (host names, labels). `h.Value()` gives the value back.
+
+For more information: https://pkg.go.dev/unique#Make"""
+
+[[exercises]]
+name = "memory2"
+path = "exercises/memory/memory2/main_test.go"
+mode = "test"
+nudge = """The pool made 0 buffers for 100 calls: greet never takes one from the pool, and allocates its own each time."""
+stronger = """Get the buffer from the pool with a type assertion to *bytes.Buffer, Reset it, and give it back with Put in a deferred call."""
+hint = """
+`sync.Pool` keeps objects for reuse, so a busy program doesn't allocate and free the same buffers over and over. `Get` returns a pooled object or makes one with `New`; `Put` gives it back. The object comes back as it was left, so `Reset` it first, and don't use it after `Put`. The garbage collector may empty a pool at any time, so it is a cache, not storage.
+
+For more information: https://pkg.go.dev/sync#Pool"""
+
+[[exercises]]
+name = "memory3"
+path = "exercises/memory/memory3/main_test.go"
+mode = "test"
+nudge = """The blob is still there after a garbage collection: the cache holds it with a normal pointer, which keeps it alive."""
+stronger = """Store a weak.Pointer[blob] in the cache: make it with weak.Make in set, and read it with Value in get."""
+hint = """
+A `weak.Pointer[T]` (Go 1.24) refers to a value without keeping it alive. `weak.Make(p)` makes one, and its `Value()` returns the pointer while the value is alive and `nil` after the garbage collector has freed it. It fits caches and canonicalization maps that must not stop the collector from freeing what nobody else uses.
+
+For more information: https://pkg.go.dev/weak"""
+
+[[exercises]]
+name = "memory4"
+path = "exercises/memory/memory4/main_test.go"
+mode = "test"
+nudge = """The cleanup did not run: nothing is registered, so nothing happens when the resource is collected."""
+stronger = """Call runtime.AddCleanup with the resource, a function that closes the channel, and the channel as the argument. Don't use r inside the function."""
+hint = """
+`runtime.AddCleanup(ptr, f, arg)` (Go 1.24) runs `f(arg)` in a goroutine some time after `ptr` became unreachable. It replaces `SetFinalizer`: you can register several cleanups, they work with objects in cycles, and the object is not resurrected. The function must not refer to `ptr`, or the object would never be unreachable; pass what it needs in `arg`. Do not rely on cleanups for anything that must happen: close resources explicitly, and use cleanups as a safety net.
+
+For more information: https://pkg.go.dev/runtime#AddCleanup"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
