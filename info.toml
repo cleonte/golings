@@ -1502,6 +1502,50 @@ hint = """
 For more information: https://pkg.go.dev/encoding/binary#ByteOrder"""
 
 [[exercises]]
+name = "rand1"
+path = "exercises/rand/rand1/main.go"
+mode = "compile"
+nudge = """The compiler says rand.Intn is undefined but suggests IntN: math/rand/v2 renamed its functions."""
+stronger = """Change Intn to the name the compiler suggests, IntN."""
+hint = """
+`math/rand/v2` (Go 1.22) cleaned up the old package: `Intn` became `IntN`, `Int63n` became `Int64N`, and the global generator is always seeded at random, so there is no `Seed`. The generic `rand.N` works with any integer type, durations included.
+
+For more information: https://pkg.go.dev/math/rand/v2"""
+
+[[exercises]]
+name = "rand2"
+path = "exercises/rand/rand2/main_test.go"
+mode = "test"
+nudge = """Two calls with the same seed gave different orders: the global generator doesn't use the seed."""
+stronger = """Make a generator of your own with rand.New and a PCG source built from the seed, and shuffle with that generator."""
+hint = """
+The top-level functions of `math/rand/v2` use a generator that is seeded at random, so they can't be reproduced. For a sequence that depends on a seed (a game level, a test), make your own: `rand.New(rand.NewPCG(seed1, seed2))`. The same seed gives the same sequence on every run, and its methods are the same as the top-level functions.
+
+For more information: https://pkg.go.dev/math/rand/v2#New"""
+
+[[exercises]]
+name = "rand3"
+path = "exercises/rand/rand3/main_test.go"
+mode = "test"
+nudge = """jitter only returned whole seconds in 200 tries: IntN picks a number of seconds, not a duration."""
+stronger = """Call rand.N with 5 * time.Second: it returns a random duration below that, to the nanosecond."""
+hint = """
+`rand.N` is generic: `rand.N(n)` returns a random value of the same type as `n`, from 0 up to but not including `n`, for any integer type, and `time.Duration` is one. It replaces the usual `time.Duration(rand.Int63n(int64(d)))` with a conversion in each direction.
+
+For more information: https://pkg.go.dev/math/rand/v2#N"""
+
+[[exercises]]
+name = "rand4"
+path = "exercises/rand/rand4/main_test.go"
+mode = "test"
+nudge = """The token is a fixed text of x characters: it is not random, and not from the base32 alphabet."""
+stronger = """Return what the Text function of the crypto/rand package gives: it makes a random string of 26 characters."""
+hint = """
+`math/rand` is fast but predictable: from a few values you can work out the next ones, so it must never make passwords, tokens or keys. `crypto/rand` takes its numbers from the operating system, and since Go 1.24 `rand.Text()` returns a random string of 26 base32 characters (128 bits), which is what you need for a session token.
+
+For more information: https://pkg.go.dev/crypto/rand#Text"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
