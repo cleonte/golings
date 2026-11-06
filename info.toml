@@ -1590,6 +1590,61 @@ hint = """
 For more information: https://pkg.go.dev/runtime#AddCleanup"""
 
 [[exercises]]
+name = "reflect1"
+path = "exercises/reflect/reflect1/main_test.go"
+mode = "test"
+nudge = """The result is the name of the type (main_test.Celsius, []string): the kind (float64, slice) is not what kindOf returns."""
+stronger = """Get the type with reflect.TypeOf, then its Kind(), and return the text of the kind with String()."""
+hint = """
+Every type has a *name* (`main_test.Celsius`) and a *kind*, the shape under the name: `float64`, `slice`, `struct`, `ptr` and so on. `reflect.TypeOf(v).Kind()` returns the kind as one of a few constants (`reflect.Slice`, `reflect.Struct`...) that you can switch on, and `String()` gives its text. Note that the kind of a pointer is `ptr` in the text, and `reflect.Pointer` in code.
+
+For more information: https://pkg.go.dev/reflect#Kind"""
+
+[[exercises]]
+name = "reflect2"
+path = "exercises/reflect/reflect2/main_test.go"
+mode = "test"
+nudge = """jsonNames returns the Go field names (ID, Name, Email), not the names written in the json tags (id, name, email_address)."""
+stronger = """Append field.Tag.Get("json") instead of field.Name."""
+hint = """
+A struct field can carry a *tag*, a string after its type that other code reads with reflection: `json:"id"` is what `encoding/json` looks at. `field.Tag.Get("json")` returns what is under that key (an empty string if there is none). `reflect.TypeOf(v).Fields()` (Go 1.26) ranges over the `StructField` values of a struct type; `NumField` and `Field(i)` do the same in older code.
+
+For more information: https://pkg.go.dev/reflect#StructTag"""
+
+[[exercises]]
+name = "reflect3"
+path = "exercises/reflect/reflect3/main_test.go"
+mode = "test"
+nudge = """setName returns the error "ptr is not a struct": p holds a pointer, and the function checks for a struct."""
+stronger = """Check that v is a pointer to a struct, then call FieldByName on v.Elem(), the struct the pointer points to, and set that field."""
+hint = """
+`reflect.ValueOf(p)` of a pointer holds the pointer; `.Elem()` is the value it points to, and only that is *addressable*, so only that can be changed (`CanSet()` says whether it can). A value passed by copy, or an unexported field, is not settable: `Set` on it panics, so check `CanSet` first and return an error.
+
+For more information: https://go.dev/blog/laws-of-reflection"""
+
+[[exercises]]
+name = "reflect4"
+path = "exercises/reflect/reflect4/main_test.go"
+mode = "test"
+nudge = """Configs with other ports or variables are reported as the same: only the names are compared."""
+stronger = """Return reflect.DeepEqual(a, b): it compares slices and maps by content, element by element."""
+hint = """
+`==` does not compile on a struct that holds a slice or a map, and comparing the fields you remember misses the ones you don't. `reflect.DeepEqual(a, b)` walks both values and compares them by content, following pointers, slices, maps and structs. Know its corners: a nil slice and an empty slice are *not* deeply equal, and it is slow, so in a test it is great and in a hot loop it is not. For slices alone, `slices.Equal` is simpler and faster.
+
+For more information: https://pkg.go.dev/reflect#DeepEqual"""
+
+[[exercises]]
+name = "reflect5"
+path = "exercises/reflect/reflect5/main_test.go"
+mode = "test"
+nudge = """sum(w) = 0, want 336: a Warehouse has no int fields of its own, and the function does not go into slices or arrays."""
+stronger = """Add a case for reflect.Slice and reflect.Array that adds up sum(v.Index(i)) for every i below v.Len()."""
+hint = """
+Code that walks any value switches on its `Kind()` and calls itself on the parts: `Field(i)` for a struct, `Index(i)` for a slice or an array, `MapRange()` for a map, `Elem()` for a pointer. This is how `encoding/json` and `fmt` handle values they know nothing about. Both slices and arrays have `Len()` and `Index(i)`, so one case can do both.
+
+For more information: https://pkg.go.dev/reflect#Value"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"

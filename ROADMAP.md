@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 210 exercises in 42 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 215 exercises in 43 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -104,9 +104,18 @@ Ideas from reading a similar project, [madhank93/golings](https://github.com/mad
 - [ ] A key in `watch` to open the exercise in `$VISUAL` or `$EDITOR`.
 - [ ] Exercises that span several files and packages (modules, `internal`, multi-package layouts). Needs `init`, `reset`, the embedded copy and `TestSolutions` to handle a folder, and an exercise with its own `go.mod`. Design first, as a short note, before any exercise.
 
+## Phase 9 — Closing the gap with other projects
+Topics a similar project ([madhank93/golings](https://github.com/madhank93/golings)) has and this one lacks. Same format as Phase 7, one PR per topic, released together.
+- [x] `reflect` (5): kind against type, struct tags, setting through a pointer, `DeepEqual`, walking a value by kind.
+- [ ] `unsafe` (pure Go, no C compiler): `Sizeof` and alignment, `unsafe.String`, `unsafe.Slice`.
+- [ ] Testing with fakes and dependency injection.
+- [ ] `net` over loopback, `net.Pipe` first.
+- [ ] Profiling and benchmarks, then fuzzing.
+- [ ] `cli`: `flag`, `os.Args`, exit codes.
+- [ ] Multi-file modules and a capstone (needs the Phase 8 tool design first).
+
 ## Ideas, not scheduled
-- More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` is done; `reflect` is left.
-- Topics seen in the project above that are not in Phase 7 yet: `reflect`, testing with fakes and dependency injection, profiling and benchmarks, `net` over loopback (`net.Pipe` first), `unsafe` (pure Go, no C compiler needed).
+- More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` and `reflect` are done.
 - Not planned: `cgo` (needs a C compiler, which the supported setups do not all have) and exercises that start other programs (they depend on what is installed).
 - Fuzzing as a testing exercise.
 - A web version, as the upstream README mentions.
