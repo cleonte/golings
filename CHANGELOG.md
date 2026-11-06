@@ -10,6 +10,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
+- An `encoding` topic, 5 exercises, before generics: URL-safe `base64`, the error of `hex.DecodeString`, reading `csv` with quoted fields, the `Flush` of a `csv.Writer`, and big-endian against little-endian in `encoding/binary`.
 - A `template` topic, 5 exercises, before generics: reading fields, `range`, registering a function with `Funcs`, an index and `if` inside a range, and `html/template` against `text/template`.
 - A `regexp` topic, 5 exercises, before generics: anchors in a pattern, groups with `FindStringSubmatch`, `ReplaceAllString` against the literal version, `FindAllString`, and `QuoteMeta`.
 - A `types` topic, 5 exercises, after structs: `iota` enums, a `String` method for them, `iota` expressions, an alias against a defined type, and conversion between defined types.
