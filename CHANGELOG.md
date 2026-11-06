@@ -12,6 +12,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 - A `context` topic, 6 exercises: stopping work on cancel, `WithTimeout`, typed keys for `WithValue`, `WithCancelCause`, `WithoutCancel` and `AfterFunc`.
 - A `time` topic, 6 exercises, before concurrency: `Duration` arithmetic, format layouts, `ParseInLocation`, `Truncate` in a zone, `Equal` against `==`, and a debounce with `Timer.Reset`.
+- An `io` topic, 6 exercises, before generics: a `Read` that returns less than is left, writing to an `io.Writer`, the error of a `bufio.Scanner`, `LimitReader`, hashing while copying with `MultiWriter`, and a reader of your own.
 
 ## [1.0.0] - 2026-11-04
 
