@@ -1,15 +1,20 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/cleonte/golings/golings/exercises"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 func HintCmd(infoFile string) *cobra.Command {
-	return &cobra.Command{
+	var level int
+
+	command := &cobra.Command{
 		Use:           "hint <exercise name>",
 		Short:         "Get a hint for an exercise",
+		Long:          "Get a hint for an exercise. Some exercises have smaller hints too: --level 1 is the smallest, and the highest level is the full hint, which is what you get without the flag.",
 		Args:          cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -21,13 +26,28 @@ func HintCmd(infoFile string) *cobra.Command {
 			} else {
 				exercise, err = exercises.Find(args[0], infoFile)
 			}
-
 			if err != nil {
 				color.Red(err.Error())
 				return err
 			}
-			color.Yellow(exercise.Hint)
+
+			levels := exercise.HintLevels()
+			if level == 0 {
+				color.Yellow(exercise.Hint)
+				if len(levels) > 1 {
+					color.White("There are smaller hints: golings hint %s --level 1 (up to %d)", exercise.Name, len(levels)-1)
+				}
+				return nil
+			}
+			if level < 1 || level > len(levels) {
+				err := fmt.Errorf("%s has %d hint levels, not %d", exercise.Name, len(levels), level)
+				color.Red(err.Error())
+				return err
+			}
+			color.Yellow(levels[level-1])
 			return nil
 		},
 	}
+	command.Flags().IntVar(&level, "level", 0, "which hint to show: 1 is the smallest (default: the full hint)")
+	return command
 }

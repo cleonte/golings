@@ -70,8 +70,11 @@ type Model struct {
 	height int
 
 	mode   mode
-	scroll int    // lines scrolled off the top of the body
-	notice string // one line shown instead of the key help, e.g. "Reset a1."
+	scroll int // lines scrolled off the top of the body
+	// hintLevel is the hint being shown while the hint is open: 1 is the
+	// smallest, and h moves on to the next.
+	hintLevel int
+	notice    string // one line shown instead of the key help, e.g. "Reset a1."
 
 	status   status
 	message  string // for statusError
@@ -232,7 +235,7 @@ func (m *Model) handleKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		}
 		m.mode, m.scroll = modeResult, 0
 	case "h":
-		m.toggle(modeHint)
+		m.nextHint()
 	case "s":
 		m.askToShowSolution()
 	case "r":
@@ -272,6 +275,23 @@ func (m *Model) toggle(target mode) {
 		return
 	}
 	m.mode = target
+}
+
+// nextHint opens the smallest hint of the exercise. Pressing h again shows the
+// next one, and after the last it closes the hint.
+func (m *Model) nextHint() {
+	if !m.hasExercise() {
+		return
+	}
+	m.scroll = 0
+	switch {
+	case m.mode != modeHint:
+		m.mode, m.hintLevel = modeHint, 1
+	case m.hintLevel < len(m.exercise.HintLevels()):
+		m.hintLevel++
+	default:
+		m.mode = modeResult
+	}
 }
 
 func (m *Model) askToShowSolution() {
@@ -517,12 +537,22 @@ func (m *Model) lines() []string {
 }
 
 func (m *Model) hintLines() []string {
-	lines := []string{titleStyle.Render("Hint for " + m.exercise.Name), ""}
-	hint := strings.TrimSpace(m.exercise.Hint)
-	if hint == "" {
-		hint = "There is no hint for this exercise."
+	levels := m.exercise.HintLevels()
+	title := "Hint for " + m.exercise.Name
+	if len(levels) > 1 {
+		title += fmt.Sprintf(" (%d of %d)", m.hintLevel, len(levels))
 	}
-	return append(lines, strings.Split(hint, "\n")...)
+	lines := []string{titleStyle.Render(title), ""}
+
+	if len(levels) == 0 {
+		return append(lines, "There is no hint for this exercise.")
+	}
+	level := min(max(m.hintLevel, 1), len(levels))
+	lines = append(lines, strings.Split(levels[level-1], "\n")...)
+	if level < len(levels) {
+		lines = append(lines, "", dimStyle.Render("Press h for more help."))
+	}
+	return lines
 }
 
 func (m *Model) solutionLines() []string {

@@ -14,11 +14,27 @@ type Exercise struct {
 	Path string
 	Mode string
 	Hint string
+	// Nudge and Stronger are optional, smaller hints that come before Hint: what
+	// the failure means, and where to change. Stronger is only set with Nudge.
+	Nudge    string
+	Stronger string
 	// GoVersion is the minimum Go version (e.g. "1.26") needed to run the exercise.
 	GoVersion string `toml:"go_version"`
 	// Race is set for the exercises that only fail with the race detector. They
 	// are built with -race, and skipped where that is not available.
 	Race bool `toml:"race"`
+}
+
+// HintLevels returns the hints of the exercise from the smallest to the full
+// one: the nudge and the stronger hint when there are any, then the hint.
+func (e Exercise) HintLevels() []string {
+	var levels []string
+	for _, hint := range []string{e.Nudge, e.Stronger, e.Hint} {
+		if hint = strings.TrimSpace(hint); hint != "" {
+			levels = append(levels, hint)
+		}
+	}
+	return levels
 }
 
 // ErrNotMarked means the exercise file has no "I AM NOT DONE" marker to remove.

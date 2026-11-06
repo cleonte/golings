@@ -49,6 +49,20 @@ var _ = Describe("Repository manifest", func() {
 		}
 	})
 
+	It("has a nudge before a stronger hint, and smaller hints that differ from the full one", func() {
+		for _, ex := range all {
+			if ex.Stronger != "" {
+				Expect(ex.Nudge).NotTo(BeEmpty(), "exercise %s has a stronger hint but no nudge: the levels must not skip", ex.Name)
+			}
+			levels := ex.HintLevels()
+			for i := range levels {
+				for j := i + 1; j < len(levels); j++ {
+					Expect(levels[i]).NotTo(Equal(levels[j]), "exercise %s repeats a hint", ex.Name)
+				}
+			}
+		}
+	})
+
 	It("points every exercise at an existing file", func() {
 		for _, ex := range all {
 			Expect(filepath.Join("../..", ex.Path)).To(BeARegularFile(), "exercise %s", ex.Name)

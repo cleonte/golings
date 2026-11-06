@@ -12,14 +12,39 @@ import (
 	"github.com/fatih/color"
 )
 
-func PrintHint(infoFile string) {
+// HintProgress remembers which hint of the next pending exercise was shown
+// last, so that typing hint again in the plain watch gives the next one.
+type HintProgress struct {
+	name  string
+	level int
+}
+
+// PrintHint shows the next hint of the next pending exercise: the smallest
+// first, then one more each time it is called for the same exercise.
+func PrintHint(infoFile string, progress *HintProgress) {
 	ClearScreen()
 	exercise, err := exercises.NextPending(infoFile)
 	if err != nil {
 		color.Red("Failed to find next exercises")
 		return
 	}
-	color.Yellow(exercise.Hint)
+
+	levels := exercise.HintLevels()
+	if progress.name != exercise.Name {
+		progress.name, progress.level = exercise.Name, 0
+	}
+	if progress.level < len(levels) {
+		progress.level++
+	}
+
+	if len(levels) == 0 {
+		color.Yellow("There is no hint for this exercise.")
+		return
+	}
+	color.Yellow(levels[progress.level-1])
+	if progress.level < len(levels) {
+		color.White("Type hint again for more help.")
+	}
 }
 
 func PrintList(infoFile string) {

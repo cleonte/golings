@@ -54,10 +54,11 @@ them in full (in the full-screen view the f key does).`,
 				})
 			}
 
+			progress := &HintProgress{}
 			watchLoop(cmd.InOrStdin(), changes, watchActions{
 				run:  func() { RunNextExerciseWith(infoFile, verbose) },
 				list: func() { PrintList(infoFile) },
-				hint: func() { PrintHint(infoFile) },
+				hint: func() { PrintHint(infoFile, progress) },
 			})
 			return nil
 		},

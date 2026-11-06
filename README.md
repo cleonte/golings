@@ -106,9 +106,9 @@ $env:CGO_ENABLED=1
 golings watch
 ```
 
-This opens a full-screen view: your progress at the top and the result of the current exercise below. Every time you save a file it runs the exercise again. Keys: `h` hint, `s` solution (asks first, it spoils the exercise), `r` reset the exercise (asks first), `n` move on to the next exercise once this one works (it takes out the `// I AM NOT DONE` marker for you), `c` check all the exercises (runs every one of them and lists which work, without changing any file), `l` list every exercise to open any of them (type `/` to filter by name or topic; `n` then goes back to the first pending one), `f` show all of the output of a failure that was shortened (a data race report or a panic is cut down to the lines in your exercise; the note under the failure says when that happened), `↑`/`↓` scroll, `esc` go back, `q` quit.
+This opens a full-screen view: your progress at the top and the result of the current exercise below. Every time you save a file it runs the exercise again. Keys: `h` hint (some exercises have smaller hints first: press `h` again for the next one), `s` solution (asks first, it spoils the exercise), `r` reset the exercise (asks first), `n` move on to the next exercise once this one works (it takes out the `// I AM NOT DONE` marker for you), `c` check all the exercises (runs every one of them and lists which work, without changing any file), `l` list every exercise to open any of them (type `/` to filter by name or topic; `n` then goes back to the first pending one), `f` show all of the output of a failure that was shortened (a data race report or a panic is cut down to the lines in your exercise; the note under the failure says when that happened), `↑`/`↓` scroll, `esc` go back, `q` quit.
 
-If you prefer plain line-by-line output, or when input or output is not a terminal (for example when piping), use `golings watch --plain`. There you can type `hint` or `list` and press Enter, and `exit` to quit.
+If you prefer plain line-by-line output, or when input or output is not a terminal (for example when piping), use `golings watch --plain`. There you can type `hint` (again, for more help) or `list` and press Enter, and `exit` to quit.
 
 ![golings watch](misc/demo-tui.gif)
 
@@ -135,6 +135,8 @@ In case you are stuck and need a hint:
 ```sh
 golings hint variables1
 ```
+
+Some exercises have smaller hints too, from a nudge that says what the failure means to one that says where to change. `golings hint variables1 --level 1` shows the smallest, and the full hint is what you get without the flag.
 
 If you want to start an exercise over, restore it to its original state (this discards your changes, so it asks first):
 
