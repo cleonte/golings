@@ -142,7 +142,7 @@ var _ = Describe("The files of a solution", func() {
 			"solutions/a/a1/z/more.go",
 		}))
 		Expect(ex.SolutionDir()).To(Equal("solutions/a/a1"))
-		Expect(ex.Dir()).To(Equal("exercises/a/a1"))
+		Expect(filepath.ToSlash(ex.Dir())).To(Equal("exercises/a/a1"))
 	})
 	It("are missing for an exercise that has no solution folder", func() {
 		_, err := exercises.Exercise{Path: "exercises/a/a3/main.go"}.SolutionFiles(solutions)
