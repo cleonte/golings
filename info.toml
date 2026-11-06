@@ -496,6 +496,8 @@ For more information: https://pkg.go.dev/maps#DeleteFunc"""
 name = "structs1"
 path = "exercises/structs/structs1/main.go"
 mode = "compile"
+nudge = """The compiler says person is undefined: the Person type has no fields, and the person the code prints was never created."""
+stronger = """Give the Person struct a name and an age, then create a variable called person with the values John and 32."""
 hint = """
 Structs are created using the `type structName struct {}` syntax.
 Fields inside the brackets must have their types declared along with their names."""
@@ -504,6 +506,8 @@ Fields inside the brackets must have their types declared along with their names
 name = "structs2"
 path = "exercises/structs/structs2/main.go"
 mode = "compile"
+nudge = """The compiler says person.phone doesn't exist: Person has no phone field."""
+stronger = """Define a ContactDetails struct that holds the phone, and embed it in Person by writing its name alone on a line of the struct."""
 hint = """
 Embedding a struct is done using just the struct name.
 
@@ -513,6 +517,8 @@ After embedding, fields can be accessed directly through the base struct without
 name = "structs3"
 path = "exercises/structs/structs3/main.go"
 mode = "compile"
+nudge = """The compiler says Person has no method FullName."""
+stronger = """Write a function with a Person receiver between func and the name, and return the first and the last name with a space between them."""
 hint = """
 Add a function to a struct by defining it as follows:
 
@@ -525,6 +531,8 @@ func (s *StructHere) doSomething() {
 name = "packages1"
 path = "exercises/packages/packages1/main.go"
 mode = "compile"
+nudge = """The compiler says math.pi and strings.toUpper are undefined, and suggests Pi and ToUpper: only names that start with a capital letter can be used from another package."""
+stronger = """Use the names the compiler suggests, the ones in parentheses in its message."""
 hint = """
 A name is exported, and can be used from another package, only if it starts with an upper case letter. The compiler even tells you the name it has: look at the part in parentheses.
 
@@ -534,6 +542,8 @@ For more information: https://go.dev/tour/basics/3"""
 name = "packages2"
 path = "exercises/packages/packages2/main_test.go"
 mode = "test"
+nudge = """config is empty: the function that fills it never runs."""
+stronger = """Rename the function to the special name init, with no parameters and no results. Go calls it by itself when the package is loaded."""
 hint = """
 A function called init, with no parameters and no results, runs automatically when the package is loaded, before main or the tests. You never call it yourself.
 
@@ -543,6 +553,8 @@ For more information: https://go.dev/doc/effective_go#init"""
 name = "packages3"
 path = "exercises/packages/packages3/main_test.go"
 mode = "test"
+nudge = """total is 0 instead of 20: it was calculated before init gave base its value."""
+stronger = """Give base its value in its declaration, so that it is set before total is calculated."""
 hint = """
 All the package-level variables are initialized before any init function runs, so total is calculated while base is still 0. Initialize base in its declaration, var base = 10, and total will see the value.
 
@@ -552,6 +564,8 @@ For more information: https://go.dev/ref/spec#Package_initialization"""
 name = "packages4"
 path = "exercises/packages/packages4/main.go"
 mode = "compile"
+nudge = """The compiler says rand is redeclared: both imports are called rand."""
+stronger = """Write another name before the path of one of the two imports, and use that name where its functions are called."""
 hint = """
 Two imports that end in the same name cannot both be called rand. Put a name before the path of one of them, like cryptorand "crypto/rand", and use that name for its functions.
 
@@ -561,6 +575,8 @@ For more information: https://go.dev/ref/spec#Import_declarations"""
 name = "pointers1"
 path = "exercises/pointers/pointers1/main.go"
 mode = "compile"
+nudge = """The compiler says answer is an int where a *int is needed, and the pointer is a *int where an int is needed: the two lines need the opposite operators."""
+stronger = """Use & to get the address of answer for the pointer, and * to read the value the pointer points to."""
 hint = """
 & gives the address of a variable and * follows a pointer to its value. Check which of the two each line needs: the types must match on both sides.
 
@@ -570,6 +586,8 @@ For more information: https://go.dev/tour/moretypes/1"""
 name = "pointers2"
 path = "exercises/pointers/pointers2/main_test.go"
 mode = "test"
+nudge = """n is still 1 after increment, and x and y were not swapped: the functions changed copies."""
+stronger = """Make the parameters pointers to int, write through them with *, and pass the addresses (&) in the calls in the tests."""
 hint = """
 Go passes arguments by value, so a function only changes a copy. To change the caller's variables, take pointers (*int) and pass the addresses (&n). Write through the pointer with *n. Change the calls in the tests too.
 
@@ -579,6 +597,8 @@ For more information: https://go.dev/ref/spec#Address_operators"""
 name = "pointers3"
 path = "exercises/pointers/pointers3/main_test.go"
 mode = "test"
+nudge = """newPerson returns nil: it doesn't create a Person, and the second function doesn't change the age."""
+stronger = """Return the address of a new Person built with &Person{...}. In the other function change the age through the pointer."""
 hint = """
 &Person{...} creates a Person and gives you a pointer to it. On a pointer to a struct you can write p.Age directly, no need for (*p).Age.
 
@@ -588,6 +608,8 @@ For more information: https://go.dev/ref/spec#Composite_literals"""
 name = "pointers4"
 path = "exercises/pointers/pointers4/main_test.go"
 mode = "test"
+nudge = """The test panics with a nil pointer dereference: the function reads a field of a nil pointer."""
+stronger = """Before reading the field, compare the pointer with nil, and return the greeting for nobody if it is nil."""
 hint = """
 Following a nil pointer panics. Compare the pointer with nil before using its fields, and return the greeting for nobody in that case.
 
@@ -597,6 +619,8 @@ For more information: https://go.dev/ref/spec#Pointer_types"""
 name = "pointers5"
 path = "exercises/pointers/pointers5/main.go"
 mode = "compile"
+nudge = """The compiler says count++ can't be used on a *int: it would add one to the pointer, not to the number."""
+stronger = """Add one to the value the pointer points to, by dereferencing it with *."""
 hint = """
 new(int) returns a *int. count++ would add one to the pointer itself, which is not allowed: add one to the value it points to instead.
 
@@ -606,6 +630,8 @@ For more information: https://go.dev/doc/effective_go#allocation_new"""
 name = "pointers6"
 path = "exercises/pointers/pointers6/main.go"
 mode = "compile"
+nudge = """The compiler says it can't take the address of 3, true or "fast": & needs a variable, not a constant."""
+stronger = """Replace the & expressions with calls to the built-in new that take the value itself, which works with an expression since Go 1.26."""
 hint = """
 Optional values in a struct are often pointers: nil means "not set". Before Go 1.26 you needed a variable or a helper function to get a pointer to a value, because `&3` is not allowed. Now `new` takes an expression: `new(3)` is a `*int` that points to 3, `new("fast")` a `*string`.
 
@@ -615,6 +641,8 @@ For more information: https://go.dev/doc/go1.26#language"""
 name = "methods1"
 path = "exercises/methods/methods1/main.go"
 mode = "compile"
+nudge = """The compiler says Rectangle has no method Area: the function exists, but it isn't attached to the type."""
+stronger = """Write the receiver, (r Rectangle), between func and the name of the function."""
 hint = """
 main calls Area on the rectangle, like r.Area(). A method is a function with a receiver written between func and the name: func (r Rectangle) Area() int.
 
@@ -624,6 +652,8 @@ For more information: https://go.dev/tour/methods/1"""
 name = "methods2"
 path = "exercises/methods/methods2/main_test.go"
 mode = "test"
+nudge = """Scale left the rectangle at 2x3 instead of 4x6: the method changed a copy."""
+stronger = """Change the receiver of Scale to a pointer type."""
 hint = """
 A value receiver gets a copy of the rectangle, so Scale changes the copy and the original stays the same. Use a pointer receiver, (r *Rectangle), to change the original. The call r.Scale(2) stays as it is: Go takes the address of r for you.
 
@@ -633,6 +663,8 @@ For more information: https://go.dev/doc/effective_go#pointers_vs_values"""
 name = "methods3"
 path = "exercises/methods/methods3/main_test.go"
 mode = "test"
+nudge = """Every counter is still 0: the loop increments a copy of each counter."""
+stronger = """Loop over the indexes and call Increment on counters[i], so it works on the element in the slice."""
 hint = """
 The loop variable c in "for _, c := range counters" is a copy of each element, so Increment changes the copy. Reach the element itself through the slice: counters[i].
 
@@ -642,6 +674,8 @@ For more information: https://go.dev/ref/spec#For_range"""
 name = "methods4"
 path = "exercises/methods/methods4/main.go"
 mode = "compile"
+nudge = """The compiler says methods can't be defined on float64, and that Celsius has no ToFahrenheit: a method must belong to a type of your own package."""
+stronger = """Change the receiver to the Celsius type, and convert it to float64 inside the method to do the arithmetic."""
 hint = """
 You can only declare methods on types defined in the same package. float64 is not one of them, but Celsius is. You will need a conversion between the two inside the method.
 
@@ -651,6 +685,8 @@ For more information: https://go.dev/ref/spec#Method_declarations"""
 name = "methods5"
 path = "exercises/methods/methods5/main.go"
 mode = "compile"
+nudge = """The compiler says Counter does not implement Incrementer, because Increment has a pointer receiver."""
+stronger = """Put a pointer to the counter in the interface variable: take its address with &."""
 hint = """
 Increment has a pointer receiver, so only *Counter has it in its method set, not Counter. Read the compiler message: it tells you why. Give the interface a pointer.
 
@@ -660,6 +696,8 @@ For more information: https://go.dev/ref/spec#Method_sets"""
 name = "interfaces1"
 path = "exercises/interfaces/interfaces1/main.go"
 mode = "compile"
+nudge = """The compiler says Triangle does not implement Shape: it is missing the Area method."""
+stronger = """Add an Area method to Triangle with the same signature as the one in Shape, returning the base times the height divided by two."""
 hint = """
 A type satisfies an interface by having all of its methods, there is nothing to declare. The compiler tells you which method is missing: add it to the type that lacks it.
 
@@ -669,6 +707,8 @@ For more information: https://go.dev/tour/methods/10"""
 name = "interfaces2"
 path = "exercises/interfaces/interfaces2/main_test.go"
 mode = "test"
+nudge = """totalArea is 0 and largest is nil: neither function looks at the shapes yet."""
+stronger = """Loop over the slice and call Area on each element. Add the areas up in the first function; in the second keep the shape with the biggest area so far, starting with none."""
 hint = """
 Both functions take shapes of any type: call the Area method on each element of the slice and let the interface do the work. For largest, start with no shape and keep the one with the biggest area so far.
 
@@ -678,6 +718,8 @@ For more information: https://go.dev/ref/spec#Interface_types"""
 name = "interfaces3"
 path = "exercises/interfaces/interfaces3/main_test.go"
 mode = "test"
+nudge = """asInt(42) returns (0, false) and firstString returns an empty string: the values are never tested for their type."""
+stronger = """Use the two-value form of the type assertion, n, ok := v.(int), and return both values. For firstString loop over the values and use the same form with string."""
 hint = """
 A type assertion v.(int) panics if v holds something else. The form n, ok := v.(int) never panics: ok tells you whether it worked.
 
@@ -687,6 +729,8 @@ For more information: https://go.dev/ref/spec#Type_assertions"""
 name = "interfaces4"
 path = "exercises/interfaces/interfaces4/main_test.go"
 mode = "test"
+nudge = """describe returns "something else" for everything: only the default case exists."""
+stronger = """Switch on v.(type) with a case for each kind of value in the tests: int, string, bool, a slice of ints, and nil. In each case v has that case's type."""
 hint = """
 A type switch looks like switch v := v.(type) { case int: ... }. Inside each case, v has that case's type. There is also a case nil, and a default for everything else. You will need fmt to build some of the strings.
 
@@ -696,6 +740,8 @@ For more information: https://go.dev/tour/methods/16"""
 name = "interfaces5"
 path = "exercises/interfaces/interfaces5/main_test.go"
 mode = "test"
+nudge = """validate(30) returns an error although there is no problem: it returns a nil *ValidationError, and that is not a nil error."""
+stronger = """In the case without a problem return the literal nil, not the pointer variable."""
 hint = """
 An interface value holds a type and a value. An error that holds a nil *ValidationError has a type, so it is not equal to nil. Return the literal nil when there is no error, instead of a variable that happens to be nil.
 
@@ -705,6 +751,8 @@ For more information: https://go.dev/doc/faq#nil_error"""
 name = "interfaces6"
 path = "exercises/interfaces/interfaces6/main.go"
 mode = "compile"
+nudge = """The compiler says Runner has no Stop and Service has no Log: neither the interface nor the struct embeds the type that provides them."""
+stronger = """Write Logger alone on a line inside the Service struct, and add Stopper alone on a line in the Runner interface, next to the one that is already there."""
 hint = """
 Embedding means writing a type name in a struct or interface without a field name. In a struct it promotes the methods of that type, and the embedded value is a field you can set by the type name: Service{Logger: Logger{...}}. In an interface it adds the methods of that interface.
 
@@ -714,6 +762,8 @@ For more information: https://go.dev/doc/effective_go#embedding"""
 name = "errors1"
 path = "exercises/errors/errors1/main.go"
 mode = "compile"
+nudge = """The compiler says one variable can't receive the 2 values that strconv.Atoi returns."""
+stronger = """Receive both values, the number and the error. Check the error against nil, print it and go on to the next text."""
 hint = """
 A function that can fail returns an error as its last value. Receive both results, number, err := ..., and use err: check it against nil before using the number.
 
@@ -723,6 +773,8 @@ For more information: https://go.dev/blog/error-handling-and-go"""
 name = "errors2"
 path = "exercises/errors/errors2/main_test.go"
 mode = "test"
+nudge = """total returns errors that look like ErrNotFound but aren't it: errors.New makes a new error every time it is called."""
+stronger = """Return the variables ErrNotFound and ErrInvalidQuantity declared at the top, instead of creating errors in the function."""
 hint = """
 errors.New creates a new error every time you call it, and two errors are only equal when they are the same value, even if their text matches. Return the variables declared at the top, ErrNotFound and ErrInvalidQuantity, so that callers can compare against them.
 
@@ -732,6 +784,8 @@ For more information: https://go.dev/blog/go1.13-errors"""
 name = "errors3"
 path = "exercises/errors/errors3/main_test.go"
 mode = "test"
+nudge = """errors.Is can't find ErrNotFound in the error that was returned: the new error only has its text."""
+stronger = """Wrap the error with fmt.Errorf, using the verb that keeps the original error in the chain."""
 hint = """
 The verb %v only puts the text of the error into the new one. The verb %w keeps the error itself inside, which is what errors.Is looks for.
 
@@ -741,6 +795,8 @@ For more information: https://go.dev/blog/go1.13-errors"""
 name = "errors4"
 path = "exercises/errors/errors4/main_test.go"
 mode = "test"
+nudge = """failedField returns an empty string: the validation error is wrapped, so a plain type assertion doesn't see it."""
+stronger = """Declare a variable of type *ValidationError and pass its address to errors.As together with err. When it returns true, return the field of the variable."""
 hint = """
 A type assertion only looks at the outermost error. errors.As walks the whole chain of wrapped errors and, when it finds the type you ask for, stores it in the variable you pass by pointer: var target *ValidationError; errors.As(err, &target).
 
@@ -750,6 +806,8 @@ For more information: https://pkg.go.dev/errors#As"""
 name = "errors5"
 path = "exercises/errors/errors5/main_test.go"
 mode = "test"
+nudge = """validate returns only the first problem: it stops at the first error."""
+stronger = """Collect the problems in a slice of errors instead of returning at the first one, and return them as a single error with errors.Join."""
 hint = """
 Keep the problems in a slice of errors instead of returning at the first one. errors.Join combines them into one error that errors.Is can look through, and it returns nil when it gets no errors at all.
 
@@ -759,6 +817,8 @@ For more information: https://pkg.go.dev/errors#Join"""
 name = "errors6"
 path = "exercises/errors/errors6/main_test.go"
 mode = "test"
+nudge = """waitTime returns 0 and false in all three cases: nothing looks for the *RateLimitError in the chain."""
+stronger = """Call errors.AsType with the type *RateLimitError on err. When it finds one, return its WaitSeconds and true."""
 hint = """
 `errors.AsType[T](err)` (Go 1.26) looks through the chain of err for an error of type T and returns it with a bool, so you don't declare a variable first and pass its address like with `errors.As`: `if limit, ok := errors.AsType[*RateLimitError](err); ok { ... }`. The type is checked by the compiler.
 
@@ -768,6 +828,8 @@ For more information: https://pkg.go.dev/errors#AsType"""
 name = "anonymous_functions1"
 path = "exercises/anonymous_functions/anonymous_functions1/main.go"
 mode = "compile"
+nudge = """The compiler says the function is called without arguments, but it wants a string."""
+stronger = """Add a string argument in the parentheses at the end of the function literal."""
 hint = """
 The function needs a string to print."""
 
@@ -775,6 +837,8 @@ The function needs a string to print."""
 name = "anonymous_functions2"
 path = "exercises/anonymous_functions/anonymous_functions2/main.go"
 mode = "compile"
+nudge = """The compiler says sayBye is not used, the function literal doesn't match the type func(name string), and n is undefined."""
+stronger = """Give the function literal a string parameter called n, which its body already uses, and call sayBye with a name."""
 hint = """
 You should call the function with a parameter."""
 
@@ -782,6 +846,8 @@ You should call the function with a parameter."""
 name = "anonymous_functions3"
 path = "exercises/anonymous_functions/anonymous_functions3/main.go"
 mode = "compile"
+nudge = """The compiler says orderStatus is declared and not used: updateStatus doesn't use it."""
+stronger = """Make the function return orderStatus[index], and use the value it returns."""
 hint = """
 1 - The `updateStatus()` function should return an order status index like `orderStatus[index]`.
 2 - You may need to call `anonymous_func` once more."""
@@ -790,6 +856,8 @@ hint = """
 name = "closures1"
 path = "exercises/closures/closures1/main.go"
 mode = "compile"
+nudge = """The compiler says the returned function is a func(), but newCounter has to return a func() int."""
+stronger = """Give the returned function an int result, add one to count inside it, and return the new count."""
 hint = """
 The type of the returned function is func() int, so the function you return has to match it: it must declare and return an int. It still uses count from newCounter, even though newCounter has already returned.
 
@@ -799,6 +867,8 @@ For more information: https://go.dev/tour/moretypes/25"""
 name = "closures2"
 path = "exercises/closures/closures2/main_test.go"
 mode = "test"
+nudge = """A new counter starts at 6 instead of 1: every counter shares the same count variable."""
+stronger = """Move the declaration of count inside newCounter, so that each call makes its own."""
 hint = """
 count lives outside newCounter, so every counter changes the same variable. Declare the variable inside newCounter: each call then creates a new one, and only the function returned by that call can see it.
 
@@ -808,6 +878,8 @@ For more information: https://go.dev/ref/spec#Function_literals"""
 name = "closures3"
 path = "exercises/closures/closures3/main_test.go"
 mode = "test"
+nudge = """balance is 0: the amount is added to a different variable from the one balance reads."""
+stronger = """Inside the function assign to the existing total, with = or +=, not with :=, which declares a new variable."""
 hint = """
 total := total + amount declares a new variable called total, which hides the one balance reads. Assign to the existing variable instead: total += amount.
 
@@ -817,6 +889,8 @@ For more information: https://go.dev/doc/effective_go#redeclaration"""
 name = "closures4"
 path = "exercises/closures/closures4/main_test.go"
 mode = "test"
+nudge = """Every adder adds 100: they all share one variable, which is read after the loop has finished."""
+stronger = """Make each adder capture a variable that belongs to its own iteration, by declaring it in the for statement."""
 hint = """
 The variable n is declared before the loop, so there is only one, and every adder reads it after the loop has finished. Declare the number in the for statement instead, for i, n := range numbers: Go 1.22 gives each iteration its own n.
 
@@ -826,6 +900,8 @@ For more information: https://go.dev/blog/loopvar-preview"""
 name = "closures5"
 path = "exercises/closures/closures5/main_test.go"
 mode = "test"
+nudge = """double(4) is 4 instead of 8 and the call count stays 0: multiplier and counted just pass the call through."""
+stronger = """multiplier returns a function that multiplies its argument by factor. counted keeps a counter; the function it returns adds one to it and calls fn, and calls returns the counter."""
 hint = """
 A function can return another function that uses its parameters: multiplier's result multiplies by factor. For counted, make a counter variable inside it. The wrapped function increments it and calls fn, and calls returns it.
 
