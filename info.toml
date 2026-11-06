@@ -1645,6 +1645,50 @@ Code that walks any value switches on its `Kind()` and calls itself on the parts
 For more information: https://pkg.go.dev/reflect#Value"""
 
 [[exercises]]
+name = "unsafe1"
+path = "exercises/unsafe/unsafe1/main_test.go"
+mode = "test"
+nudge = """A Record takes 24 bytes, not 16 or fewer: the bools around the int64 each get padded to 8."""
+stronger = """Reorder the fields so the int64 comes first and the two bools follow each other."""
+hint = """
+Every field must start at a multiple of its alignment (`unsafe.Alignof`), so the compiler leaves gaps. `bool, int64, bool` takes 1 + 7 padding + 8 + 1 + 7 padding = 24 bytes; `int64, bool, bool` takes 8 + 1 + 1 + 6 padding = 16. Ordering fields from largest to smallest alignment is a cheap win when you have millions of values. `unsafe.Sizeof` reports the size, `unsafe.Offsetof(r.Field)` where a field starts. The `fieldalignment` analyzer finds these automatically.
+
+For more information: https://pkg.go.dev/unsafe#Sizeof"""
+
+[[exercises]]
+name = "unsafe2"
+path = "exercises/unsafe/unsafe2/main_test.go"
+mode = "test"
+nudge = """After the bytes change, the string still says hello: view copied the bytes."""
+stronger = """Return unsafe.String with unsafe.SliceData(b) as the pointer and len(b) as the length."""
+hint = """
+`string(b)` copies, because a string is immutable and the slice is not. `unsafe.String(ptr, len)` (Go 1.20) builds a string header over memory that already exists, and `unsafe.SliceData(b)` is the pointer to the first byte of a slice. It saves the copy, but the rule is yours to keep: nobody may change those bytes while the string is in use, or maps, comparisons and everything else that relies on immutable strings break. Measure first; most programs never need this.
+
+For more information: https://pkg.go.dev/unsafe#String"""
+
+[[exercises]]
+name = "unsafe3"
+path = "exercises/unsafe/unsafe3/main_test.go"
+mode = "test"
+nudge = """The numbers are unchanged after the bytes are filled with 0xFF: asBytes returned new bytes, not a view of nums."""
+stronger = """Return unsafe.Slice over (*byte)(unsafe.Pointer(unsafe.SliceData(nums))), with len(nums) times unsafe.Sizeof(nums[0]) as the length."""
+hint = """
+`unsafe.Pointer` can be converted to and from any pointer type, which is how memory is read as another type. `unsafe.Slice(ptr, n)` (Go 1.17) makes a slice of `n` elements starting at `ptr`; here the elements are bytes, so the length is the number of bytes. The result shares the memory of `nums`; what you read through it depends on the byte order of the machine (`encoding/binary` is the portable way). Keep `nums` alive for as long as the bytes are used.
+
+For more information: https://pkg.go.dev/unsafe#Slice"""
+
+[[exercises]]
+name = "unsafe4"
+path = "exercises/unsafe/unsafe4/main_test.go"
+mode = "test"
+nudge = """at(nums, 1) reads 335544320, not 20: the pointer moved 1 byte, and an int32 is 4 bytes long."""
+stronger = """Move the pointer by uintptr(i) * unsafe.Sizeof(nums[0]) bytes, not by i."""
+hint = """
+`unsafe.Add(p, n)` (Go 1.17) moves a pointer by `n` *bytes*: the size of the element is your job, like pointer arithmetic in C. It does no bounds check, so an index too big reads whatever is in memory, and the garbage collector must still see the memory as part of a live object (a pointer into the middle of the same slice is fine). Normal code gets all of this from `nums[i]`; this is for the rare case of building such a thing yourself.
+
+For more information: https://pkg.go.dev/unsafe#Add"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"

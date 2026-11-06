@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 215 exercises in 43 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 219 exercises in 44 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -107,7 +107,7 @@ Ideas from reading a similar project, [madhank93/golings](https://github.com/mad
 ## Phase 9 — Closing the gap with other projects
 Topics a similar project ([madhank93/golings](https://github.com/madhank93/golings)) has and this one lacks. Same format as Phase 7, one PR per topic, released together.
 - [x] `reflect` (5): kind against type, struct tags, setting through a pointer, `DeepEqual`, walking a value by kind.
-- [ ] `unsafe` (pure Go, no C compiler): `Sizeof` and alignment, `unsafe.String`, `unsafe.Slice`.
+- [x] `unsafe` (4, pure Go, no C compiler): struct padding with `Sizeof`, `unsafe.String`, `unsafe.Slice`, `unsafe.Add`.
 - [ ] Testing with fakes and dependency injection.
 - [ ] `net` over loopback, `net.Pipe` first.
 - [ ] Profiling and benchmarks, then fuzzing.
