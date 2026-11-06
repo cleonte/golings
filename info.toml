@@ -939,6 +939,51 @@ A `Reader` is any type with `Read(p []byte) (n int, err error)`. A reader that w
 For more information: https://pkg.go.dev/io#Reader"""
 
 [[exercises]]
+name = "fs1"
+path = "exercises/fs/fs1/main_test.go"
+mode = "test"
+hint = """
+The error from `os.ReadFile` says what went wrong, and a missing file is only one of the possibilities. `errors.Is(err, fs.ErrNotExist)` is true when the file does not exist (the `os` package's old `os.IsNotExist` does the same). Return the default for that error, and pass any other error on.
+
+For more information: https://pkg.go.dev/io/fs#pkg-variables"""
+
+[[exercises]]
+name = "fs2"
+path = "exercises/fs/fs2/main_test.go"
+mode = "test"
+hint = """
+`fs.FS` is the interface for a read-only file system: `os.DirFS(dir)` is one backed by a folder, `fstest.MapFS` one in memory, and `embed.FS` one inside the binary. `fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error { ... })` visits every file and folder below a root; `d.IsDir()` and `d.Name()` tell what each entry is. Code that takes an `fs.FS` can be tested without touching the disk.
+
+For more information: https://pkg.go.dev/io/fs#WalkDir"""
+
+[[exercises]]
+name = "fs3"
+path = "exercises/fs/fs3/main_test.go"
+mode = "test"
+hint = """
+A walk function can return `fs.SkipDir` to skip the rest of the folder it was called for (when the entry is a folder), or `fs.SkipAll` to stop the walk. Both are values from `io/fs`, and `filepath.WalkDir` understands them like `fs.WalkDir` does. Skipping a folder is much cheaper than visiting its files and ignoring them.
+
+For more information: https://pkg.go.dev/io/fs#SkipDir"""
+
+[[exercises]]
+name = "fs4"
+path = "exercises/fs/fs4/main_test.go"
+mode = "test"
+hint = """
+`filepath.Join(dir, "../secret.txt")` is a path outside `dir`, and `os.ReadFile` is glad to read it. `os.OpenRoot(dir)` returns an `*os.Root` whose methods (`Open`, `ReadFile`, `Create`, ...) refuse any name that leaves the folder, through `..` or through a symbolic link. Close it when done.
+
+For more information: https://pkg.go.dev/os#Root"""
+
+[[exercises]]
+name = "fs5"
+path = "exercises/fs/fs5/main_test.go"
+mode = "test"
+hint = """
+A pattern passed to `fs.Glob(fsys, pattern)` is matched against paths from the root of `fsys`, and `*` does not cross a `/`. `fs.Sub(fsys, "assets/css")` returns a file system rooted at that sub-folder, so inside it `*.css` finds the style sheets and the names are relative to the folder.
+
+For more information: https://pkg.go.dev/io/fs#Sub"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
