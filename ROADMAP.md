@@ -95,7 +95,7 @@ Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:
 ## Phase 8 — Tool features (planned)
 Ideas from reading a similar project, [madhank93/golings](https://github.com/madhank93/golings) (another fork of upstream; Apache-2.0). Ideas only: nothing is copied, and every exercise here is written and verified on its own.
 - [x] Graded hints, the tool: besides `hint`, optional `nudge` (what the error means) and `stronger` (where to change it) in `info.toml`; `h` in `watch` shows them one at a time, then the full hint; `golings hint --level N`; `hint` in the plain watch steps through them. Exercises without them keep working as now.
-- [ ] Graded hints, the content: `nudge` and `stronger` for the exercises. Done: `context`, `time`, `io`, `fs` and `http` (29 exercises). Left: the older topics, a few at a time, starting with `concurrent` and `pitfalls`.
+- [ ] Graded hints, the content: `nudge` and `stronger` for the exercises. Done: `context`, `time`, `io`, `fs`, `http`, `concurrent` and `pitfalls` (54 exercises). Left: the older topics, a few at a time.
 - [ ] A key in `watch` to open the exercise in `$VISUAL` or `$EDITOR`.
 - [ ] Exercises that span several files and packages (modules, `internal`, multi-package layouts). Needs `init`, `reset`, the embedded copy and `TestSolutions` to handle a folder, and an exercise with its own `go.mod`. Design first, as a short note, before any exercise.
 
