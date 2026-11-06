@@ -1546,6 +1546,61 @@ The classic server shape is a loop of `Accept` that starts a goroutine for each 
 For more information: https://pkg.go.dev/net#Listener"""
 
 [[exercises]]
+name = "cli1"
+path = "exercises/cli/cli1/main_test.go"
+mode = "test"
+nudge = """greeting returns "Hello, world!" for -name Ann: the arguments are never parsed, so the flag keeps its default."""
+stronger = """Call fs.Parse(args) after declaring the flags, and return its error if there is one."""
+hint = """
+The `flag` package works in two steps: you *declare* flags (`fs.String`, `fs.Int`, `fs.Bool`... each returns a pointer) and then *parse* the arguments, which fills the pointers. Without the parse call every flag keeps its default. `flag.NewFlagSet` with `flag.ContinueOnError` returns the error instead of exiting the program, and taking `args` as a parameter (the real ones are `os.Args[1:]`) is what makes a command line testable.
+
+For more information: https://pkg.go.dev/flag"""
+
+[[exercises]]
+name = "cli2"
+path = "exercises/cli/cli2/main_test.go"
+mode = "test"
+nudge = """names = ["-v" "a.txt" "b.txt"]: the flag is counted as a file name, because args still has everything."""
+stronger = """Return fs.Args() instead of args: it holds what is left after the flags have been parsed."""
+hint = """
+After `Parse`, `fs.Args()` returns the arguments that are not flags, `fs.NArg()` how many, and `fs.Arg(i)` one of them. Parsing stops at the first argument that is not a flag (or after `--`), so `tool a.txt -v` has no flags and two file names. That is the Go convention; libraries such as `cobra` allow flags in any position.
+
+For more information: https://pkg.go.dev/flag#FlagSet.Args"""
+
+[[exercises]]
+name = "cli3"
+path = "exercises/cli/cli3/main_test.go"
+mode = "test"
+nudge = """The exit code of a wrong flag is 1 (want 2), the usage went to stdout and stderr is empty, and -h exits with 1."""
+stronger = """Send the flag set's output to stderr, return 2 when Parse fails, and return 0 when the error is flag.ErrHelp."""
+hint = """
+The conventions of a command line tool: results go to *stdout* and messages about problems go to *stderr*, so that `tool | other` only passes on the results. Exit code 0 is success, 1 is a failure while running and 2 is a wrong command line (the `flag` package itself exits with 2). `-h` is a request, not a failure, so `Parse` returns `flag.ErrHelp` and the program exits with 0. Write `run(args, stdout, stderr) int` and let `main` be just `os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))`: `os.Exit` skips deferred functions, which is one more reason to keep it in one place.
+
+For more information: https://pkg.go.dev/flag#ErrHelp"""
+
+[[exercises]]
+name = "cli4"
+path = "exercises/cli/cli4/main_test.go"
+mode = "test"
+nudge = """tags = ["test"], want ["go" "cli" "test"]: a string flag keeps only the last value."""
+stronger = """Declare var tags []string first, then use fs.Func("tag", usage, func(value string) error { ... }) to append each value to it."""
+hint = """
+`fs.Func(name, usage, fn)` declares a flag whose value is handled by your function: it is called once for every time the flag appears, with the text, and can return an error to reject it (that error becomes the error of `Parse`). That is how you make a repeatable flag, or a flag with a type of your own such as a duration list. For a type used in many places, implement the `flag.Value` interface (`String` and `Set`) and use `fs.Var`. `fs.TextVar` works for any type with `UnmarshalText`.
+
+For more information: https://pkg.go.dev/flag#FlagSet.Func"""
+
+[[exercises]]
+name = "cli5"
+path = "exercises/cli/cli5/main_test.go"
+mode = "test"
+nudge = """dispatch gives "Hello, world!" for greet -name Ann: the command's flag set got the word greet first, and stopped reading there."""
+stronger = """Pass args[1:] to greet, so the command only sees the arguments after its own name."""
+hint = """
+Tools with commands (`git commit -m x`, `go test -v`) read the command from the first argument and give the rest to a flag set of its own, one per command, each with its own flags and usage. Remember that `flag` stops at the first argument that is not a flag, so the name of the command must be cut off before parsing. Unknown commands are a usage error: say so on stderr and return 2. For bigger tools, packages like `cobra` or `urfave/cli` do this for you, at the price of a dependency.
+
+For more information: https://pkg.go.dev/flag#FlagSet"""
+
+[[exercises]]
 name = "regexp1"
 path = "exercises/regexp/regexp1/main_test.go"
 mode = "test"

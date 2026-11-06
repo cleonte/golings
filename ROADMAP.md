@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 238 exercises in 48 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 243 exercises in 49 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -112,7 +112,7 @@ Topics a similar project ([madhank93/golings](https://github.com/madhank93/golin
 - [x] `net` (5): `net.Pipe`, a stream is not messages, a listener on port 0, recognizing a timeout with `errors.Is`, a goroutine per connection.
 - [x] `bench` (5): profiling and benchmarks: `strings.Builder` against `+=`, preallocating slices, `AllocsPerRun`, CPU and heap profiles with `runtime/pprof`, `b.Loop`.
 - [x] `fuzz` (4): fuzzing as a testing exercise: a property over runes, no panic on bad input, seeds of the right types, an escape round trip.
-- [ ] `cli`: `flag`, `os.Args`, exit codes.
+- [x] `cli` (5): `flag.FlagSet` and `Parse`, `Args`, exit codes and stderr, a repeatable flag with `Func`, subcommands.
 - [ ] Multi-file modules and a capstone (needs the Phase 8 tool design first).
 
 ## Ideas, not scheduled
