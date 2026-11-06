@@ -8,14 +8,17 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-06
+
 ### Added
 
-- A `memory` topic, 4 exercises, before generics: `unique.Make` handles, reusing buffers with `sync.Pool`, a cache that holds its values with `weak.Pointer`, and `runtime.AddCleanup`.
-- A `rand` topic, 4 exercises, before generics: the new names in `math/rand/v2`, a generator made from a seed, `rand.N` for durations, and `crypto/rand.Text` for secrets.
-- An `encoding` topic, 5 exercises, before generics: URL-safe `base64`, the error of `hex.DecodeString`, reading `csv` with quoted fields, the `Flush` of a `csv.Writer`, and big-endian against little-endian in `encoding/binary`.
-- A `template` topic, 5 exercises, before generics: reading fields, `range`, registering a function with `Funcs`, an index and `if` inside a range, and `html/template` against `text/template`.
-- A `regexp` topic, 5 exercises, before generics: anchors in a pattern, groups with `FindStringSubmatch`, `ReplaceAllString` against the literal version, `FindAllString`, and `QuoteMeta`.
-- A `types` topic, 5 exercises, after structs: `iota` enums, a `String` method for them, `iota` expressions, an alias against a defined type, and conversion between defined types.
+- **28 new exercises in 6 topics**, 210 exercises in 42 topics in all, each with the three hint levels, a `// TODO:` and a verified solution. This finishes the list of new topics planned after 1.0:
+  - A `memory` topic, 4 exercises, before generics: `unique.Make` handles, reusing buffers with `sync.Pool`, a cache that holds its values with `weak.Pointer`, and `runtime.AddCleanup`.
+  - A `rand` topic, 4 exercises, before generics: the new names in `math/rand/v2`, a generator made from a seed, `rand.N` for durations, and `crypto/rand.Text` for secrets.
+  - An `encoding` topic, 5 exercises, before generics: URL-safe `base64`, the error of `hex.DecodeString`, reading `csv` with quoted fields, the `Flush` of a `csv.Writer`, and big-endian against little-endian in `encoding/binary`.
+  - A `template` topic, 5 exercises, before generics: reading fields, `range`, registering a function with `Funcs`, an index and `if` inside a range, and `html/template` against `text/template`.
+  - A `regexp` topic, 5 exercises, before generics: anchors in a pattern, groups with `FindStringSubmatch`, `ReplaceAllString` against the literal version, `FindAllString`, and `QuoteMeta`.
+  - A `types` topic, 5 exercises, after structs: `iota` enums, a `String` method for them, `iota` expressions, an alias against a defined type, and conversion between defined types.
 
 ## [1.2.0] - 2026-11-06
 
@@ -71,7 +74,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/cleonte/golings/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cleonte/golings/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cleonte/golings/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/cleonte/golings/releases/tag/v1.0.0
