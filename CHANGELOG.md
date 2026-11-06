@@ -11,6 +11,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 ### Added
 
 - An `fs` topic, 5 exercises, before generics: `fs.ErrNotExist`, walking an `fs.FS` (`fstest.MapFS` in the tests), `fs.SkipDir`, `os.Root` against paths that leave a folder, and `fs.Sub`.
+- An `http` topic, 6 exercises, before generics, all in memory with `httptest`: the order of status and body, `GET /items/{id}` patterns, a middleware that stops the request, a bad query parameter, `MaxBytesReader`, and a client timeout.
 
 ## [1.1.0] - 2026-11-06
 

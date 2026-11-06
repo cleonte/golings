@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 171 exercises in 34 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 177 exercises in 35 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -88,7 +88,7 @@ Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:
 - [x] `time` (6): durations, the reference layout of `Format` and `Parse`, `Truncate`, monotonic against wall clock, timers and tickers (the Go 1.23 change), `testing/synctest`.
 - [x] `io` and `bufio` (6): `Reader` and `Writer`, `io.Copy`, `TeeReader`, `bufio.Scanner` and its token limit, `strings.NewReader`, `io.Pipe`.
 - [x] `os` and `io/fs` (5, topic `fs`): `os.ReadFile`, `os.Root` (1.24), `fstest.MapFS`, `filepath.WalkDir`, `embed`.
-- [ ] `net/http` (5–6): a handler tested with `httptest`, pattern routing (`GET /items/{id}`, 1.22), middleware, client timeouts.
+- [x] `net/http` (6, topic `http`): a handler tested with `httptest`, pattern routing (`GET /items/{id}`, 1.22), middleware, client timeouts.
 - [ ] `cmp`, `sort` and `container` (4–5): `cmp.Compare`, `slices.SortFunc` with several keys, `container/heap` and `list`.
 - [ ] Smaller topics, if wanted: `regexp`, `text/template`, `unique`, `weak`, `sync.Pool`, `math/rand/v2`, and `encoding` (`base64`, `hex`, `csv`, `binary`).
 

@@ -984,6 +984,60 @@ A pattern passed to `fs.Glob(fsys, pattern)` is matched against paths from the r
 For more information: https://pkg.go.dev/io/fs#Sub"""
 
 [[exercises]]
+name = "http1"
+path = "exercises/http/http1/main_test.go"
+mode = "test"
+hint = """
+A response is sent in order: the status line, the headers, then the body. The first `Write` sends the status line with `200 OK` if you haven't set one, and after that `WriteHeader` has no effect. Call `w.WriteHeader(http.StatusCreated)` (and set any headers) before writing the body.
+
+For more information: https://pkg.go.dev/net/http#ResponseWriter"""
+
+[[exercises]]
+name = "http2"
+path = "exercises/http/http2/main_test.go"
+mode = "test"
+hint = """
+Since Go 1.22 a `ServeMux` pattern can start with a method and contain wildcards: `"GET /items/{id}"`. The handler reads the wildcard with `r.PathValue("id")`. A request with another method for a path that matches gets `405 Method Not Allowed` from the mux itself.
+
+For more information: https://pkg.go.dev/net/http#ServeMux"""
+
+[[exercises]]
+name = "http3"
+path = "exercises/http/http3/main_test.go"
+mode = "test"
+hint = """
+A middleware is a function that takes a handler and returns one. `http.Error` writes an answer but does not return from your function, so code after it still runs. After answering the unauthorized request, `return`, so `next.ServeHTTP` is only called for requests that passed the check.
+
+For more information: https://pkg.go.dev/net/http#Error"""
+
+[[exercises]]
+name = "http4"
+path = "exercises/http/http4/main_test.go"
+mode = "test"
+hint = """
+`strconv.Atoi` returns an error for text that is not a number, and ignoring it gives 0. Check it, answer with `http.Error(w, message, http.StatusBadRequest)` and `return`. A 4xx status tells the client that the request was wrong, not the server.
+
+For more information: https://pkg.go.dev/net/http#pkg-constants"""
+
+[[exercises]]
+name = "http5"
+path = "exercises/http/http5/main_test.go"
+mode = "test"
+hint = """
+`http.MaxBytesReader(w, r.Body, n)` returns a body that fails once more than `n` bytes have been read. The error is a `*http.MaxBytesError`, which you can find with `errors.As`, and the right answer is `http.StatusRequestEntityTooLarge` (413). Without a limit, one request can use all the memory of the server.
+
+For more information: https://pkg.go.dev/net/http#MaxBytesReader"""
+
+[[exercises]]
+name = "http6"
+path = "exercises/http/http6/main_test.go"
+mode = "test"
+hint = """
+An `http.Client` has no timeout by default: it waits as long as the server does. Set `Timeout` when you create it, `&http.Client{Transport: rt, Timeout: 2 * time.Second}`; it covers the whole exchange, including reading the body. The test uses a fake transport and `synctest`, so the two seconds cost nothing.
+
+For more information: https://pkg.go.dev/net/http#Client"""
+
+[[exercises]]
 name = "generics1"
 path = "exercises/generics/generics1/main.go"
 mode = "compile"
