@@ -196,6 +196,6 @@ Found a problem with an exercise? Open an issue with the Exercise problem templa
 
 ## Credits
 
-golings was created by [Mauricio Abreu](https://github.com/mauricioabreu/golings), and this project builds on his work.
+golings was created by [Mauricio Abreu](https://github.com/mauricioabreu/golings), and this project builds on that work.
 
 The dancing gopher is pixel art by [Egon Elbre](https://github.com/egonelbre/gophers) (CC0), exported from his `dance.ase` at 8x, based on the Go gopher designed by [Renée French](https://reneefrench.blogspot.com/) (CC BY 4.0).
