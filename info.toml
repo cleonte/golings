@@ -1312,6 +1312,8 @@ For more information: https://pkg.go.dev/time#Timer.Reset"""
 name = "concurrent1"
 path = "exercises/concurrent/concurrent1/main_test.go"
 mode = "test"
+nudge = """None of the three messages is in the output: the goroutines run and take the lock, but nothing is written to buf."""
+stronger = """The line that writes to buf is in the code as a comment, right after the Lock. Make it a real statement."""
 hint = """
 We have multiple printers (though these may also be non-functional).
 
@@ -1323,6 +1325,8 @@ name = "concurrent2"
 path = "exercises/concurrent/concurrent2/main_test.go"
 mode = "test"
 race = true
+nudge = """The race detector reports a data race on the counter: several goroutines read and write it at the same time."""
+stronger = """Declare a sync.Mutex next to the counter. In the goroutine, lock it before changing the counter and unlock it after, with a defer so that the unlock cannot be forgotten."""
 hint = """
 Updating a variable from multiple goroutines can lead to a data race. A data race occurs when multiple goroutines read and write the same variable simultaneously without proper synchronization.
 
@@ -1335,6 +1339,8 @@ Learn more about mutexes to handle this issue: https://pkg.go.dev/sync#Mutex.
 name = "concurrent3"
 path = "exercises/concurrent/concurrent3/main_test.go"
 mode = "test"
+nudge = """Only "Hello" arrived: the receiver took one message and stopped, but the sender sends two and then closes the channel."""
+stronger = """Receive in a loop that ends by itself when the channel is closed, and write each message to buf with a space between them (and none after the last)."""
 hint = """
 Writing messages to closed channels will cause a panic.
 
@@ -1347,6 +1353,8 @@ Note: Channels can be iterated using `for-range` loops.
 name = "concurrent4"
 path = "exercises/concurrent/concurrent4/main_test.go"
 mode = "test"
+nudge = """The test is stuck: a send on an unbuffered channel waits for a receiver, and the receiving only happens later in the same goroutine."""
+stronger = """Give the channel a size when you make it, big enough for all the numbers that are sent before the first one is received."""
 hint = """
 A send on an unbuffered channel waits until another goroutine receives, and here the same goroutine would do the receiving later: it deadlocks. A buffered channel, make(chan int, size), accepts that many values without a receiver.
 
@@ -1356,6 +1364,8 @@ For more information: https://go.dev/tour/concurrency/3"""
 name = "concurrent5"
 path = "exercises/concurrent/concurrent5/main_test.go"
 mode = "test"
+nudge = """The results are wrong, and the race detector complains: squares returns before the goroutines have written their answers."""
+stronger = """The WaitGroup is counting the goroutines already. Call its Wait method before the function returns the results."""
 hint = """
 go starts a goroutine and carries on without waiting for it, so squares can return before the goroutines have written their results. The WaitGroup counts them: wg.Wait() blocks until every wg.Done() has been called.
 
@@ -1365,6 +1375,8 @@ For more information: https://pkg.go.dev/sync#WaitGroup"""
 name = "concurrent6"
 path = "exercises/concurrent/concurrent6/main_test.go"
 mode = "test"
+nudge = """The answer is "late" and it took half a second: the code waits for the result for as long as it takes."""
+stronger = """Wait in a select with two cases: one that receives the result, and one that receives from the channel returned by time.After(limit), and return the right text in each."""
 hint = """
 select waits on several channel operations and runs the one that is ready first. time.After(limit) returns a channel that receives a value once the limit has passed: use it as the second case.
 
@@ -1374,6 +1386,8 @@ For more information: https://go.dev/tour/concurrency/5"""
 name = "concurrent7"
 path = "exercises/concurrent/concurrent7/main_test.go"
 mode = "test"
+nudge = """spin is still running a second after the context was cancelled: it is stuck on a send that nobody receives."""
+stronger = """Replace the plain send with a select that has two cases: the send, and a receive from ctx.Done(). Return from the second."""
 hint = """
 A plain send blocks until someone receives, so a cancelled spin would stay stuck on it. Put the send in a select with a second case that receives from ctx.Done(), and return from that case.
 
@@ -1383,6 +1397,8 @@ For more information: https://go.dev/blog/context"""
 name = "concurrent8"
 path = "exercises/concurrent/concurrent8/main_test.go"
 mode = "test"
+nudge = """Only 1 job ran at a time, not 4: no worker has been started, so the jobs are done one by one."""
+stronger = """Start as many goroutines as there are workers. Each ranges over the jobs channel, sends its result, and tells a WaitGroup when it is done, so that the results channel can be closed after the last one."""
 hint = """
 A worker pool is a fixed number of goroutines that all read from the same jobs channel, and send their results on another. Close the jobs channel when there are no more jobs so that the workers' range loops end, and close the results channel after a WaitGroup says all the workers are done.
 
@@ -1392,6 +1408,8 @@ For more information: https://go.dev/blog/pipelines"""
 name = "concurrent9"
 path = "exercises/concurrent/concurrent9/main_test.go"
 mode = "test"
+nudge = """The test waited a second for the merged channel: nothing forwards the values from the inputs to out, or nobody closes out."""
+stronger = """Start one goroutine for each input that sends every value it receives to out. Count them with a WaitGroup, and close out in one more goroutine that waits for the group."""
 hint = """
 Start one goroutine per input, each forwarding its values to out, so that a slow input does not hold up the others. Count them with a WaitGroup, and close out in one more goroutine that waits for the group.
 
@@ -1402,6 +1420,8 @@ name = "concurrent10"
 path = "exercises/concurrent/concurrent10/main_test.go"
 mode = "test"
 race = true
+nudge = """The race detector reports a data race on the settings: many goroutines can reach the loading code at the same time."""
+stronger = """Put the loading in a function and run it through a sync.Once. Every caller calls Do, and the function runs only the first time."""
 hint = """
 Checking a flag and then setting it is not safe when many goroutines do it at the same time: two of them can both see it unset. sync.Once runs a function exactly once, however many goroutines call Do, and everyone waits for it to finish.
 
@@ -1411,6 +1431,8 @@ For more information: https://pkg.go.dev/sync#Once"""
 name = "concurrent11"
 path = "exercises/concurrent/concurrent11/main_test.go"
 mode = "test"
+nudge = """squares gave all zeros: the goroutines were not waited for, so the results were read before they were written."""
+stronger = """Start each goroutine with the Go method of the WaitGroup instead of the go statement, and call Wait once after the loop."""
 hint = """
 Since Go 1.25, `wg.Go(f)` starts `f` in a new goroutine and does the `wg.Add(1)` before and the `wg.Done()` after for you, so you can't forget one of them. You still call `wg.Wait()` to wait for all of them.
 
@@ -1420,6 +1442,8 @@ For more information: https://pkg.go.dev/sync#WaitGroup.Go"""
 name = "concurrent12"
 path = "exercises/concurrent/concurrent12/main_test.go"
 mode = "test"
+nudge = """The test panics with "goroutine is not in a bubble": synctest.Wait only works in a goroutine that runs inside synctest.Test."""
+stronger = """Wrap the whole body of the test in synctest.Test(t, func(t *testing.T) { ... }), so the clock is fake and Wait is allowed."""
 hint = """
 Tests that wait for time are slow and flaky. `synctest.Test(t, f)` (Go 1.25) runs `f` in a bubble with a fake clock: when every goroutine in the bubble is blocked, time jumps ahead to the next timer, so `time.Sleep(time.Hour)` takes no real time. `synctest.Wait()` waits until all the other goroutines of the bubble are blocked, and it only works inside a bubble.
 
@@ -1430,6 +1454,8 @@ name = "concurrent13"
 path = "exercises/concurrent/concurrent13/main_test.go"
 mode = "test"
 go_version = "1.27"
+nudge = """0 of the 5 workers have finished: the test looks at the counter before the minute has passed on the fake clock."""
+stronger = """Where the TODO is, let a minute pass with the function of the synctest package that sleeps and then waits until every other goroutine in the bubble is blocked again."""
 hint = """
 `synctest.Sleep(d)` (Go 1.27) is `time.Sleep(d)` followed by `synctest.Wait()`. After a plain sleep, a goroutine that sleeps for the same time is woken at the same instant and it is not decided which of the two runs first, so the test may look before that goroutine did its work. `synctest.Sleep` also waits until the other goroutines of the bubble have run as far as they can, so you see what they did.
 
@@ -1439,6 +1465,8 @@ For more information: https://pkg.go.dev/testing/synctest#Sleep"""
 name = "concurrent14"
 path = "exercises/concurrent/concurrent14/main_test.go"
 mode = "test"
+nudge = """The lookup took an hour and gave no error: nothing limits how long it may run."""
+stronger = """Make a context that ends after d from the context you were given, call its cancel function when you are done, and pass the new context to the lookup."""
 hint = """
 `context.WithTimeout(parent, d)` returns a context that is cancelled by itself after `d`, and a `cancel` function. Call `cancel` when you are done (`defer cancel()`) so the timer is released. Code that waits on `ctx.Done()` stops, and `ctx.Err()` says why: `context.DeadlineExceeded` for a timeout, `context.Canceled` after a call to `cancel`. `context.WithDeadline` does the same with a point in time instead of a duration.
 
@@ -1448,6 +1476,8 @@ For more information: https://pkg.go.dev/context#WithTimeout"""
 name = "concurrent15"
 path = "exercises/concurrent/concurrent15/main_test.go"
 mode = "test"
+nudge = """Up to 10 tasks ran at the same time instead of 3: nothing stops the loop from starting all of them."""
+stronger = """Make a buffered channel with room for limit values. Send to it before starting a task, which blocks when it is full, and receive from it when the task is done."""
 hint = """
 Starting a goroutine for every task is fine until there are thousands of them, or each one opens a connection. A buffered channel makes a simple limit, a semaphore: send to it before starting a task (this blocks while the channel is full) and receive from it when the task is done to free the slot. The capacity is the number of tasks that may run at once.
 
@@ -1457,6 +1487,8 @@ For more information: https://go.dev/wiki/BoundingResourceUse"""
 name = "concurrent16"
 path = "exercises/concurrent/concurrent16/main_test.go"
 mode = "test"
+nudge = """runTasks returned no error, and the slow task was never told to stop: the error of each task is thrown away, and nothing cancels the context."""
+stronger = """Keep the error that task(ctx) returns. If it is not nil and no task failed before, store it in firstErr (guard that, so that two goroutines can't race) and cancel the context with it. The function returns firstErr after the Wait."""
 hint = """
 Running tasks together and stopping them all when one fails is what `golang.org/x/sync/errgroup` does, and you can build it from the standard library. A context made with `context.WithCancelCause` is given to every task; the first task that fails stores its error and cancels the context, so the others, which wait on `ctx.Done()`, stop early. `sync.Once` makes "remember the first error only" safe when several tasks fail at the same time, and `sync.WaitGroup` waits for all of them.
 
@@ -1466,6 +1498,8 @@ For more information: https://pkg.go.dev/context#WithCancelCause"""
 name = "concurrent17"
 path = "exercises/concurrent/concurrent17/main_test.go"
 mode = "test"
+nudge = """Only one reader ran at a time: a plain Mutex lets one goroutine in even when it only reads."""
+stronger = """Switch the lock to the kind that has separate read and write locks. In Get take the read lock and release it with the matching call; keep the full lock in Set."""
 hint = """
 A `sync.Mutex` lets one goroutine in at a time, even when they only read. `sync.RWMutex` has two kinds of lock: `RLock` and `RUnlock` for readers, any number of which can hold it together, and `Lock` and `Unlock` for a writer, which waits until nobody holds it and keeps everybody else out. It pays off when there are many more reads than writes, and the reads are not tiny.
 
@@ -1475,6 +1509,8 @@ For more information: https://pkg.go.dev/sync#RWMutex"""
 name = "concurrent18"
 path = "exercises/concurrent/concurrent18/main_test.go"
 mode = "test"
+nudge = """10 goroutines became the leader instead of 1: they all saw the flag unset before any of them set it."""
+stronger = """Replace the check and the set with a single atomic operation that sets the flag only if it still has the old value, and tells you whether it did."""
 hint = """
 Checking a flag and then setting it are two steps, and other goroutines can get in between. The `sync/atomic` package does read-modify-write in one step: `Add` for counters, and `CompareAndSwap(old, new)`, which sets the value to `new` only if it is still `old` and tells you whether it did. When many goroutines call `CompareAndSwap(false, true)`, exactly one gets `true`.
 
@@ -1550,6 +1586,8 @@ For more information: https://pkg.go.dev/context#AfterFunc"""
 name = "pitfalls1"
 path = "exercises/pitfalls/pitfalls1/main_test.go"
 mode = "test"
+nudge = """The first slice changed too: a is [1 2 3 5], not [1 2 3 4]. Both appends wrote into the same array."""
+stronger = """Don't append to base directly. Make a new slice with its own array, copy base into it, and append to that."""
 hint = """
 A slice is a small header (a pointer to an array, a length and a capacity). `append` writes into the same array when there is room left (length below capacity), so two slices made with `append` from the same base can end up sharing, and overwriting, the same element. To get a slice of your own, copy into a new one (`slices.Clone`, or `make` and `copy`), or cap the capacity so `append` has to allocate: `base[:len(base):len(base)]`.
 
@@ -1559,6 +1597,8 @@ For more information: https://go.dev/blog/slices-intro"""
 name = "pitfalls2"
 path = "exercises/pitfalls/pitfalls2/main_test.go"
 mode = "test"
+nudge = """The scores are 5 and 12 instead of 15 and 22: the loop changed copies, and the slice kept its old values."""
+stronger = """Loop over the indexes, and change players[i] instead of the loop variable."""
 hint = """
 In `for _, p := range players`, `p` is a copy of the element, so changing it changes nothing in the slice. To change the elements, go through the index: `for i := range players { players[i].Score += 10 }`, or take a pointer to the element: `p := &players[i]`. The same is true for arrays and for maps of structs.
 
@@ -1568,6 +1608,8 @@ For more information: https://go.dev/ref/spec#For_range"""
 name = "pitfalls3"
 path = "exercises/pitfalls/pitfalls3/main_test.go"
 mode = "test"
+nudge = """parseCount("42") returned 0 and no error: the real result variables were never set."""
+stronger = """Inside the if, the := declares new variables that vanish at the closing brace. Use = so that the variables declared before are assigned."""
 hint = """
 `:=` declares new variables, and inside an `if` or a `for` that means new ones that hide the outer ones with the same name (they "shadow" them). `count, err := strconv.Atoi(text)` in an inner block makes an inner `count` and `err`, and when the block ends the function still has the outer ones, untouched. Use `=` to assign to the ones that already exist.
 
@@ -1577,6 +1619,8 @@ For more information: https://go.dev/ref/spec#Declarations_and_scope"""
 name = "pitfalls4"
 path = "exercises/pitfalls/pitfalls4/main_test.go"
 mode = "test"
+nudge = """The test panics with "assignment to entry in nil map": the map was declared but never created."""
+stronger = """Create the map with make before the first write to it."""
 hint = """
 The zero value of a map is `nil`. Reading from a nil map is fine, you get the zero value, but writing to one panics with `assignment to entry in nil map`. Make the map before you write: `make(map[string]int)` or a literal `map[string]int{}`. The same is not true of slices: appending to a nil slice works.
 
@@ -1586,6 +1630,8 @@ For more information: https://go.dev/blog/maps"""
 name = "pitfalls5"
 path = "exercises/pitfalls/pitfalls5/main_test.go"
 mode = "test"
+nudge = """The entries come out in a different order each time: describe goes through the map directly."""
+stronger = """Collect the keys in a slice, sort it, and build the text by going through the sorted keys."""
 hint = """
 A map has no order, and Go makes the order of `range` over a map different on purpose, so nobody relies on it. When the output has to be the same every time (a report, a test, a log line), get the keys, sort them, and go through the sorted keys. `slices.Sorted(maps.Keys(m))` does that in one line.
 
@@ -1595,6 +1641,8 @@ For more information: https://go.dev/blog/maps#iteration-order"""
 name = "pitfalls6"
 path = "exercises/pitfalls/pitfalls6/main_test.go"
 mode = "test"
+nudge = """The second call panics with "close of closed channel": each call closes the channel again."""
+stronger = """Make the close happen only once, however many times the method is called. The sync package has a type made for that."""
 hint = """
 Closing a channel that is already closed panics (`close of closed channel`), and so does sending on a closed one. When a method that closes a channel can be called more than once, make the close happen once: `sync.Once` runs a function exactly one time, however many times `Do` is called, from however many goroutines.
 
@@ -1604,6 +1652,8 @@ For more information: https://pkg.go.dev/sync#Once"""
 name = "pitfalls7"
 path = "exercises/pitfalls/pitfalls7/main_test.go"
 mode = "test"
+nudge = """The counter is 0 instead of 100: each call counted on its own copy of the counter and of its lock."""
+stronger = """Change the receiver of the method to a pointer, so every call works on the same counter."""
 hint = """
 A `sync.Mutex` (and everything that holds one) must not be copied after it is first used: the copy has its own lock state. A method with a value receiver, `func (c Counter) Inc()`, gets a copy of the whole struct on every call, so it locks and changes a copy and the real counter never changes. Use a pointer receiver, and pass such structs by pointer. `go vet` finds this with its `copylocks` check.
 
