@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 210 exercises in 42 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 are done; what is left is the decision about upstream (Phase 6) and the ideas at the end.
+Where things stand (latest release: see the GitHub releases page): 210 exercises in 42 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -82,7 +82,7 @@ Everything here is tagged `go_version = "1.27"`, so it is skipped on 1.26 (the f
 - [x] Releases with binaries on every `v*` tag.
 - [x] Decide: open PRs back to upstream (small, per-topic) or keep the fork independent. Decided: the fork stays independent (see Decided).
 
-## Phase 7 — More topics after 1.0 (planned)
+## Phase 7 — More topics after 1.0 (done)
 Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:` at the fix site and a verified solution, added to `info.toml` in learning order, one small PR per topic. Everything stays in memory or in `t.TempDir()`, so no network is needed.
 - [x] `context` (6): cancel, timeout and deadline, `WithValue` and when not to use it, `WithCancelCause`, `AfterFunc`, `ctx` as the first argument.
 - [x] `time` (6): durations, the reference layout of `Format` and `Parse`, `Truncate`, monotonic against wall clock, timers and tickers (the Go 1.23 change), `testing/synctest`.
