@@ -37,15 +37,11 @@ func TestSolutions(t *testing.T) {
 			t.Errorf("%s: path %q is not laid out as exercises/<topic>/<name>/...", ex.Name, ex.Path)
 			continue
 		}
-		solutionFile := filepath.Join(repoRoot, filepath.FromSlash(solutionPath))
-
-		if _, err := os.Stat(solutionFile); os.IsNotExist(err) {
+		files, err := ex.SolutionFiles(os.DirFS(repoRoot))
+		if err != nil || len(files) == 0 {
 			if allSolutionsRequired {
-				t.Errorf("%s: missing solution %s", ex.Name, solutionPath)
+				t.Errorf("%s: missing solution in %s", ex.Name, ex.SolutionDir())
 			}
-			continue
-		} else if err != nil {
-			t.Errorf("%s: %v", ex.Name, err)
 			continue
 		}
 
@@ -58,10 +54,6 @@ func TestSolutions(t *testing.T) {
 				t.Skipf("%s %s here", ex.Name, reason)
 			}
 
-			files, err := ex.SolutionFiles(os.DirFS(repoRoot))
-			if err != nil {
-				t.Fatal(err)
-			}
 			for _, file := range files {
 				source, err := os.ReadFile(filepath.Join(repoRoot, filepath.FromSlash(file)))
 				if err != nil {

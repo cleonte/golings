@@ -107,7 +107,7 @@ func TestResetRestoresTheOriginalIncludingTheMarker(t *testing.T) {
 	g.Expect(exercises.Exercise{Path: file}.State()).To(Equal(exercises.Pending))
 }
 
-func TestResetRestoresEveryFileOfTheFolderAndKeepsTheLearnersOwn(t *testing.T) {
+func TestResetRestoresEveryFileOfTheFolderAndRemovesTheGoFilesTheLearnerAdded(t *testing.T) {
 	g := NewWithT(t)
 	root := t.TempDir()
 	src := sampleFS()
@@ -117,6 +117,7 @@ func TestResetRestoresEveryFileOfTheFolderAndKeepsTheLearnersOwn(t *testing.T) {
 	g.Expect(os.WriteFile(filepath.Join(folder, "main.go"), []byte("package main\n"), 0o644)).To(Succeed())
 	g.Expect(os.WriteFile(filepath.Join(folder, "helper.go"), []byte("changed"), 0o644)).To(Succeed())
 	g.Expect(os.WriteFile(filepath.Join(folder, "notes.go"), []byte("package main\n"), 0o644)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(folder, "notes.txt"), []byte("my notes"), 0o644)).To(Succeed())
 
 	path, err := workspace.Reset(src, root, "a1")
 
@@ -126,8 +127,8 @@ func TestResetRestoresEveryFileOfTheFolderAndKeepsTheLearnersOwn(t *testing.T) {
 	g.Expect(string(helper)).To(Equal("package main\n\nfunc helper() {}\n"))
 	main, _ := os.ReadFile(filepath.Join(folder, "main.go"))
 	g.Expect(string(main)).To(Equal(unsolved))
-	notes, _ := os.ReadFile(filepath.Join(folder, "notes.go"))
-	g.Expect(string(notes)).To(Equal("package main\n"), "a file the learner added stays")
+	g.Expect(filepath.Join(folder, "notes.go")).NotTo(BeAnExistingFile(), "a Go file the learner added goes")
+	g.Expect(filepath.Join(folder, "notes.txt")).To(BeAnExistingFile(), "other files stay")
 }
 
 func TestResetRecreatesADeletedExercise(t *testing.T) {

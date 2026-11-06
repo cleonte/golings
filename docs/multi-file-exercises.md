@@ -39,8 +39,8 @@ Each step is a small PR that can be released alone. Step 1 changes no behavior.
 - The runner builds the package in the folder of `path` (`go build ./<dir>`, `go test -c ./<dir>`). For the existing exercises this is the same build.
 - `path` keeps its meaning as the **main file**: it holds the `// I AM NOT DONE` marker, it is the file shown in the TUI and the one `n` takes the marker out of. Other files in the folder are plain code with their own `// TODO:` comments.
 - No new manifest fields. A multi-file exercise is one whose folder has more than one `.go` file.
-- `reset` restores every file of the exercise folder from the embedded copy (and only those that exist there; it does not delete files the learner added).
-- Solutions: `solutions/<topic>/<name>/` holds the files that **replace or add to** the exercise files of the same name. `TestSolutions` copies the exercise folder to a temporary folder, copies the solution files over it, and runs that. That also removes the need for solution files to be complete copies.
+- `reset` restores every file of the exercise folder from the embedded copy and removes the Go files the learner added to the folder, so the exercise starts over (other files, such as notes, stay).
+- Solutions: `solutions/<topic>/<name>/` holds the files that **replace or add to** the exercise files of the same name; it need not have the main file at all (an exercise solved by adding a new file has only that file). `TestSolutions` copies the exercise folder to a temporary folder, copies the solution files over it, and runs that. That also removes the need for solution files to be complete copies.
 - `golings solution` and the `s` key show all solution files, each with its name, not only the main one.
 - `TestNoOrphanedSolutions` and the manifest tests check "every solution file has an exercise file or is an addition inside its folder" instead of "same path".
 - The Go version checks in the manifest tests read every file of the folder.
