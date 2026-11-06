@@ -92,10 +92,16 @@ Same format as before: 5 to 6 exercises per topic, each with a hint, a `// TODO:
 - [ ] `cmp`, `sort` and `container` (4–5): `cmp.Compare`, `slices.SortFunc` with several keys, `container/heap` and `list`.
 - [ ] Smaller topics, if wanted: `regexp`, `text/template`, `unique`, `weak`, `sync.Pool`, `math/rand/v2`, and `encoding` (`base64`, `hex`, `csv`, `binary`).
 
+## Phase 8 — Tool features (planned)
+Ideas from reading a similar project, [madhank93/golings](https://github.com/madhank93/golings) (another fork of upstream; Apache-2.0). Ideas only: nothing is copied, and every exercise here is written and verified on its own.
+- [ ] Graded hints: besides `hint`, optional `nudge` (what the error means) and `stronger` (where to change it) in `info.toml`; `h` in `watch` shows them one at a time, then the full hint. Exercises without them keep working as now.
+- [ ] A key in `watch` to open the exercise in `$VISUAL` or `$EDITOR`.
+- [ ] Exercises that span several files and packages (modules, `internal`, multi-package layouts). Needs `init`, `reset`, the embedded copy and `TestSolutions` to handle a folder, and an exercise with its own `go.mod`. Design first, as a short note, before any exercise.
+
 ## Ideas, not scheduled
-- Exercises that span several files (modules, `internal`, multi-package), which also needs `init`, `reset` and the embedded copy to handle a folder instead of a file.
 - More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` is done; `reflect` is left.
-- Not planned: `cgo` and `unsafe`, because they need a C compiler, which the supported setups do not all have.
+- Topics seen in the project above that are not in Phase 7 yet: `reflect`, enums with `iota` and type aliases (neither is covered today), testing with fakes and dependency injection, profiling and benchmarks, `net` over loopback (`net.Pipe` first), `unsafe` (pure Go, no C compiler needed).
+- Not planned: `cgo` (needs a C compiler, which the supported setups do not all have) and exercises that start other programs (they depend on what is installed).
 - Fuzzing as a testing exercise.
 - A web version, as the upstream README mentions.
 
