@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -291,4 +292,45 @@ func TestANewRunScrollsBackToTheTopAndClosesPanels(t *testing.T) {
 
 	g.Expect(m.mode).To(Equal(modeResult))
 	g.Expect(m.scroll).To(Equal(0))
+}
+
+func TestEditWithoutAnEditorSaysHowToSetOne(t *testing.T) {
+	g := NewWithT(t)
+	m, _ := withExercise(t)
+
+	cmd := press(m, "e")
+	g.Expect(cmd).To(BeNil())
+	g.Expect(m.View().Content).To(ContainSubstring("Set $VISUAL or $EDITOR"))
+	g.Expect(m.View().Content).NotTo(ContainSubstring("e edit"))
+}
+
+func TestEditOpensTheMainFileFirstThenTheOthers(t *testing.T) {
+	g := NewWithT(t)
+	m, file := withExercise(t, func(c *Config) { c.Editor = "myeditor --wait" })
+	dir := filepath.Dir(file)
+	for name, content := range map[string]string{"extra.go": "package main\n", "notes.txt": "x"} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	g.Expect(m.View().Content).To(ContainSubstring("e edit"))
+
+	g.Expect(m.exerciseFiles()).To(Equal([]string{file, filepath.Join(dir, "extra.go")}))
+	g.Expect(press(m, "e")).NotTo(BeNil())
+}
+
+func TestEditNeedsAnExercise(t *testing.T) {
+	g := NewWithT(t)
+	m, _ := withExercise(t, func(c *Config) { c.Editor = "myeditor" })
+	m.status = statusAllDone
+
+	g.Expect(press(m, "e")).To(BeNil())
+}
+
+func TestEditorFailureIsShown(t *testing.T) {
+	g := NewWithT(t)
+	m, _ := withExercise(t, func(c *Config) { c.Editor = "myeditor" })
+
+	m.Update(editDoneMsg{err: errors.New("exit status 1")})
+	g.Expect(m.View().Content).To(ContainSubstring("The editor failed: exit status 1"))
 }

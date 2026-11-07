@@ -51,6 +51,7 @@ them in full (in the full-screen view the f key does).`,
 					Source:    golings.FS,
 					Root:      filepath.Dir(infoFile),
 					Solutions: golings.Solutions,
+					Editor:    editorCommand(),
 				})
 			}
 
@@ -120,4 +121,13 @@ func watchLoop(in io.Reader, changes <-chan []string, actions watchActions) {
 			}
 		}
 	}
+}
+
+// editorCommand is the editor the learner has set up, for the e key of the
+// full-screen view.
+func editorCommand() string {
+	if editor := strings.TrimSpace(os.Getenv("VISUAL")); editor != "" {
+		return editor
+	}
+	return strings.TrimSpace(os.Getenv("EDITOR"))
 }
