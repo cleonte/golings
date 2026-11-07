@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- Support for exercises about modules: an exercise can be a module of its own (`module = true` in `info.toml`), with a `go.mod`, a dependency in a folder of it that a `replace` points to, or a `go.work`. It is built and run inside its folder with the network off, no other Go downloaded and the workspace off, so it works the same everywhere. `watch` also notices saves of `go.mod`, `go.sum` and `go.work`, and `golings init`, `reset` and `solution` handle the files of such an exercise (they are stored with a `.txt` added in the repository and in the binary). There are no exercises that use it yet.
+
 ## [1.6.0] - 2026-11-07
 
 ### Added

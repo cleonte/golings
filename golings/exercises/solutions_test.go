@@ -66,6 +66,10 @@ func TestSolutions(t *testing.T) {
 
 			unsolved := ex
 			unsolved.Path = filepath.Join(repoRoot, filepath.FromSlash(ex.Path))
+			if ex.Module {
+				// The files are stored with a .txt: run them as a learner has them.
+				unsolved = inAFolderOfItsOwn(t, ex, nil)
+			}
 			if result, err := unsolved.Run(); err == nil {
 				t.Errorf("the unsolved exercise passes, it should fail:\n%s", result.Out)
 			}
@@ -100,7 +104,7 @@ func inAFolderOfItsOwn(t *testing.T, ex exercises.Exercise, solutionFiles []stri
 			if err != nil {
 				return err
 			}
-			target := filepath.Join(to, rel)
+			target := filepath.Join(to, ex.LearnerName(rel))
 			if d.IsDir() {
 				return os.MkdirAll(target, 0o755)
 			}
@@ -116,7 +120,7 @@ func inAFolderOfItsOwn(t *testing.T, ex exercises.Exercise, solutionFiles []stri
 	}
 	copyTree(filepath.Join(repoRoot, ex.Dir()), filepath.Join(root, ex.Dir()))
 	for _, file := range solutionFiles {
-		rel := strings.TrimPrefix(file, ex.SolutionDir()+"/")
+		rel := ex.LearnerName(strings.TrimPrefix(file, ex.SolutionDir()+"/"))
 		target := filepath.Join(root, ex.Dir(), filepath.FromSlash(rel))
 		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 			t.Fatal(err)

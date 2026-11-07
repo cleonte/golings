@@ -61,9 +61,9 @@ the solution stays hidden unless you pass --reveal.`,
 					return err
 				}
 				if i == 0 {
-					color.Cyan("Solution for %s (%s):\n\n", exercise.Name, file)
+					color.Cyan("Solution for %s (%s):\n\n", exercise.Name, exercise.LearnerName(file))
 				} else {
-					color.Cyan("\n%s:\n\n", file)
+					color.Cyan("\n%s:\n\n", exercise.LearnerName(file))
 				}
 				// Printed as is: the source is not a format string, it may well contain %d.
 				_, _ = fmt.Fprint(color.Output, string(source))

@@ -330,7 +330,7 @@ func (m *Model) exerciseFiles() []string {
 	}
 	for _, entry := range entries {
 		file := filepath.Join(filepath.Dir(main), entry.Name())
-		if !entry.IsDir() && filepath.Ext(file) == ".go" && file != main {
+		if !entry.IsDir() && file != main && (filepath.Ext(file) == ".go" || entry.Name() == "go.mod" || entry.Name() == "go.work") {
 			files = append(files, file)
 		}
 	}
@@ -614,7 +614,7 @@ func (m *Model) solutionLines() []string {
 			if i > 0 {
 				lines = append(lines, "")
 			}
-			lines = append(lines, dimStyle.Render(file), "")
+			lines = append(lines, dimStyle.Render(m.exercise.LearnerName(file)), "")
 		}
 		source = bytes.ReplaceAll(source, []byte("\t"), []byte("    "))
 		lines = append(lines, strings.Split(strings.TrimRight(string(source), "\n"), "\n")...)

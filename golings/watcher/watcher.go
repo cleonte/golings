@@ -110,9 +110,13 @@ func addTree(w *fsnotify.Watcher, root string) error {
 	})
 }
 
-// isExerciseFile is true for Go sources, leaving out the backups, swap files
-// and temporary files editors create next to them.
+// isExerciseFile is true for Go sources and for the files that make up a module
+// (go.mod, go.sum, go.work), leaving out the backups, swap files and temporary
+// files editors create next to them.
 func isExerciseFile(name string) bool {
 	base := filepath.Base(name)
-	return strings.HasSuffix(base, ".go") && !strings.HasPrefix(base, ".") && !strings.HasPrefix(base, "#")
+	if strings.HasPrefix(base, ".") || strings.HasPrefix(base, "#") {
+		return false
+	}
+	return strings.HasSuffix(base, ".go") || base == "go.mod" || base == "go.sum" || base == "go.work"
 }
