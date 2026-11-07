@@ -12,7 +12,7 @@ import (
 )
 
 func RunCmd(infoFile string) *cobra.Command {
-	var verbose bool
+	var verbose, asJSON bool
 
 	runCmd := &cobra.Command{
 		Use:   "run next | <exercise name>",
@@ -29,6 +29,10 @@ example specific exercise : golings run variables1`,
 				exercise, err = exercises.NextPending(infoFile)
 			} else {
 				exercise, err = exercises.Find(args[0], infoFile)
+			}
+
+			if asJSON {
+				return runAsJSON(cmd.OutOrStdout(), exercise, args[0], err)
 			}
 
 			spinner := RunSpinner(exercise.Name)
@@ -64,6 +68,7 @@ example specific exercise : golings run variables1`,
 		},
 	}
 	runCmd.Flags().BoolVar(&verbose, "verbose", false, verboseFlagHelp)
+	runCmd.Flags().BoolVar(&asJSON, "json", false, jsonFlagHelp)
 
 	return runCmd
 }

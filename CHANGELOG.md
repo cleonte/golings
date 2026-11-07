@@ -8,6 +8,11 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- `golings list --json` and `golings run --json` print the exercises, their state and the result of a run as JSON, for editors and scripts. The format is versioned and described in `docs/json.md`. `run --json` exits 0 when the exercise fails (the answer is in `status`); both exit 1 with an `error` field when they can't answer.
+- A README section about using golings in an editor (VS Code and the errors gopls shows in an unfixed exercise).
+
 ## [1.7.0] - 2026-11-07
 
 ### Added

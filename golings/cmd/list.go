@@ -10,12 +10,21 @@ import (
 )
 
 func ListCmd(infoFile string) *cobra.Command {
-	return &cobra.Command{
+	var asJSON bool
+
+	listCmd := &cobra.Command{
 		Use:           "list",
 		Short:         "List all exercises",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if asJSON {
+				list, err := listJSON(infoFile)
+				if err != nil {
+					return jsonError(cmd.OutOrStdout(), err)
+				}
+				return writeJSON(cmd.OutOrStdout(), list)
+			}
 			exs, err := exercises.List(infoFile)
 			if err != nil {
 				color.Red(err.Error())
@@ -26,4 +35,7 @@ func ListCmd(infoFile string) *cobra.Command {
 			return nil
 		},
 	}
+	listCmd.Flags().BoolVar(&asJSON, "json", false, jsonFlagHelp)
+
+	return listCmd
 }
