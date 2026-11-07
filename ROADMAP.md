@@ -115,12 +115,14 @@ Topics a similar project ([madhank93/golings](https://github.com/madhank93/golin
 - [x] `cli` (5): `flag.FlagSet` and `Parse`, `Args`, exit codes and stderr, a repeatable flag with `Func`, subcommands.
 - [x] Several files and packages in an exercise (`packages5` to `packages8`, the `layout` topic).
 - [x] A capstone: a word counter in five steps (`capstone1` to `capstone5`), each starting from the finished previous step.
+- [x] `--json` output for `list` and `run` (docs/json.md), the base for an editor extension; the extension itself waits until someone asks.
 - [x] Module exercises (`go.mod` itself): a `modules` topic of 5 exercises, each a module of its own (step 3 of docs/multi-file-exercises.md).
 
 ## Ideas, not scheduled
 - More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` and `reflect` are done.
 - Not planned: `cgo` (needs a C compiler, which the supported setups do not all have) and exercises that start other programs (they depend on what is installed).
 - A web version, as the upstream README mentions.
+- A VS Code extension on top of `--json`: a sidebar of topics and exercises, with run on save. Only if someone asks for it.
 
 ## Decided
 - The fork stays independent. No pull requests back to upstream: it has had no commit since March 2025, and the changes (Go 1.26 floor, a new manifest field, the TUI, 105 more exercises) are too large to send in small pieces. Upstream gets a friendly issue saying a maintained fork exists; the README credits Mauricio Abreu and keeps the Apache-2.0 license.

@@ -179,6 +179,14 @@ A demo running the command `golings run <exercise name>`
 
 ![demo](misc/demo.gif)
 
+## Using golings in an editor
+
+`golings watch` works in the terminal of any editor. In VS Code, open the integrated terminal (split it so the exercise stays in view), run `golings watch`, and press `e` to open the exercise file; every save runs the exercise again.
+
+The Go extension (gopls) shows red errors in an exercise you have not fixed yet. That is the exercise, not a broken setup: the compiler error in the editor and the one in `golings` are the same.
+
+Tools can read the state of the exercises without parsing the text: `golings list --json` and `golings run --json <exercise name | next>` print JSON, described in [docs/json.md](docs/json.md).
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
