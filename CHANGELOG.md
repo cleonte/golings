@@ -10,7 +10,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
-- A `capstone` topic, at the end, with its first exercise: a word counter built a step at a time, each exercise a step in the life of the same program, with the files of one package in the folder of the exercise. `capstone1` adds the missing method of a `Counter` type that `main` calls. 253 exercises in 51 topics in all.
+- A `capstone` topic, at the end, with 5 exercises: a word counter built a step at a time, each exercise a step in the life of the same program, starting from the finished previous step, with the files of one package (and a package of its own) in the folder of the exercise. `capstone1` adds the missing method of a `Counter` type, `capstone2` reads words from a stream (and the limits of `bufio.Scanner`), `capstone3` defines an interface where it is used and tests with a fake, `capstone4` is the whole program with flags and exit codes, and `capstone5` counts in parallel without sharing. 257 exercises in 51 topics in all.
 - `e` in the full-screen `watch` opens the exercise in your editor (`$VISUAL`, or else `$EDITOR`), with the main file first and the other Go files of the exercise after it. The view waits until you close the editor. Without an editor set, the key says how to set one.
 
 ## [1.5.0] - 2026-11-06

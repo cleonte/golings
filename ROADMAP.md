@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 253 exercises in 51 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done except the capstone, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features: module exercises) and the capstone (a pilot, `capstone1`, is in) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 257 exercises in 51 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done, the capstone included, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features: module exercises) and the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -102,7 +102,7 @@ Ideas from reading a similar project, [madhank93/golings](https://github.com/mad
 - [x] Graded hints, the tool: besides `hint`, optional `nudge` (what the error means) and `stronger` (where to change it) in `info.toml`; `h` in `watch` shows them one at a time, then the full hint; `golings hint --level N`; `hint` in the plain watch steps through them. Exercises without them keep working as now.
 - [x] Graded hints, the content (all 182 exercises): `nudge` and `stronger` for every exercise, written from the real failure of the unsolved version. A manifest test requires them.
 - [x] A key in `watch` to open the exercise in `$VISUAL` or `$EDITOR` (`e`).
-- [x] Exercises that span several files and packages: the exercise is the whole folder, with packages of its own (steps 1 and 2 of [docs/multi-file-exercises.md](docs/multi-file-exercises.md)). Exercises about `go.mod` itself (step 3) and the capstone wait until someone asks.
+- [x] Exercises that span several files and packages: the exercise is the whole folder, with packages of its own (steps 1 and 2 of [docs/multi-file-exercises.md](docs/multi-file-exercises.md)). The capstone is built on top of it; exercises about `go.mod` itself (step 3) wait until someone asks.
 
 ## Phase 9 — Closing the gap with other projects
 Topics a similar project ([madhank93/golings](https://github.com/madhank93/golings)) has and this one lacks. Same format as Phase 7, one PR per topic, released together.
@@ -114,7 +114,8 @@ Topics a similar project ([madhank93/golings](https://github.com/madhank93/golin
 - [x] `fuzz` (4): fuzzing as a testing exercise: a property over runes, no panic on bad input, seeds of the right types, an escape round trip.
 - [x] `cli` (5): `flag.FlagSet` and `Parse`, `Args`, exit codes and stderr, a repeatable flag with `Func`, subcommands.
 - [x] Several files and packages in an exercise (`packages5` to `packages8`, the `layout` topic).
-- [ ] A capstone (a program in steps; the pilot `capstone1`, a word counter, is in, the other steps wait for a decision) and module exercises (`go.mod` itself): see docs/multi-file-exercises.md.
+- [x] A capstone: a word counter in five steps (`capstone1` to `capstone5`), each starting from the finished previous step.
+- [ ] Module exercises (`go.mod` itself): see docs/multi-file-exercises.md.
 
 ## Ideas, not scheduled
 - More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` and `reflect` are done.
