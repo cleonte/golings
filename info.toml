@@ -2734,3 +2734,14 @@ hint = """
 `encoding/json/v2` (Go 1.27) is a new JSON package with the same two entry points, `json.Marshal(value)` and `json.Unmarshal(data, &value)`, and stricter, more interoperable defaults than the old `encoding/json`. Two differences you can see here: a nil slice (or map) is written as `[]` (or `{}`), where v1 writes `null`; and an object with the same name twice is an error, where v1 quietly keeps the last one. (JSON names are also matched case-sensitively.) `encoding/json` itself is built on v2 now, but keeps its old behavior.
 
 For more information: https://pkg.go.dev/encoding/json/v2"""
+
+[[exercises]]
+name = "capstone1"
+path = "exercises/capstone/capstone1/main.go"
+mode = "compile"
+nudge = """The compiler says c.Total undefined: main calls a method that the Counter type does not have."""
+stronger = """Open counter.go and write Total there, a method on *Counter that adds up the numbers in the counts map and returns the sum."""
+hint = """
+The files of a folder are one package, so `main.go` can use `Counter` from `counter.go` without an import, and a method can be added to the type in any file of the package, as long as it is the same package. `Total` is a method with the same receiver as `Add` and `Count`: `func (c *Counter) Total() int`. Range over the map to add up its values (`for _, n := range c.counts`); each value is how many times one word was added, so the sum is every word, counting repeats.
+
+For more information: https://go.dev/ref/spec#Method_declarations"""
