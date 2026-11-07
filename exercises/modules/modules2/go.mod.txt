@@ -1,0 +1,11 @@
+// modules2
+// Make me compile!
+
+// I AM NOT DONE
+module example.com/app
+
+go 1.26
+
+// TODO: main.go imports example.com/greet, but this go.mod does not require it. Add the require line (the version v0.0.0 will do: the replace below decides where the code is).
+
+replace example.com/greet => ./greet

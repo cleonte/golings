@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing/fstest"
 
 	"github.com/cleonte/golings/golings/exercises"
@@ -91,6 +92,24 @@ var _ = Describe("Module exercises", func() {
 
 		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Out).To(ContainSubstring("hello from a module"))
+	})
+
+	It("finds the go.work of the exercise when the folder is reached through a symbolic link", func() {
+		if runtime.GOOS == "windows" {
+			Skip("symbolic links need privileges on Windows")
+		}
+		ex := moduleExercise("module example.com/app\n\ngo 1.26\n", map[string]string{
+			"go.work": "go 1.26\n\nuse (\n\t.\n\t./greet\n)\n",
+		})
+		real, err := filepath.Abs(filepath.Join(ex.Root, filepath.Dir(ex.Path)))
+		Expect(err).NotTo(HaveOccurred())
+		link := filepath.Join(GinkgoT().TempDir(), "link")
+		Expect(os.Symlink(real, link)).To(Succeed())
+		ex.Root, ex.Path = link, "go.mod"
+
+		result, err := ex.Run()
+
+		Expect(err).NotTo(HaveOccurred(), result.Err)
 	})
 
 	It("says to run golings init where the files are not in place", func() {

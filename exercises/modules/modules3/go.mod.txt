@@ -1,0 +1,11 @@
+// modules3
+// Make me compile!
+
+// I AM NOT DONE
+module example.com/app
+
+go 1.26
+
+require example.com/greet v0.0.0
+
+// TODO: example.com/greet is not published anywhere, it is the folder greet next to this file. Add a replace line that points the module at that folder.

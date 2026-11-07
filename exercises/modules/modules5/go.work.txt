@@ -1,0 +1,8 @@
+// modules5
+// Make me compile!
+
+// I AM NOT DONE
+go 1.26
+
+// TODO: This workspace has the app but not the greet module that the app imports. Add greet to the use list.
+use .

@@ -1,0 +1,8 @@
+// modules1
+// Make me compile!
+
+// I AM NOT DONE
+module example.com/hello
+
+// TODO: This go.mod asks for a newer Go than the one that is installed. Change the go line to a version you have (1.26 is enough here).
+go 1.99

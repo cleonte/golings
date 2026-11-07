@@ -1,0 +1,12 @@
+// modules4
+// Make me compile!
+
+// I AM NOT DONE
+module example.com/app
+
+go 1.26
+
+// TODO: The module in greet/ is version 2: its go.mod says example.com/greet/v2, and main.go imports that path. Use the /v2 path in the require and in the replace, and v2.0.0 as the version.
+require example.com/greet v0.0.0
+
+replace example.com/greet => ./greet

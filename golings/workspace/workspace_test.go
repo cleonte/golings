@@ -184,7 +184,7 @@ func TestEmbeddedExercisesAreComplete(t *testing.T) {
 
 	g.Expect(listed).To(Equal(onDisk))
 	for _, ex := range listed {
-		original, err := fs.ReadFile(golings.FS, ex.Path)
+		original, err := fs.ReadFile(golings.FS, ex.StoredName(ex.Path))
 		g.Expect(err).NotTo(HaveOccurred(), ex.Name)
 		g.Expect(string(original)).To(ContainSubstring("I AM NOT DONE"), ex.Name)
 	}
