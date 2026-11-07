@@ -8,6 +8,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-11-07
+
 ### Added
 
 - A `modules` topic, 5 exercises, after `layout`, about the files that make a module, each a folder that is a module of its own, built with the network off: a `go` line newer than the installed Go, a `replace` without its `require`, a `require` without its `replace`, a `/v2` module path, and a `go.work` that does not list a module. 262 exercises in 52 topics in all.
@@ -112,7 +114,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/cleonte/golings/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cleonte/golings/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cleonte/golings/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cleonte/golings/compare/v1.3.0...v1.4.0
