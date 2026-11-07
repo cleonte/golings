@@ -1,6 +1,6 @@
 # Design note: exercises that span several files and packages
 
-Status: accepted and built. Step 1 and step 2 are in (v1.5.0), and the capstone is in too (v1.6.0, five steps, a word counter). Step 3 waits until someone asks for it.
+Status: accepted and built. Step 1 and step 2 are in (v1.5.0), and the capstone is in too (v1.6.0, five steps, a word counter). Step 3 (module exercises) is built too.
 
 ## Why
 
@@ -94,7 +94,7 @@ Each step starts from the solved previous step, so the exercise folder carries t
 
 ## Order of work
 
-Done so far: steps 1 and 2, the multi-file exercises, the `layout` topic and the capstone. Left: step 3.
+Done: steps 1, 2 and 3, the multi-file exercises, the `layout` topic, the capstone and the `modules` topic.
 
 1. Step 1 (an exercise is a folder), with a CHANGELOG line and no visible effect for learners.
 2. Two-file exercises in existing topics (for example `packages`) to prove the mechanism.

@@ -10,7 +10,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
-- Support for exercises about modules: an exercise can be a module of its own (`module = true` in `info.toml`), with a `go.mod`, a dependency in a folder of it that a `replace` points to, or a `go.work`. It is built and run inside its folder with the network off, no other Go downloaded and the workspace off, so it works the same everywhere. `watch` also notices saves of `go.mod`, `go.sum` and `go.work`, and `golings init`, `reset` and `solution` handle the files of such an exercise (they are stored with a `.txt` added in the repository and in the binary). There are no exercises that use it yet.
+- A `modules` topic, 5 exercises, after `layout`, about the files that make a module, each a folder that is a module of its own, built with the network off: a `go` line newer than the installed Go, a `replace` without its `require`, a `require` without its `replace`, a `/v2` module path, and a `go.work` that does not list a module. 262 exercises in 52 topics in all.
+- Support for exercises about modules: an exercise can be a module of its own (`module = true` in `info.toml`), with a `go.mod`, a dependency in a folder of it that a `replace` points to, or a `go.work`. It is built and run inside its folder with the network off, no other Go downloaded and the workspace off, so it works the same everywhere. `watch` also notices saves of `go.mod`, `go.sum` and `go.work`, and `golings init`, `reset` and `solution` handle the files of such an exercise (they are stored with a `.txt` added in the repository and in the binary). A symbolic link in the path of the exercises folder does not confuse the workspace of such an exercise.
 
 ## [1.6.0] - 2026-11-07
 

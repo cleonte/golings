@@ -726,6 +726,66 @@ An import path ends with the name of a folder, but the name you use in code is t
 For more information: https://go.dev/ref/mod#major-version-suffixes"""
 
 [[exercises]]
+name = "modules1"
+path = "exercises/modules/modules1/go.mod"
+mode = "compile"
+module = true
+nudge = """Go says go.mod requires go >= 1.99, and that it is running an older Go: the go line asks for a version that is not installed."""
+stronger = """Change the go line of go.mod to 1.26, a version that you have."""
+hint = """
+The `go` line of a `go.mod` is the Go version the module needs. A Go older than that refuses to build it, and, with a toolchain download turned off (as it is here), it says so; with the default settings it would try to fetch the newer Go. Write the oldest version that your code needs: `go 1.26` is enough for this program, and any version you have installed is fine.
+
+For more information: https://go.dev/doc/modules/gomod-ref#go"""
+
+[[exercises]]
+name = "modules2"
+path = "exercises/modules/modules2/go.mod"
+mode = "compile"
+module = true
+nudge = """Go says module example.com/greet provides the package main imports and is replaced but not required."""
+stronger = """Add a require line for example.com/greet with the version v0.0.0 to go.mod; the replace line already says where the code is."""
+hint = """
+A `replace` only says where to find a module that is already needed; it does not make the module needed. The `require` line is what adds a module to the build (`require example.com/greet v0.0.0`), and it needs a version even when the code comes from a folder: `v0.0.0` is the usual placeholder for a module that is never published. Normally `go get example.com/greet` or `go mod tidy` writes the line for you.
+
+For more information: https://go.dev/doc/modules/gomod-ref#require"""
+
+[[exercises]]
+name = "modules3"
+path = "exercises/modules/modules3/go.mod"
+mode = "compile"
+module = true
+nudge = """Go says there is no go.sum entry for example.com/greet: the module is required, but nothing says where its code is, so Go would look for it on a server, which is turned off here."""
+stronger = """Add replace example.com/greet => ./greet to go.mod, so the module is the folder greet next to it."""
+hint = """
+A module that is required is looked for on a module server, with a checksum in `go.sum`. A module that only exists on your disk has neither: a `replace` line points its name at a folder (`replace example.com/greet => ./greet`), and the folder must have its own `go.mod`. That is how you develop two modules together before one of them is published, or use a local fork of a dependency.
+
+For more information: https://go.dev/doc/modules/gomod-ref#replace"""
+
+[[exercises]]
+name = "modules4"
+path = "exercises/modules/modules4/go.mod"
+mode = "compile"
+module = true
+nudge = """Go cannot find a module that provides example.com/greet/v2: main.go imports the /v2 path, and go.mod only knows the one without /v2."""
+stronger = """In go.mod, use example.com/greet/v2 in the require (with v2.0.0) and in the replace."""
+hint = """
+From major version 2 on, the name of a module ends with `/v2` (`/v3`, and so on), in its `go.mod` (`module example.com/greet/v2`), in every import of its packages, and in the `require` and `replace` lines. It lets a program use v1 and v2 of the same module at once, because to Go they are different modules. The version in the `require` has to be `v2.x.y` too. The folder of the module can be named anything: `greet/` here, but its `go.mod` says what the module is called.
+
+For more information: https://go.dev/blog/v2-go-modules"""
+
+[[exercises]]
+name = "modules5"
+path = "exercises/modules/modules5/go.work"
+mode = "compile"
+module = true
+nudge = """Go cannot find a module that provides example.com/greet: the workspace lists only the app, not the folder with greet."""
+stronger = """In go.work, put ./greet in the use list next to the app (a use ( ... ) block with . and ./greet)."""
+hint = """
+A `go.work` file lists the modules you are working on together with `use` (`use ./app`, or a block `use ( ... )` for several). Modules in the list find each other's packages by name without `require` or `replace` lines in their `go.mod` files, and the file stays out of the modules, so you can keep it out of version control. `go work init` and `go work use` write it for you. Without the module in the list, nothing says where `example.com/greet` is.
+
+For more information: https://go.dev/doc/tutorial/workspaces"""
+
+[[exercises]]
 name = "pointers1"
 path = "exercises/pointers/pointers1/main.go"
 mode = "compile"

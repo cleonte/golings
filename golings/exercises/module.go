@@ -43,7 +43,10 @@ func (e Exercise) moduleEnv() []string {
 	if path := filepath.Join(e.moduleDir(), "go.work"); fileExists(path) {
 		work = path
 	}
-	return []string{"GOWORK=" + work, "GOPROXY=off", "GOFLAGS=-mod=readonly", "GOTOOLCHAIN=local"}
+	// PWD is the folder as the other paths here spell it. The one inherited is the
+	// folder golings runs in, and a folder reached through a symbolic link would
+	// otherwise be two different paths for the workspace.
+	return []string{"PWD=" + e.moduleDir(), "GOWORK=" + work, "GOPROXY=off", "GOFLAGS=-mod=readonly", "GOTOOLCHAIN=local"}
 }
 
 func fileExists(path string) bool {

@@ -1,6 +1,6 @@
 # ROADMAP — modernizing golings
 
-Where things stand (latest release: see the GitHub releases page): 257 exercises in 51 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done, the capstone included, and the fork's independence is decided (Phase 6). What is left is Phase 8 (tool features: module exercises) and the topics in the Ideas list.
+Where things stand (latest release: see the GitHub releases page): 262 exercises in 52 topics, each with a verified solution; a full-screen `watch`; `init`, `reset`, `solution`, `doctor`. Phases 1 to 5 and 7 are done, and Phase 9 (closing the gap with other projects) is done, the capstone included, and the fork's independence is decided (Phase 6). What is left is the topics in the Ideas list.
 
 Baseline (upstream HEAD, for the record): last commit 2025-03-12, `go 1.19` in go.mod and CI, `actions/checkout@v3` / `setup-go@v3`, deps from 2022 (cobra 1.6, fsnotify 1.6, go-pretty 6.4, ginkgo 2.5, progressbar 3.12, go-toml 2.0.5, fatih/color 1.13). 43 exercises in 13 topics.
 
@@ -115,7 +115,7 @@ Topics a similar project ([madhank93/golings](https://github.com/madhank93/golin
 - [x] `cli` (5): `flag.FlagSet` and `Parse`, `Args`, exit codes and stderr, a repeatable flag with `Func`, subcommands.
 - [x] Several files and packages in an exercise (`packages5` to `packages8`, the `layout` topic).
 - [x] A capstone: a word counter in five steps (`capstone1` to `capstone5`), each starting from the finished previous step.
-- [ ] Module exercises (`go.mod` itself): see docs/multi-file-exercises.md.
+- [x] Module exercises (`go.mod` itself): a `modules` topic of 5 exercises, each a module of its own (step 3 of docs/multi-file-exercises.md).
 
 ## Ideas, not scheduled
 - More topics from [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests) (MIT licensed, used as a topic list only): `encoding/json` and `reflect` are done.
