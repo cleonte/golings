@@ -2,6 +2,7 @@ package exercises_test
 
 import (
 	"go/version"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -72,15 +73,40 @@ var _ = Describe("Repository manifest", func() {
 
 	It("points every exercise at an existing file", func() {
 		for _, ex := range all {
-			Expect(filepath.Join("../..", ex.Path)).To(BeARegularFile(), "exercise %s", ex.Name)
+			Expect(filepath.Join("../..", ex.StoredName(ex.Path))).To(BeARegularFile(), "exercise %s", ex.Name)
 		}
 	})
 
 	It("ships every exercise unsolved", func() {
 		for _, ex := range all {
-			data, err := os.ReadFile(filepath.Join("../..", ex.Path))
+			data, err := os.ReadFile(filepath.Join("../..", ex.StoredName(ex.Path)))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(string(data)).To(MatchRegexp(`(?m)^\s*///?\s*I\s+AM\s+NOT\s+DONE`), "exercise %s", ex.Name)
+		}
+	})
+
+	It("stores the files of a module exercise with a .txt, and no other exercise has a go.mod", func() {
+		// go:embed leaves out a folder that holds a go.mod, and a go.mod or Go
+		// files would make the folder a part of (or a module inside) the module
+		// of this repository, so they only exist under a .txt name.
+		modules := map[string]bool{}
+		for _, ex := range all {
+			modules[filepath.ToSlash(ex.Dir())] = ex.Module
+		}
+		for dir, module := range modules {
+			err := filepath.WalkDir(filepath.Join("../..", filepath.FromSlash(dir)), func(name string, d fs.DirEntry, err error) error {
+				if err != nil || d.IsDir() {
+					return err
+				}
+				switch base := d.Name(); {
+				case module:
+					Expect(base).To(HaveSuffix(".txt"), "%s is in a module exercise, so it is stored with a .txt", name)
+				default:
+					Expect([]string{"go.mod", "go.sum", "go.work"}).NotTo(ContainElement(base), "%s: only a module exercise has module files", name)
+				}
+				return nil
+			})
+			Expect(err).NotTo(HaveOccurred())
 		}
 	})
 
@@ -89,7 +115,7 @@ var _ = Describe("Repository manifest", func() {
 			if ex.Mode != "test" {
 				continue
 			}
-			tests, err := filepath.Glob(filepath.Join("../..", filepath.Dir(ex.Path), "*_test.go"))
+			tests, err := filepath.Glob(filepath.Join("../..", filepath.Dir(ex.Path), ex.StoredName("*_test.go")))
 			Expect(err).NotTo(HaveOccurred())
 			Expect(tests).NotTo(BeEmpty(), "exercise %s", ex.Name)
 		}

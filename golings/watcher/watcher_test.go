@@ -234,3 +234,15 @@ func TestWatchStartsWhileFilesAreBeingWritten(t *testing.T) {
 		t.Fatal("Watch did not return while files were being written")
 	}
 }
+
+func TestSeesTheFilesOfAModule(t *testing.T) {
+	g := NewWithT(t)
+	_, file, changes, _ := start(t)
+	dir := filepath.Dir(file)
+
+	write(t, filepath.Join(dir, "go.mod"), "module example.com/app\n")
+	g.Expect(next(t, changes)).To(Equal([]string{filepath.Join(dir, "go.mod")}))
+
+	write(t, filepath.Join(dir, "go.work"), "go 1.26\n")
+	g.Expect(next(t, changes)).To(Equal([]string{filepath.Join(dir, "go.work")}))
+}

@@ -49,7 +49,7 @@ func (e Exercise) SolutionDir() string {
 // A solution has the files that replace or add to the files of the exercise
 // folder with the same names.
 func (e Exercise) SolutionFiles(src fs.FS) ([]string, error) {
-	dir, main := e.SolutionDir(), e.SolutionPath()
+	dir, main := e.SolutionDir(), e.StoredName(e.SolutionPath())
 	if dir == "" {
 		return nil, fs.ErrNotExist
 	}

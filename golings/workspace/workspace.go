@@ -9,6 +9,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
+	"strings"
 
 	"github.com/cleonte/golings/golings/doctor"
 	"github.com/cleonte/golings/golings/exercises"
@@ -34,12 +36,22 @@ func Init(src fs.FS, dest string) error {
 }
 
 func write(src fs.FS, dest string) error {
+	modules := moduleExercises(src)
 	err := fs.WalkDir(src, ".", func(name string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
+		// The files of a module exercise are stored with a .txt added; they are
+		// written without it.
+		written := name
+		for _, ex := range modules {
+			if strings.HasPrefix(name, path.Dir(ex.Path)+"/") {
+				written = ex.LearnerName(name)
+				break
+			}
+		}
 		// Names inside an fs.FS always use forward slashes.
-		target := filepath.Join(dest, filepath.FromSlash(name))
+		target := filepath.Join(dest, filepath.FromSlash(written))
 		if d.IsDir() {
 			return os.MkdirAll(target, 0o755)
 		}
@@ -88,7 +100,7 @@ func Reset(src fs.FS, root, name string) (string, error) {
 			if err != nil {
 				return err
 			}
-			target := filepath.Join(root, filepath.FromSlash(name))
+			target := filepath.Join(root, filepath.FromSlash(ex.LearnerName(name)))
 			if d.IsDir() {
 				return os.MkdirAll(target, 0o755)
 			}
@@ -112,4 +124,18 @@ func Reset(src fs.FS, root, name string) (string, error) {
 	}
 
 	return "", exercises.ErrExerciseNotFound
+}
+
+// moduleExercises are the exercises of src that are modules of their own, whose
+// files are stored with a .txt added to their names.
+func moduleExercises(src fs.FS) []exercises.Exercise {
+	info, err := fs.ReadFile(src, "info.toml")
+	if err != nil {
+		return nil
+	}
+	all, err := exercises.ParseInfo(info)
+	if err != nil {
+		return nil
+	}
+	return slices.DeleteFunc(all, func(ex exercises.Exercise) bool { return !ex.Module })
 }

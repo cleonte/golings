@@ -64,7 +64,7 @@ Recommendation: **option 2** for the capstone and sub-package exercises, because
 
 Exercises about `go.mod` itself (`go mod init`, `require`, `replace`, a local dependency, `go.work`) need their own module, so option 1 applies, only here. Proposal: the exercise folder holds `go.mod.txt` (and `go.sum.txt` if needed), and the manifest field `module = true` tells the runner to run `go build`/`go test -c` **inside** the folder (`cmd.Dir`) and `init`/`reset` to write the files under their real names. The learner's task is then often to fix `go.mod`, so the main file for these exercises is `go.mod`, which means the marker in it is `// I AM NOT DONE`, a valid comment there too. The marker regex already allows `//`.
 
-This is the part with the most open questions; it should wait until steps 1 and 2 are in use.
+This is the part with the most open questions; it should wait until steps 1 and 2 are in use. (Built; see "Step 3, as built" at the end.)
 
 ## The capstone
 
@@ -113,3 +113,12 @@ Option 2 as written (`golings-exercises/...`) turned out not to work: `go mod ti
 ## The capstone, as built
 
 `exercises/capstone/capstone1` to `capstone5`, a word counter: the type and its methods; reading text from a stream (`bufio.Scanner` and its limits); an interface defined where it is used, a fake, and a package of its own (`store`); the whole program with flags and exit codes (`run(args, stdin, stdout, stderr) int`); counting in parallel without sharing (a `Counter` per goroutine, merged). Steps 2 to 5 are test-mode exercises, and every step's folder carries the finished code of the previous step. `TestCapstoneStepsStartFromTheFinishedPreviousStep` checks it: the carried files are the same, except the main file, the tests, the files the step changes, and the step number in an import path.
+
+## Step 3, as built
+
+The design above changed in two places while it was prototyped.
+
+- **Every file is stored with `.txt`**, not only `go.mod`. Renaming only `go.mod` lets `go:embed` see the folder, but then the Go files of the exercise sit in the module of the repository without a `go.mod` of their own, and their imports (`example.com/greet`) do not resolve: `go mod tidy` fails, and so would Dependabot. A `//go:build ignore` line would hide them from tidy, but the learner's copy cannot keep it, so the tool would have to rewrite file contents. One rule on names is simpler: in a module exercise every file is `<name>.txt`, and `init`, `reset`, `solution` and `TestSolutions` drop the suffix. The cost is that the files cannot be vetted or edited with Go tooling in the repository; `TestSolutions` runs them for real in a temporary folder.
+- **The environment is closed.** The exercise runs inside its folder with `GOPROXY=off` (a dependency must be a folder on disk, reached by `replace`), `GOFLAGS=-mod=readonly` (so a missing `require` is an error, not a silent edit), `GOTOOLCHAIN=local` (a `go` line that is newer than the installed Go is an error and no toolchain is downloaded) and `GOWORK=off`, unless the folder has a `go.work` of its own, which is then used by its full path. A learner's own `GOWORK`, `GOFLAGS` or `GOPROXY` cannot change the exercise.
+
+`module = true` is the one new manifest field. The watcher also reports changes to `go.mod`, `go.sum` and `go.work`, and the `e` key opens a `go.mod` and `go.work` next to the Go files. In a clone, where the `.txt` files are not in place, `golings run` says to run `golings init`.

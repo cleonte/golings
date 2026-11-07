@@ -63,6 +63,13 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 
 	build := exec.CommandContext(ctx, "go", buildArgs(e, binary)...)
 	build.Dir = e.Root
+	if e.Module {
+		if err := e.checkModuleFolder(); err != nil {
+			return result, err
+		}
+		build.Dir = e.moduleDir()
+		build.Env = append(os.Environ(), e.moduleEnv()...)
+	}
 	var buildOut, buildErr bytes.Buffer
 	build.Stdout, build.Stderr = &buildOut, &buildErr
 	if err := build.Run(); err != nil {
@@ -77,7 +84,7 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 	defer cancel()
 
 	run := exec.CommandContext(runCtx, binary, runArgs(e)...)
-	if e.Mode == "test" {
+	if e.Mode == "test" || e.Module {
 		// `go test` runs the test binary in the package folder.
 		run.Dir = filepath.Join(e.Root, e.Dir())
 	}
@@ -105,6 +112,10 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 // package in the folder of the exercise, so an exercise may have several files.
 func buildArgs(e Exercise, out string) []string {
 	path := fmt.Sprintf("./%s", e.Dir())
+	if e.Module {
+		// The folder is a module of its own, and the build runs inside it.
+		path = "."
+	}
 	switch {
 	case e.Mode == "compile":
 		return []string{"build", "-o", out, path}

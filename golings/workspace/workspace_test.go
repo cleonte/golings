@@ -203,3 +203,54 @@ func TestInitWithTheRealExercises(t *testing.T) {
 		g.Expect(filepath.Join(dest, filepath.FromSlash(ex.Path))).To(BeAnExistingFile(), ex.Name)
 	}
 }
+
+// moduleFS has one exercise that is a module of its own, whose files are stored
+// with a .txt added to their names.
+func moduleFS() fstest.MapFS {
+	fsys := sampleFS()
+	fsys["info.toml"] = &fstest.MapFile{Data: append(fsys["info.toml"].Data, []byte(`
+[[exercises]]
+name = "m1"
+path = "exercises/m/m1/go.mod"
+mode = "compile"
+module = true
+hint = ""
+`)...)}
+	fsys["exercises/m/m1/go.mod.txt"] = &fstest.MapFile{Data: []byte("// I AM NOT DONE\nmodule example.com/app\n")}
+	fsys["exercises/m/m1/main.go.txt"] = &fstest.MapFile{Data: []byte("package main\n\nfunc main() {}\n")}
+	fsys["exercises/m/m1/greet/go.mod.txt"] = &fstest.MapFile{Data: []byte("module example.com/greet\n")}
+	return fsys
+}
+
+func TestInitWritesTheFilesOfAModuleExerciseWithoutTheSuffix(t *testing.T) {
+	g := NewWithT(t)
+	dest := filepath.Join(t.TempDir(), "ws")
+
+	g.Expect(workspace.Init(moduleFS(), dest)).To(Succeed())
+
+	for _, name := range []string{"exercises/m/m1/go.mod", "exercises/m/m1/main.go", "exercises/m/m1/greet/go.mod", "exercises/a/a1/main.go"} {
+		g.Expect(filepath.Join(dest, filepath.FromSlash(name))).To(BeAnExistingFile(), name)
+	}
+	g.Expect(filepath.Join(dest, "exercises", "m", "m1", "go.mod.txt")).NotTo(BeAnExistingFile())
+	g.Expect(filepath.Join(dest, "exercises", "a", "README.md")).To(BeAnExistingFile())
+}
+
+func TestResetRestoresAModuleExercise(t *testing.T) {
+	g := NewWithT(t)
+	root := filepath.Join(t.TempDir(), "ws")
+	g.Expect(workspace.Init(moduleFS(), root)).To(Succeed())
+	dir := filepath.Join(root, "exercises", "m", "m1")
+	g.Expect(os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module changed\n"), 0o644)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(dir, "extra.go"), []byte("package main\n"), 0o644)).To(Succeed())
+
+	path, err := workspace.Reset(moduleFS(), root, "m1")
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(path).To(Equal("exercises/m/m1/go.mod"))
+	data, err := os.ReadFile(filepath.Join(dir, "go.mod"))
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(string(data)).To(Equal("// I AM NOT DONE\nmodule example.com/app\n"))
+	g.Expect(filepath.Join(dir, "extra.go")).NotTo(BeAnExistingFile())
+	g.Expect(filepath.Join(dir, "go.mod.txt")).NotTo(BeAnExistingFile())
+	g.Expect(filepath.Join(dir, "greet", "go.mod")).To(BeAnExistingFile())
+}

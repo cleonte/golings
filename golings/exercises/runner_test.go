@@ -41,7 +41,9 @@ func writeExercise(mode, name, source string) exercises.Exercise {
 func writeFolderExercise(mode string, files map[string]string, main string) exercises.Exercise {
 	dir := tempDirHere()
 	for name, source := range files {
-		Expect(os.WriteFile(filepath.Join(dir, name), []byte(source), 0o644)).To(Succeed())
+		file := filepath.Join(dir, filepath.FromSlash(name))
+		Expect(os.MkdirAll(filepath.Dir(file), 0o755)).To(Succeed())
+		Expect(os.WriteFile(file, []byte(source), 0o644)).To(Succeed())
 	}
 	wd, err := os.Getwd()
 	Expect(err).NotTo(HaveOccurred())

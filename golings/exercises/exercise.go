@@ -24,6 +24,14 @@ type Exercise struct {
 	// Race is set for the exercises that only fail with the race detector. They
 	// are built with -race, and skipped where that is not available.
 	Race bool `toml:"race"`
+	// Module is set for the exercises about modules: the folder of the exercise
+	// is a module of its own (it has a go.mod, maybe a go.work and modules
+	// inside), and the exercise is built and run in it. The files of such a
+	// folder are stored with a .txt added to their names (go.mod.txt), in the
+	// repository and in the binary, so that they are not taken for part of this
+	// module or for a module of their own; `golings init` and `golings reset`
+	// write them without it, and Path is the name without it.
+	Module bool `toml:"module"`
 	// Root is the folder Path is relative to, when it is not the current one.
 	// It is never read from the manifest: tests that build an exercise in a
 	// folder of their own set it.
@@ -35,6 +43,29 @@ type Exercise struct {
 // and any other Go file in the folder is part of the same package.
 func (e Exercise) Dir() string {
 	return filepath.Dir(e.Path)
+}
+
+// storedSuffix is what the files of a module exercise have added to their names
+// in the repository and in the binary.
+const storedSuffix = ".txt"
+
+// StoredName is the name of a file of the exercise folder where the exercises
+// are stored (the repository, the binary): the same name, with .txt added for a
+// module exercise.
+func (e Exercise) StoredName(name string) string {
+	if e.Module {
+		return name + storedSuffix
+	}
+	return name
+}
+
+// LearnerName is the name a stored file has in the folder of a learner: for a
+// module exercise without the .txt, as it is in the manifest.
+func (e Exercise) LearnerName(name string) string {
+	if e.Module {
+		return strings.TrimSuffix(name, storedSuffix)
+	}
+	return name
 }
 
 // HintLevels returns the hints of the exercise from the smallest to the full
