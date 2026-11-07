@@ -8,6 +8,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-07
+
 ### Added
 
 - A `capstone` topic, at the end, with 5 exercises: a word counter built a step at a time, each exercise a step in the life of the same program, starting from the finished previous step, with the files of one package (and a package of its own) in the folder of the exercise. `capstone1` adds the missing method of a `Counter` type, `capstone2` reads words from a stream (and the limits of `bufio.Scanner`), `capstone3` defines an interface where it is used and tests with a fake, `capstone4` is the whole program with flags and exit codes, and `capstone5` counts in parallel without sharing. 257 exercises in 51 topics in all.
@@ -105,7 +107,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/cleonte/golings/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cleonte/golings/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cleonte/golings/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/cleonte/golings/compare/v1.2.0...v1.3.0
