@@ -8,6 +8,10 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+### Added
+
+- `e` in the full-screen `watch` opens the exercise in your editor (`$VISUAL`, or else `$EDITOR`), with the main file first and the other Go files of the exercise after it. The view waits until you close the editor. Without an editor set, the key says how to set one.
+
 ## [1.5.0] - 2026-11-06
 
 ### Added

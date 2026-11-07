@@ -9,6 +9,9 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
+	osexec "os/exec"
+	"path/filepath"
 	"slices"
 	"strings"
 
@@ -37,6 +40,10 @@ type Config struct {
 	// Solutions holds the solutions shown on request, laid out like
 	// exercises/. Without it the solution key says it is not available.
 	Solutions fs.FS
+	// Editor is the command the e key opens the exercise with, e.g. "code -w"
+	// (the caller takes it from $VISUAL or $EDITOR). Without it the key says how
+	// to set one.
+	Editor string
 }
 
 type status int
@@ -114,6 +121,8 @@ type changesMsg struct{ files []string }
 
 type changesClosedMsg struct{}
 
+type editDoneMsg struct{ err error }
+
 type checkDoneMsg struct {
 	id     int
 	index  int
@@ -174,6 +183,11 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case changesClosedMsg:
 		// The watcher stopped; whatever is on screen stays, and q still works.
+
+	case editDoneMsg:
+		if msg.err != nil {
+			m.notice = "The editor failed: " + msg.err.Error()
+		}
 
 	case checkDoneMsg:
 		return m, m.finishCheck(msg)
@@ -240,6 +254,8 @@ func (m *Model) handleKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 		m.askToShowSolution()
 	case "r":
 		m.askToReset()
+	case "e":
+		return m, m.edit()
 	case "n":
 		return m, m.next()
 	case "c":
@@ -280,6 +296,45 @@ func (m *Model) nextHint() {
 	default:
 		m.mode = modeResult
 	}
+}
+
+// edit opens the files of the exercise in the editor of the learner and waits
+// for it, with the screen handed over to it. Saving there runs the exercise
+// again, like any other save.
+func (m *Model) edit() tea.Cmd {
+	if !m.hasExercise() {
+		return nil
+	}
+	fields := strings.Fields(m.cfg.Editor)
+	if len(fields) == 0 {
+		m.notice = "Set $VISUAL or $EDITOR to open exercises with e, e.g. EDITOR=vim golings watch."
+		return nil
+	}
+	cmd := osexec.Command(fields[0], append(fields[1:], m.exerciseFiles()...)...)
+	return tea.ExecProcess(cmd, func(err error) tea.Msg {
+		return editDoneMsg{err: err}
+	})
+}
+
+// exerciseFiles is the main file of the exercise first, then the other Go
+// files next to it, so an editor opens them all.
+func (m *Model) exerciseFiles() []string {
+	main := m.exercise.Path
+	if !filepath.IsAbs(main) && m.cfg.Root != "" {
+		main = filepath.Join(m.cfg.Root, main)
+	}
+	files := []string{main}
+	entries, err := os.ReadDir(filepath.Dir(main))
+	if err != nil {
+		return files
+	}
+	for _, entry := range entries {
+		file := filepath.Join(filepath.Dir(main), entry.Name())
+		if !entry.IsDir() && filepath.Ext(file) == ".go" && file != main {
+			files = append(files, file)
+		}
+	}
+	return files
 }
 
 func (m *Model) askToShowSolution() {
@@ -599,6 +654,9 @@ func (m *Model) footer() string {
 		return dimStyle.Render("esc back   ↑↓ scroll   q quit")
 	case m.hasExercise():
 		keys := []string{"h hint", "s solution", "r reset", "n next", "l list", "c check all"}
+		if m.cfg.Editor != "" {
+			keys = slices.Insert(keys, 1, "e edit")
+		}
 		if m.fullAvailable {
 			keys = append(keys, "f full")
 		}
