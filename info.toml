@@ -2745,3 +2745,49 @@ hint = """
 The files of a folder are one package, so `main.go` can use `Counter` from `counter.go` without an import, and a method can be added to the type in any file of the package, as long as it is the same package. `Total` is a method with the same receiver as `Add` and `Count`: `func (c *Counter) Total() int`. Range over the map to add up its values (`for _, n := range c.counts`); each value is how many times one word was added, so the sum is every word, counting repeats.
 
 For more information: https://go.dev/ref/spec#Method_declarations"""
+
+[[exercises]]
+name = "capstone2"
+path = "exercises/capstone/capstone2/main_test.go"
+mode = "test"
+nudge = """The tests say AddFrom counted nothing for a long line and dropped the error of the reader: a bufio.Scanner reads lines by default, and gives up on one that is too long."""
+stronger = """In read.go, call scanner.Split(bufio.ScanWords) before the loop, so every token is a word and never too long, and return scanner.Err() at the end instead of nil."""
+hint = """
+A `bufio.Scanner` splits its input into tokens, and by default a token is a line, at most 64 KB long: a longer line stops the scan, and the only sign is `scanner.Err()` (`bufio.ErrTooLong`) after `Scan` returned false. A loop that ends with `return nil` never tells anyone. A word counter does not care about lines, so ask for words: `scanner.Split(bufio.ScanWords)` has to be called before the first `Scan`. Then `Add` gets one word at a time, and the error to return is `scanner.Err()`, which is nil at a normal end of the input.
+
+For more information: https://pkg.go.dev/bufio#Scanner"""
+
+[[exercises]]
+name = "capstone3"
+path = "exercises/capstone/capstone3/main_test.go"
+mode = "test"
+nudge = """The tests say the saver was never given the counts: Save returns nil without calling anything, because its parameter is any."""
+stronger = """In save.go, define a Saver interface with the method Save(counts map[string]int) error, make Save take a Saver, and return the result of calling s.Save(c.counts)."""
+hint = """
+An interface is best defined by the code that uses it: `Counter` only needs something with a `Save(counts map[string]int) error` method, so that is what it asks for, in the file where it asks. The `store` package knows nothing about it (a type satisfies an interface by having the methods), and a test can pass a fake that records the call and fails when told to, which is how you check that the error comes back. `Save` is then one line: hand `c.counts` to `s.Save` and return its error.
+
+The `store` folder inside the exercise is a package of its own; the test imports it by its full path, which starts with the module path of `go.mod` (`golings doctor` checks that it is the right one).
+
+For more information: https://go.dev/doc/effective_go#interfaces"""
+
+[[exercises]]
+name = "capstone4"
+path = "exercises/capstone/capstone4/main_test.go"
+mode = "test"
+nudge = """The tests say run printed nothing and returned 0 every time: its body only creates the flags."""
+stronger = """In run.go, parse args and return 2 if that fails, count stdin with AddFrom (print the error to stderr and return 1), then print c.Total() with -total, or call c.Save(store.NewText(stdout))."""
+hint = """
+`run` is the whole program with its surroundings passed in: the arguments, the input and the two output streams come as parameters and the exit code comes out, so a test can call it with a `strings.NewReader` and a `bytes.Buffer`, and only `main` touches `os`. The order is: parse the flags (a `flag.FlagSet` with `ContinueOnError` returns the error instead of exiting; exit code 2 is the convention for bad usage, and the flag package already printed the message on the stream you gave it with `SetOutput`), read the input, and print the result to `stdout`. Problems go to `stderr` with exit code 1.
+
+For more information: https://pkg.go.dev/flag#FlagSet"""
+
+[[exercises]]
+name = "capstone5"
+path = "exercises/capstone/capstone5/main_test.go"
+mode = "test"
+nudge = """The tests say counts were lost: Merge replaces the count of a word that both counters have, so CountAll keeps only the last text's count."""
+stronger = """In merge.go, change the line in Merge from c.counts[word] = n to c.counts[word] += n."""
+hint = """
+`CountAll` does not share anything between its goroutines: each one counts into a `Counter` of its own and sends it over a channel, and the receiving loop is the only code that touches the total, so there is no race and nothing to lock. That design only works if the merge is right: `=` on a map entry replaces what was there, and `+=` adds to it (a missing word starts at zero). The order in which the goroutines finish is not fixed, which is why a wrong merge gives a different wrong count every time, and a right one always gives the same count.
+
+For more information: https://go.dev/blog/codelab-share"""

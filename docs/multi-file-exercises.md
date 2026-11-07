@@ -1,6 +1,6 @@
 # Design note: exercises that span several files and packages
 
-Status: accepted. The decision is to build step 1 and step 2, use them for new exercises in existing topics and a package-layout topic, and leave the capstone for later (nothing here closes that door). Step 3 waits until someone asks for it.
+Status: accepted and built. Step 1 and step 2 are in (v1.5.0), and the capstone is in too (v1.6.0, five steps, a word counter). Step 3 waits until someone asks for it.
 
 ## Why
 
@@ -87,14 +87,14 @@ Each step starts from the solved previous step, so the exercise folder carries t
 
 ## Open questions
 
-1. Is the capstone worth the maintenance? Decided: not now; see Order of work.
+1. Is the capstone worth the maintenance? Built as a pilot (`capstone1`) and then in five steps; a test checks that each step carries the finished code of the one before.
 2. Option 2 against option 1 for import paths (the recommendation above).
 3. Should `golings solution` for several files print all of them, or ask which one?
 4. Should a multi-file exercise be done when the main file loses its marker, or only when every file has no `// TODO:` left? Proposal: the marker in the main file, as now; it is the learner's own statement.
 
 ## Order of work
 
-Decided: no capstone for now.
+Done so far: steps 1 and 2, the multi-file exercises, the `layout` topic and the capstone. Left: step 3.
 
 1. Step 1 (an exercise is a folder), with a CHANGELOG line and no visible effect for learners.
 2. Two-file exercises in existing topics (for example `packages`) to prove the mechanism.
@@ -109,3 +109,7 @@ Option 2 as written (`golings-exercises/...`) turned out not to work: `go mod ti
 - The worry about claiming our import path is small: the folder has no dependencies to download, and nothing imports it.
 - `golings doctor` warns about a folder made by an older golings (`module golings-exercises`) and says to change the first line of `go.mod`. Only the exercises with packages of their own need it.
 - `TestSolutions` still copies the exercise folder and the solution into a module of its own, with the same module path.
+
+## The capstone, as built
+
+`exercises/capstone/capstone1` to `capstone5`, a word counter: the type and its methods; reading text from a stream (`bufio.Scanner` and its limits); an interface defined where it is used, a fake, and a package of its own (`store`); the whole program with flags and exit codes (`run(args, stdin, stdout, stderr) int`); counting in parallel without sharing (a `Counter` per goroutine, merged). Steps 2 to 5 are test-mode exercises, and every step's folder carries the finished code of the previous step. `TestCapstoneStepsStartFromTheFinishedPreviousStep` checks it: the carried files are the same, except the main file, the tests, the files the step changes, and the step number in an import path.
