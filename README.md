@@ -1,6 +1,6 @@
 # golings
 
-[![build and test](https://github.com/cleonte/golings/actions/workflows/test.yml/badge.svg)](https://github.com/cleonte/golings/actions/workflows/test.yml)
+[![build and test](https://github.com/cleonte/golings/actions/workflows/test.yml/badge.svg)](https://github.com/cleonte/golings/actions/workflows/test.yml) [![Release](https://img.shields.io/github/v/release/cleonte/golings)](https://github.com/cleonte/golings/releases/latest) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE) [![Go 1.26+](https://img.shields.io/badge/go-1.26%2B-00ADD8.svg)](https://go.dev/dl/)
 
 <p align="center"><img src="misc/gopher-dance.gif" width="256" alt="A dancing gopher"></p>
 
