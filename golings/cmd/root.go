@@ -1,3 +1,4 @@
+// Package cmd has the commands of golings: the cobra commands and what they print.
 package cmd
 
 import (
@@ -7,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// NewRootCmd is the golings command with all of its subcommands.
 func NewRootCmd(version string) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:           "golings",
@@ -29,6 +31,7 @@ func NewRootCmd(version string) *cobra.Command {
 	return rootCmd
 }
 
+// Execute runs the golings command and exits with 1 when it fails.
 func Execute(version string) {
 	if err := NewRootCmd(version).Execute(); err != nil {
 		os.Exit(1)

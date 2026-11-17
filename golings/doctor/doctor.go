@@ -21,14 +21,18 @@ const MinGoVersion = "1.26"
 // the repository and in a learner's folder.
 const ExercisesModule = "github.com/cleonte/golings"
 
+// Status is how a check went.
 type Status int
 
 const (
+	// OK means the check passed, Warn that something may not work, and Fail that
+	// something will not.
 	OK Status = iota
 	Warn
 	Fail
 )
 
+// Check is the result of one check of the setup.
 type Check struct {
 	Name   string
 	Status Status
@@ -47,6 +51,7 @@ type Env struct {
 	ReadFile func(path string) ([]byte, error)
 }
 
+// DefaultEnv is the environment of this machine.
 func DefaultEnv() Env {
 	race := exercises.DefaultRaceEnv()
 	return Env{

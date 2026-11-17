@@ -20,6 +20,7 @@ import (
 // debounce is how long the watcher waits for a burst of file events to settle.
 const debounce = 150 * time.Millisecond
 
+// WatchCmd runs the next pending exercise again each time a file is saved.
 func WatchCmd(infoFile string) *cobra.Command {
 	var plain, verbose bool
 
@@ -32,7 +33,7 @@ In a terminal this opens a full-screen view. Use --plain for simple line-by-line
 output; that is also what you get when input or output is not a terminal, for
 example when piping. Data race reports and panics are shortened; --verbose shows
 them in full (in the full-screen view the f key does).`,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			ctx, cancel := context.WithCancel(cmd.Context())
 			defer cancel()
 

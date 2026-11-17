@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// VerifyCmd runs every exercise and stops at the first one that fails.
 func VerifyCmd(infoFile string) *cobra.Command {
 	var verbose bool
 
@@ -19,7 +20,7 @@ func VerifyCmd(infoFile string) *cobra.Command {
 		Short:         "Verify all exercises",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			allExercises, err := exercises.List(infoFile)
 			if err != nil {
 				color.Red(err.Error())
@@ -49,7 +50,7 @@ func VerifyCmd(infoFile string) *cobra.Command {
 			for _, exercise := range allExercises {
 				bar.Describe(fmt.Sprintf("Running %s", exercise.Name))
 				result, err := exercise.Run()
-				bar.Add(1) // nolint
+				_ = bar.Add(1)
 
 				if exercises.IsSkipped(err) {
 					fmt.Print("\n")

@@ -47,6 +47,7 @@ func PrintHint(infoFile string, progress *HintProgress) {
 	}
 }
 
+// PrintList clears the screen and lists the exercises with the progress per topic.
 func PrintList(infoFile string) {
 	ClearScreen()
 	exs, err := exercises.List(infoFile)
@@ -86,6 +87,7 @@ func currentTopicLine(infoFile string, exercise exercises.Exercise) string {
 	return ""
 }
 
+// RunNextExercise runs the next pending exercise and prints how it went.
 func RunNextExercise(infoFile string) {
 	RunNextExerciseWith(infoFile, false)
 }
@@ -152,6 +154,7 @@ func RunNextExerciseWith(infoFile string, verbose bool) {
 	}
 }
 
+// ClearScreen clears the terminal.
 func ClearScreen() {
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/c", "cls")

@@ -344,7 +344,7 @@ func TestProgramRunsAndQuits(t *testing.T) {
 
 	var runs int
 	var mu sync.Mutex
-	run := func(ctx context.Context, ex exercises.Exercise) (exercises.Result, error) {
+	run := func(_ context.Context, ex exercises.Exercise) (exercises.Result, error) {
 		mu.Lock()
 		runs++
 		n := runs

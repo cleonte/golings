@@ -1,3 +1,5 @@
+// Command golings is an interactive tool that teaches Go with small broken
+// programs for the learner to fix.
 package main
 
 import (

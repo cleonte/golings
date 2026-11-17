@@ -15,6 +15,7 @@ func hintLevelsText(n int) string {
 	return fmt.Sprintf("%d hint levels", n)
 }
 
+// HintCmd shows the hint of an exercise, or a smaller one with --level.
 func HintCmd(infoFile string) *cobra.Command {
 	var level int
 

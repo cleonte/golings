@@ -47,7 +47,7 @@ cd golings
 go test -coverprofile=coverage.out -v $(go list ./... | grep -v fixtures/error1)
 ```
 
-If you have `make` installed it is easy as running `make test`. It runs every exercise through the real runner, so it takes a minute or two; `go test -short` skips that.
+Run `make lint` (golangci-lint v2, set up in `.golangci.yml`) before you commit: it is `golangci-lint run` on the packages of the tool, because `./...` would also load the exercises, which do not compile on purpose. If you have `make` installed it is easy as running `make test`. It runs every exercise through the real runner, so it takes a minute or two; `go test -short` skips that.
 
 `make smoke` installs golings into a temporary folder and runs the first commands a learner types (`init`, `list`, `doctor`, `run` on the first exercise), checking the exit codes.
 

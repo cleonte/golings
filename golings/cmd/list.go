@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// ListCmd lists the exercises and how far each topic is, or --json for tools.
 func ListCmd(infoFile string) *cobra.Command {
 	var asJSON bool
 
@@ -17,7 +18,7 @@ func ListCmd(infoFile string) *cobra.Command {
 		Short:         "List all exercises",
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			if asJSON {
 				list, err := listJSON(infoFile)
 				if err != nil {

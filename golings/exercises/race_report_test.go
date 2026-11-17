@@ -103,9 +103,15 @@ func TestCondenseRacesCountsTheSameRaceOnce(t *testing.T) {
 	if len(blocks) != 2 {
 		t.Fatalf("expected the two reports of concurrent10, got %d parts", len(blocks))
 	}
-	first := blocks[0][strings.Index(blocks[0], raceHeader):]
-	second := strings.TrimSuffix(blocks[1], raceFence)
-	second = second[:strings.Index(second, "    testing.go:")]
+	start := strings.Index(blocks[0], raceHeader)
+	if start < 0 {
+		t.Fatal("the first report of concurrent10 has no race header")
+	}
+	first := blocks[0][start:]
+	second, _, found := strings.Cut(strings.TrimSuffix(blocks[1], raceFence), "    testing.go:")
+	if !found {
+		t.Fatal("the second report of concurrent10 has no testing.go frame")
+	}
 
 	other := strings.NewReplacer("goroutine 12", "goroutine 31", "goroutine 10", "goroutine 29", "Goroutine 12", "Goroutine 31", "Goroutine 10", "Goroutine 29").Replace(first)
 	again := strings.NewReplacer("goroutine 12", "goroutine 41", "goroutine 10", "goroutine 40", "Goroutine 12", "Goroutine 41", "Goroutine 10", "Goroutine 40").Replace(first)

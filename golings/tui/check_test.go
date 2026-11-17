@@ -61,7 +61,7 @@ func TestNMarksTheExerciseDoneAndMovesOn(t *testing.T) {
 	g := NewWithT(t)
 	noColor(t)
 	info := newWorkspace(t, "!a/a1", "!a/a2")
-	fake := &fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) { return passing(ex) }}
+	fake := &fakeRuns{result: passing}
 	m, cmd := start(t, Config{InfoFile: info, Run: fake.run})
 	runCmds(t, m, cmd)
 	first := m.exercise
@@ -82,7 +82,7 @@ func TestNDoesNotSkipAnExerciseThatDoesNotWork(t *testing.T) {
 	g := NewWithT(t)
 	noColor(t)
 	info := newWorkspace(t, "!a/a1", "!a/a2")
-	fake := &fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) { return failingToCompile(ex) }}
+	fake := &fakeRuns{result: failingToCompile}
 	m, cmd := start(t, Config{InfoFile: info, Run: fake.run})
 	runCmds(t, m, cmd)
 
@@ -116,7 +116,7 @@ func TestNWhenThereIsNothingLeft(t *testing.T) {
 func TestNReportsAFileThatCannotBeChanged(t *testing.T) {
 	g := NewWithT(t)
 	noColor(t)
-	fake := &fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) { return passing(ex) }}
+	fake := &fakeRuns{result: passing}
 	m, cmd := start(t, Config{InfoFile: newWorkspace(t, "!a/a1", "!a/a2"), Run: fake.run})
 	runCmds(t, m, cmd)
 	g.Expect(os.Remove(m.exercise.Path)).To(Succeed())

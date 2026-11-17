@@ -54,7 +54,7 @@ func (e Exercise) RunContext(ctx context.Context, timeout time.Duration) (Result
 	if err != nil {
 		return result, err
 	}
-	defer os.RemoveAll(dir) // nolint
+	defer func() { _ = os.RemoveAll(dir) }()
 
 	binary := filepath.Join(dir, "exercise")
 	if runtime.GOOS == "windows" {

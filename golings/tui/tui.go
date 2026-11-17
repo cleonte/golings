@@ -26,6 +26,7 @@ import (
 // RunFunc builds and runs an exercise. It must give up when ctx is cancelled.
 type RunFunc func(ctx context.Context, ex exercises.Exercise) (exercises.Result, error)
 
+// Config is what the full-screen view needs to start.
 type Config struct {
 	InfoFile string
 	// Changes delivers the files that were saved, see the watcher package.
@@ -71,6 +72,7 @@ const (
 	modeFull  // the output of the failed run, with nothing shortened
 )
 
+// Model is the state of the full-screen view (a Bubble Tea model).
 type Model struct {
 	cfg    Config
 	width  int
@@ -136,6 +138,7 @@ type runDoneMsg struct {
 	err    error
 }
 
+// New makes the model for cfg.
 func New(cfg Config) *Model {
 	if cfg.Run == nil {
 		cfg.Run = func(ctx context.Context, ex exercises.Exercise) (exercises.Result, error) {
@@ -154,10 +157,12 @@ func Run(ctx context.Context, cfg Config) error {
 	return err
 }
 
+// Init starts the first run of the exercise.
 func (m *Model) Init() tea.Cmd {
 	return func() tea.Msg { return startMsg{} }
 }
 
+// Update handles a key, a saved file or the result of a run.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -485,6 +490,7 @@ var (
 	footerLines = 1
 )
 
+// View draws the current screen.
 func (m *Model) View() tea.View {
 	var b strings.Builder
 	b.WriteString(m.header())
