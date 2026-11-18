@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RunCmd runs one exercise, or the next pending one, and says how it went.
 func RunCmd(infoFile string) *cobra.Command {
 	var verbose, asJSON bool
 
@@ -44,7 +45,7 @@ example specific exercise : golings run variables1`,
 
 			result, err := exercise.Run()
 
-			spinner.Close() // nolint
+			_ = spinner.Close()
 
 			if exercises.IsSkipped(err) {
 				color.Yellow(err.Error())
@@ -73,6 +74,7 @@ example specific exercise : golings run variables1`,
 	return runCmd
 }
 
+// RunSpinner shows that the exercise is being built and run.
 func RunSpinner(exercise string) *progressbar.ProgressBar {
 	spinner := progressbar.NewOptions(
 		-1, // a negative number makes turns the progress bar into a spinner
@@ -84,7 +86,7 @@ func RunSpinner(exercise string) *progressbar.ProgressBar {
 	)
 	go func() {
 		for range 100 {
-			spinner.Add(1) // nolint
+			_ = spinner.Add(1)
 			time.Sleep(250 * time.Millisecond)
 		}
 	}()

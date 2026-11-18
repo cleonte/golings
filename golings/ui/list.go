@@ -7,6 +7,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
+// PrintList prints the exercises in a table, with their state.
 func PrintList(o io.Writer, exs []exercises.Exercise) {
 	t := table.NewWriter()
 	t.SetOutputMirror(o)

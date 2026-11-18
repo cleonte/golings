@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// DoctorCmd checks the setup: the Go version, the exercise files and the race detector.
 func DoctorCmd(infoFile string) *cobra.Command {
 	return &cobra.Command{
 		Use:           "doctor",

@@ -98,7 +98,7 @@ func TestFScrolls(t *testing.T) {
 func TestFWhenNothingWasShortened(t *testing.T) {
 	g := NewWithT(t)
 	noColor(t)
-	fake := &fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) { return failingToCompile(ex) }}
+	fake := &fakeRuns{result: failingToCompile}
 	m, cmd := start(t, Config{InfoFile: newWorkspace(t, "!a/a1"), Run: fake.run})
 	runCmds(t, m, cmd)
 
@@ -112,7 +112,7 @@ func TestFWhenNothingWasShortened(t *testing.T) {
 func TestFWhenTheExerciseWorks(t *testing.T) {
 	g := NewWithT(t)
 	noColor(t)
-	m, cmd := start(t, Config{InfoFile: newWorkspace(t, "!a/a1"), Run: (&fakeRuns{result: func(ex exercises.Exercise) (exercises.Result, error) { return passing(ex) }}).run})
+	m, cmd := start(t, Config{InfoFile: newWorkspace(t, "!a/a1"), Run: (&fakeRuns{result: passing}).run})
 	runCmds(t, m, cmd)
 
 	press(m, "f")

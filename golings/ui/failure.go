@@ -1,3 +1,4 @@
+// Package ui prints what golings shows: exercise lists, progress and failures.
 package ui
 
 import (

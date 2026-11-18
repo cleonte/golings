@@ -12,6 +12,7 @@ import (
 
 const defaultWorkspace = "golings-exercises"
 
+// InitCmd makes a folder with the exercises from src, for a learner to work in.
 func InitCmd(src fs.FS) *cobra.Command {
 	return &cobra.Command{
 		Use:   "init [folder]",
@@ -21,7 +22,7 @@ the info.toml that golings needs. Use it after installing golings with go instal
 		Args:          cobra.MaximumNArgs(1),
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, args []string) error {
 			dest := defaultWorkspace
 			if len(args) == 1 {
 				dest = args[0]

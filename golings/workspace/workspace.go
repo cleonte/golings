@@ -16,6 +16,7 @@ import (
 	"github.com/cleonte/golings/golings/exercises"
 )
 
+// ErrExists means the folder for the exercises is already there.
 var ErrExists = errors.New("already exists")
 
 // Init writes the exercises in src to a new folder dest, with a go.mod so
