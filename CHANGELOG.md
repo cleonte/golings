@@ -8,14 +8,17 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
-### Changed
-
-- The README badges, on one line under the title: the release, the license and the minimum Go version besides the build status.
+## [1.8.0] - 2026-11-22
 
 ### Added
 
 - `golings list --json` and `golings run --json` print the exercises, their state and the result of a run as JSON, for editors and scripts. The format is versioned and described in `docs/json.md`. `run --json` exits 0 when the exercise fails (the answer is in `status`); both exit 1 with an `error` field when they can't answer.
 - A README section about using golings in an editor (VS Code and the errors gopls shows in an unfixed exercise).
+
+### Changed
+
+- The README badges, on one line under the title: the release, the license and the minimum Go version besides the build status.
+- The code is checked with golangci-lint v2 (`.golangci.yml`, `make lint`, pinned in the lint workflow), and what it found is fixed: doc comments, unused parameters and ignored errors made explicit. No change in behavior.
 
 ## [1.7.0] - 2026-11-07
 
@@ -123,7 +126,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 The development releases of this fork, on the way to 1.0.0: everything listed above, added a piece at a time. (Versions 0.1.0 to 0.8.0 are upstream's releases.)
 
-[Unreleased]: https://github.com/cleonte/golings/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/cleonte/golings/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/cleonte/golings/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cleonte/golings/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cleonte/golings/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cleonte/golings/compare/v1.4.0...v1.5.0
