@@ -20,6 +20,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 - CodeQL scans the Go code and the workflows on every pull request, on `main` and weekly (`codeql.yml`).
 - The README badges, on one line under the title: the release, the license and the minimum Go version besides the build status.
 - The code is checked with golangci-lint v2 (`.golangci.yml`, `make lint`, pinned in the lint workflow), and what it found is fixed: doc comments, unused parameters and ignored errors made explicit. No change in behavior.
+- The `e edit` key in the footer of `watch` comes after `r reset`, where it is in tflings and k8slings.
 
 ## [1.7.0] - 2026-11-07
 
