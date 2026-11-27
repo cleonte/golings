@@ -14,6 +14,7 @@ import (
 
 	"github.com/cleonte/golings/golings/doctor"
 	"github.com/cleonte/golings/golings/exercises"
+	lw "github.com/cleonte/lingscore/workspace"
 )
 
 // ErrExists means the folder for the exercises is already there.
@@ -67,7 +68,35 @@ func write(src fs.FS, dest string) error {
 	}
 
 	goMod := fmt.Sprintf("module %s\n\ngo %s\n", doctor.ExercisesModule, doctor.MinGoVersion)
-	return os.WriteFile(filepath.Join(dest, "go.mod"), []byte(goMod), 0o644)
+	if err := os.WriteFile(filepath.Join(dest, "go.mod"), []byte(goMod), 0o644); err != nil {
+		return err
+	}
+	// Remember what was written, so that a later `update` can tell a file the
+	// learner has not touched from one with their work in it.
+	if err := recordOriginals(src, dest); err != nil {
+		_ = os.RemoveAll(dest)
+		return err
+	}
+	return nil
+}
+
+// recordOriginals records the hash of the main file of every exercise in src.
+func recordOriginals(src fs.FS, dest string) error {
+	raw, err := fs.ReadFile(src, "info.toml")
+	if err != nil {
+		return nil // nothing is listed, so there is nothing to remember
+	}
+	all, err := exercises.ParseInfo(raw)
+	if err != nil {
+		return nil
+	}
+	hashes := map[string]string{}
+	for _, e := range all {
+		if data, err := fs.ReadFile(src, e.StoredName(e.Path)); err == nil {
+			hashes[e.Name] = lw.Hash(data)
+		}
+	}
+	return exercises.RecordOriginals(dest, hashes, nil)
 }
 
 // Reset restores the exercise called name below root to the version in src: all
@@ -121,7 +150,14 @@ func Reset(src fs.FS, root, name string) (string, error) {
 			}
 			return os.Remove(name)
 		})
-		return ex.Path, err
+		if err != nil {
+			return ex.Path, err
+		}
+		// The file is the original again: a later update may replace it safely.
+		if data, err := fs.ReadFile(src, ex.StoredName(ex.Path)); err == nil {
+			_ = exercises.RecordOriginals(root, map[string]string{ex.Name: lw.Hash(data)}, nil)
+		}
+		return ex.Path, nil
 	}
 
 	return "", exercises.ErrExerciseNotFound

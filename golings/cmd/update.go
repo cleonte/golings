@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"strings"
 
 	"github.com/cleonte/golings"
 	"github.com/cleonte/golings/golings/workspace"
@@ -22,10 +23,11 @@ func UpdateCmd(src fs.FS, root string) *cobra.Command {
 by an older version, does not know about them. update adds them to the folder and to
 info.toml, each one where it belongs in the order of the course.
 
-It never writes over a file of an exercise you already have, because that may be
-your work. It keeps a copy of info.toml as info.toml.bak. The README of a topic is
-replaced by its newer text. To get the newer version of an exercise you have,
-use 'golings reset <name>', which loses your changes to it.
+It never writes over a file you have changed, because that may be your work. A
+single-file exercise you have not touched is replaced by its newer version. It
+keeps a copy of info.toml as info.toml.bak. The README of a topic is replaced by
+its newer text. To get the newer version of an exercise you changed, use
+'golings reset <name>', which loses your changes to it.
 
 Use --dry-run to see what it would do.`,
 		Args:          cobra.NoArgs,
@@ -46,7 +48,7 @@ Use --dry-run to see what it would do.`,
 }
 
 func printUpdate(res workspace.UpdateResult, dryRun bool) {
-	if len(res.Added) == 0 && res.Readmes == 0 {
+	if len(res.Added) == 0 && res.Readmes == 0 && len(res.Refreshed) == 0 && len(res.Newer) == 0 {
 		color.Green("Your exercises are up to date with this version of golings.")
 		return
 	}
@@ -75,6 +77,17 @@ func printUpdate(res workspace.UpdateResult, dryRun bool) {
 			verb = "Would replace"
 		}
 		_, _ = fmt.Fprintf(color.Output, "%s %d README files with their newer text.\n", verb, res.Readmes)
+	}
+	if len(res.Refreshed) > 0 {
+		verb := "Replaced"
+		if dryRun {
+			verb = "Would replace"
+		}
+		_, _ = fmt.Fprintf(color.Output, "%s the file of %d exercises you had not started: %s\n", verb, len(res.Refreshed), workspace.Describe(res.Refreshed))
+	}
+	if len(res.Newer) > 0 {
+		color.Yellow("%d exercises have a newer file that was not applied, because you changed the old one: %s", len(res.Newer), strings.Join(res.Newer, ", "))
+		color.White("`golings reset <name>` brings the newer file, and loses your changes to it.")
 	}
 }
 
