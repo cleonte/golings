@@ -661,7 +661,7 @@ func (m *Model) footer() string {
 	case m.hasExercise():
 		keys := []string{"h hint", "s solution", "r reset", "n next", "l list", "c check all"}
 		if m.cfg.Editor != "" {
-			keys = slices.Insert(keys, 1, "e edit")
+			keys = slices.Insert(keys, 3, "e edit")
 		}
 		if m.fullAvailable {
 			keys = append(keys, "f full")

@@ -313,7 +313,8 @@ func TestEditOpensTheMainFileFirstThenTheOthers(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	g.Expect(m.View().Content).To(ContainSubstring("e edit"))
+	// Where tflings and k8slings have it: after reset, before next.
+	g.Expect(m.View().Content).To(ContainSubstring("r reset   e edit   n next"))
 
 	g.Expect(m.exerciseFiles()).To(Equal([]string{file, filepath.Join(dir, "extra.go")}))
 	g.Expect(press(m, "e")).NotTo(BeNil())
