@@ -1,17 +1,13 @@
 package workspace
 
 import (
-	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
-	"slices"
-	"strings"
 
 	"github.com/cleonte/golings/golings/exercises"
+	lw "github.com/cleonte/lingscore/workspace"
 )
 
 // UpdateResult says what Update did (or, for a dry run, would do).
@@ -20,35 +16,6 @@ type UpdateResult struct {
 	Added []exercises.Exercise
 	// Readmes is how many README.md files were replaced by a newer text.
 	Readmes int
-}
-
-var (
-	infoBlock = regexp.MustCompile(`(?m)^\[\[exercises\]\]`)
-	infoName  = regexp.MustCompile(`(?m)^name\s*=\s*"([^"]+)"`)
-)
-
-// splitInfo cuts the text of an info.toml into what comes before the first
-// exercise and the text of each exercise, in order. It works on the text, not on
-// the parsed manifest, so that nothing else in the file is rewritten.
-func splitInfo(text string) (header string, names []string, blocks map[string]string) {
-	blocks = map[string]string{}
-	locs := infoBlock.FindAllStringIndex(text, -1)
-	if len(locs) == 0 {
-		return text, nil, blocks
-	}
-	header = text[:locs[0][0]]
-	for i, loc := range locs {
-		end := len(text)
-		if i+1 < len(locs) {
-			end = locs[i+1][0]
-		}
-		block := text[loc[0]:end]
-		if m := infoName.FindStringSubmatch(block); m != nil {
-			names = append(names, m[1])
-			blocks[m[1]] = block
-		}
-	}
-	return header, names, blocks
 }
 
 func readInfo(src fs.FS, root string) (embedded []exercises.Exercise, embeddedText string, mine []exercises.Exercise, mineText string, err error) {
@@ -142,7 +109,7 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 			continue
 		}
 		if !dryRun {
-			if err := writeFile(target, data, true); err != nil {
+			if err := lw.WriteFile(target, data, true); err != nil {
 				return res, err
 			}
 		}
@@ -157,7 +124,7 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 		}
 	}
 	if len(res.Added) > 0 {
-		merged := mergeInfo(embeddedText, mineText, embedded, res.Added)
+		merged := lw.MergeInfo(embeddedText, mineText, exerciseNames(embedded), exerciseNames(res.Added), nil)
 		if err := os.WriteFile(filepath.Join(root, "info.toml.bak"), []byte(mineText), 0o644); err != nil {
 			return res, err
 		}
@@ -166,42 +133,6 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 		}
 	}
 	return res, nil
-}
-
-// mergeInfo puts the entries of the added exercises into the info.toml of the
-// workspace, each after the exercise that comes before it in the binary's order.
-// Entries of the workspace that the binary does not know are left where they are.
-func mergeInfo(embeddedText, workspaceText string, embedded, added []exercises.Exercise) string {
-	header, names, blocks := splitInfo(workspaceText)
-	_, _, embeddedBlocks := splitInfo(embeddedText)
-	isAdded := map[string]bool{}
-	for _, e := range added {
-		isAdded[e.Name] = true
-	}
-	prev := ""
-	for _, e := range embedded {
-		if !isAdded[e.Name] {
-			prev = e.Name
-			continue
-		}
-		at := 0
-		if i := slices.Index(names, prev); prev != "" && i >= 0 {
-			at = i + 1
-		}
-		blocks[e.Name] = embeddedBlocks[e.Name]
-		names = slices.Insert(names, at, e.Name)
-		prev = e.Name
-	}
-	var b strings.Builder
-	b.WriteString(header)
-	for i, n := range names {
-		block := blocks[n]
-		if i < len(names)-1 && !strings.HasSuffix(block, "\n\n") {
-			block = strings.TrimRight(block, "\n") + "\n\n"
-		}
-		b.WriteString(block)
-	}
-	return b.String()
 }
 
 // copyExercise writes the folder of one exercise into the workspace, with the
@@ -216,30 +147,18 @@ func copyExercise(src fs.FS, root string, e exercises.Exercise) error {
 		if err != nil {
 			return err
 		}
-		return writeFile(filepath.Join(root, filepath.FromSlash(e.LearnerName(name))), data, false)
+		return lw.WriteFile(filepath.Join(root, filepath.FromSlash(e.LearnerName(name))), data, false)
 	})
 }
 
-// writeFile writes a file, creating its folder. Without overwrite it leaves an
-// existing file alone.
-func writeFile(target string, data []byte, overwrite bool) error {
-	if !overwrite {
-		if _, err := os.Stat(target); err == nil {
-			return nil
-		} else if !errors.Is(err, fs.ErrNotExist) {
-			return err
-		}
+// exerciseNames are the names of the exercises, in order.
+func exerciseNames(list []exercises.Exercise) []string {
+	out := make([]string, len(list))
+	for i, e := range list {
+		out[i] = e.Name
 	}
-	if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-		return err
-	}
-	return os.WriteFile(target, data, 0o644)
+	return out
 }
 
 // Describe is a short phrase for a list of exercises: "config5, config6 and 24 more".
-func Describe(names []string) string {
-	if len(names) <= 3 {
-		return strings.Join(names, ", ")
-	}
-	return fmt.Sprintf("%s and %d more", strings.Join(names[:3], ", "), len(names)-3)
-}
+func Describe(names []string) string { return lw.Describe(names) }
