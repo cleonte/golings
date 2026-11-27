@@ -16,6 +16,13 @@ type UpdateResult struct {
 	Added []exercises.Exercise
 	// Readmes is how many README.md files were replaced by a newer text.
 	Readmes int
+	// Refreshed are exercises whose file was replaced by a newer version because
+	// the learner had not touched the old one.
+	Refreshed []string
+	// Newer are exercises whose file has a newer version that was NOT applied,
+	// because the learner has changed the old one: `reset` brings it, and loses
+	// their work.
+	Newer []string
 }
 
 func readInfo(src fs.FS, root string) (embedded []exercises.Exercise, embeddedText string, mine []exercises.Exercise, mineText string, err error) {
@@ -81,6 +88,45 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 		}
 	}
 
+	// Exercises that are already there: a newer file replaces the old one where
+	// the learner cannot have changed it. Only exercises that are a single file
+	// are handled; a folder of several files is left to `reset`.
+	originals := exercises.Originals(root)
+	record := map[string]string{}
+	for _, e := range embedded {
+		if !have[e.Name] {
+			continue
+		}
+		stored := e.StoredName(e.Path)
+		if entries, err := fs.ReadDir(src, path.Dir(stored)); err != nil || len(entries) != 1 {
+			continue
+		}
+		original, err := fs.ReadFile(src, stored)
+		if err != nil {
+			continue
+		}
+		target := filepath.Join(root, filepath.FromSlash(e.Path))
+		current, err := os.ReadFile(target)
+		if err != nil {
+			continue
+		}
+		recorded, known := originals[e.Name]
+		switch lw.Decide(current, original, recorded, known) {
+		case lw.Record:
+			record[e.Name] = lw.Hash(original) // untouched and current: a later release can refresh it
+		case lw.Refresh:
+			res.Refreshed = append(res.Refreshed, e.Name)
+			if !dryRun {
+				if err := lw.WriteFile(target, original, true); err != nil {
+					return res, err
+				}
+				record[e.Name] = lw.Hash(original)
+			}
+		case lw.Newer:
+			res.Newer = append(res.Newer, e.Name)
+		}
+	}
+
 	// The README of a topic is text nobody edits: bring the newer one. A topic
 	// the workspace has none of comes with its first added exercise.
 	newTopic := map[string]bool{}
@@ -119,7 +165,7 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 		return res, nil
 	}
 	for _, e := range res.Added {
-		if err := copyExercise(src, root, e); err != nil {
+		if err := copyExercise(src, root, e, record); err != nil {
 			return res, err
 		}
 	}
@@ -132,13 +178,18 @@ func Update(src fs.FS, root string, dryRun bool) (UpdateResult, error) {
 			return res, err
 		}
 	}
+	if len(record) > 0 || len(res.Added) > 0 {
+		if err := exercises.RecordOriginals(root, record, exerciseNames(res.Added)); err != nil {
+			return res, err
+		}
+	}
 	return res, nil
 }
 
 // copyExercise writes the folder of one exercise into the workspace, with the
 // names a learner sees (a module exercise is stored with a .txt added to its
 // files), and never over a file that is already there.
-func copyExercise(src fs.FS, root string, e exercises.Exercise) error {
+func copyExercise(src fs.FS, root string, e exercises.Exercise, record map[string]string) error {
 	return fs.WalkDir(src, path.Dir(e.Path), func(name string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() {
 			return err
@@ -146,6 +197,9 @@ func copyExercise(src fs.FS, root string, e exercises.Exercise) error {
 		data, err := fs.ReadFile(src, name)
 		if err != nil {
 			return err
+		}
+		if name == e.StoredName(e.Path) {
+			record[e.Name] = lw.Hash(data)
 		}
 		return lw.WriteFile(filepath.Join(root, filepath.FromSlash(e.LearnerName(name))), data, false)
 	})

@@ -151,3 +151,81 @@ func TestUpdateWithTheRealExercisesIsANoOpOnAFreshFolder(t *testing.T) {
 	g.Expect(res.Added).To(BeEmpty())
 	g.Expect(res.Readmes).To(BeZero())
 }
+
+// releaseWith is a release whose exercise a1 has the given content.
+func releaseWith(content string, names ...string) fstest.MapFS {
+	src := release(names...)
+	src["exercises/a/a1/main.go"] = &fstest.MapFile{Data: []byte(content)}
+	return src
+}
+
+func TestInitRecordsTheOriginalsAndAnUntouchedFileIsRefreshed(t *testing.T) {
+	g := NewWithT(t)
+	root := filepath.Join(t.TempDir(), "ws")
+	g.Expect(workspace.Init(release("a1"), root)).To(Succeed())
+	_, err := os.Stat(filepath.Join(root, ".golings.json"))
+	g.Expect(err).NotTo(HaveOccurred(), "init writes the progress file")
+
+	newer := "package main\n\n// I AM NOT DONE\n// a better exercise\nfunc main() {}\n"
+	dry, err := workspace.Update(releaseWith(newer, "a1"), root, true)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(dry.Refreshed).To(Equal([]string{"a1"}))
+	g.Expect(read(g, root, "exercises/a/a1/main.go")).To(Equal(unsolved), "a dry run writes nothing")
+
+	res, err := workspace.Update(releaseWith(newer, "a1"), root, false)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(res.Refreshed).To(Equal([]string{"a1"}))
+	g.Expect(res.Newer).To(BeEmpty())
+	g.Expect(read(g, root, "exercises/a/a1/main.go")).To(Equal(newer))
+
+	again, err := workspace.Update(releaseWith(newer, "a1"), root, false)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(again.Refreshed).To(BeEmpty(), "the new version is the recorded one now")
+}
+
+func TestUpdateKeepsAFileTheLearnerChangedAndSaysThereIsANewerOne(t *testing.T) {
+	g := NewWithT(t)
+	root := filepath.Join(t.TempDir(), "ws")
+	g.Expect(workspace.Init(release("a1"), root)).To(Succeed())
+	work := "package main\n\nfunc main() { println(1) }\n"
+	g.Expect(os.WriteFile(filepath.Join(root, "exercises", "a", "a1", "main.go"), []byte(work), 0o644)).To(Succeed())
+
+	res, err := workspace.Update(releaseWith("package main\n// newer\n", "a1"), root, false)
+
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(res.Newer).To(Equal([]string{"a1"}))
+	g.Expect(res.Refreshed).To(BeEmpty())
+	g.Expect(read(g, root, "exercises/a/a1/main.go")).To(Equal(work))
+}
+
+func TestAFolderMadeBeforeTheProgressFileIsOnlyRecordedNotRefreshed(t *testing.T) {
+	g := NewWithT(t)
+	root := filepath.Join(t.TempDir(), "ws")
+	g.Expect(workspace.Init(release("a1"), root)).To(Succeed())
+	g.Expect(os.Remove(filepath.Join(root, ".golings.json"))).To(Succeed()) // as made by an older golings
+
+	res, err := workspace.Update(release("a1"), root, false)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(res.Refreshed).To(BeEmpty())
+	_, err = os.Stat(filepath.Join(root, ".golings.json"))
+	g.Expect(err).NotTo(HaveOccurred(), "an untouched, current file is recorded so that a later release can refresh it")
+
+	newer := "package main\n// newer\n"
+	res, err = workspace.Update(releaseWith(newer, "a1"), root, false)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(res.Refreshed).To(Equal([]string{"a1"}))
+}
+
+func TestResetRecordsTheOriginalAgain(t *testing.T) {
+	g := NewWithT(t)
+	root := filepath.Join(t.TempDir(), "ws")
+	src := release("a1")
+	g.Expect(workspace.Init(src, root)).To(Succeed())
+	g.Expect(os.WriteFile(filepath.Join(root, "exercises", "a", "a1", "main.go"), []byte("package main\n"), 0o644)).To(Succeed())
+	_, err := workspace.Reset(src, root, "a1")
+	g.Expect(err).NotTo(HaveOccurred())
+
+	res, err := workspace.Update(releaseWith("package main\n// newer\n", "a1"), root, false)
+	g.Expect(err).NotTo(HaveOccurred())
+	g.Expect(res.Refreshed).To(Equal([]string{"a1"}), "a reset file is untouched again")
+}
