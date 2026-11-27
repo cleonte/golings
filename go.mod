@@ -3,10 +3,9 @@ module github.com/cleonte/golings
 go 1.26.0
 
 require (
-	charm.land/bubbles/v2 v2.2.1
 	charm.land/bubbletea/v2 v2.1.1
 	charm.land/lipgloss/v2 v2.0.6
-	github.com/cleonte/lingscore v0.4.1
+	github.com/cleonte/lingscore v0.5.0
 	github.com/fatih/color v1.19.0
 	github.com/jedib0t/go-pretty/v6 v6.8.3
 	github.com/onsi/ginkgo/v2 v2.33.1
@@ -18,6 +17,7 @@ require (
 )
 
 require (
+	charm.land/bubbles/v2 v2.2.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/charmbracelet/colorprofile v0.4.3 // indirect
