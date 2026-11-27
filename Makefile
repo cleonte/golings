@@ -3,7 +3,7 @@ test:
 
 # The packages of the tool: ./... would also load the exercises and fixtures/error1, which do not compile on purpose.
 lint:
-	@cd golings && golangci-lint run . ./cmd/... ./doctor/... ./exercises/... ./ui/... ./workspace/... ./watcher/... ./tui/... ./fixtures/next/... ./fixtures/pending1/... ./fixtures/success1/...
+	@cd golings && golangci-lint run . ./cmd/... ./doctor/... ./exercises/... ./ui/... ./workspace/... ./tui/... ./fixtures/next/... ./fixtures/pending1/... ./fixtures/success1/...
 
 watch:
 	@go run golings/golings.go watch

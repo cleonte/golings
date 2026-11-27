@@ -11,11 +11,19 @@ import (
 
 	"github.com/cleonte/golings"
 	"github.com/cleonte/golings/golings/tui"
-	"github.com/cleonte/golings/golings/watcher"
+	"github.com/cleonte/lingscore/watcher"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
+
+// isExerciseFile is true for Go sources and for the files that make up a module
+// (go.mod, go.sum, go.work), leaving out editor backups and temporary files.
+func isExerciseFile(name string) bool {
+	base := filepath.Base(name)
+	return watcher.SkipEditorFiles(name) &&
+		(strings.HasSuffix(base, ".go") || base == "go.mod" || base == "go.sum" || base == "go.work")
+}
 
 // debounce is how long the watcher waits for a burst of file events to settle.
 const debounce = 150 * time.Millisecond
@@ -38,7 +46,7 @@ them in full (in the full-screen view the f key does).`,
 			defer cancel()
 
 			root := filepath.Join(filepath.Dir(infoFile), "exercises")
-			changes, err := watcher.Watch(ctx, root, debounce)
+			changes, err := watcher.Watch(ctx, root, debounce, isExerciseFile)
 			if err != nil {
 				color.Red("Can't watch %s: %s", root, err)
 				color.Yellow("Run golings from the folder that holds the exercises, create one with `golings init`, or try `golings doctor`.")
