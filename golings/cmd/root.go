@@ -26,6 +26,7 @@ func NewRootCmd(version string) *cobra.Command {
 	rootCmd.AddCommand(ListCmd("info.toml"))
 	rootCmd.AddCommand(RunCmd("info.toml"))
 	rootCmd.AddCommand(VerifyCmd("info.toml"))
+	rootCmd.AddCommand(UpdateCmd(golings.FS, "."))
 	rootCmd.AddCommand(WatchCmd("info.toml"))
 
 	return rootCmd

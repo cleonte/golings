@@ -144,6 +144,14 @@ If you want to start an exercise over, restore it to its original state (this di
 golings reset variables1
 ```
 
+A newer version of golings can bring new exercises, and the folder you made with `golings init` does not know about them. `run`, `list` and `watch` tell you when that is so. To get them, run this in your exercises folder:
+
+```sh
+golings update
+```
+
+It puts each new exercise where it belongs in the course and never writes over an exercise you already have (`--dry-run` shows what it would do; your old `info.toml` is kept as `info.toml.bak`).
+
 Once an exercise is done you can compare your answer with the solution. While it is still pending the solution stays hidden, unless you ask for it:
 
 ```sh

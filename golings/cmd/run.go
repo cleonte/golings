@@ -36,6 +36,7 @@ example specific exercise : golings run variables1`,
 				return runAsJSON(cmd.OutOrStdout(), exercise, args[0], err)
 			}
 
+			noticeNewExercises(infoFile)
 			spinner := RunSpinner(exercise.Name)
 
 			if errors.Is(err, exercises.ErrExerciseNotFound) {

@@ -334,3 +334,13 @@ func TestEditorFailureIsShown(t *testing.T) {
 	m.Update(editDoneMsg{err: errors.New("exit status 1")})
 	g.Expect(m.View().Content).To(ContainSubstring("The editor failed: exit status 1"))
 }
+
+func TestHeaderSaysWhenTheFolderHasNewExercises(t *testing.T) {
+	g := NewWithT(t)
+
+	m, _ := start(t, Config{InfoFile: newWorkspace(t, "!a/a1"), NewExercises: 2})
+	g.Expect(m.View().Content).To(ContainSubstring("2 new exercises: run golings update"))
+
+	m, _ = start(t, Config{InfoFile: newWorkspace(t, "!a/a1")})
+	g.Expect(m.View().Content).NotTo(ContainSubstring("new exercises"))
+}

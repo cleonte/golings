@@ -33,6 +33,7 @@ func ListCmd(infoFile string) *cobra.Command {
 			}
 			ui.PrintList(os.Stdout, exs)
 			printTopicProgress(infoFile)
+			noticeNewExercises(infoFile)
 			return nil
 		},
 	}

@@ -12,6 +12,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Added
 
+- `golings update` adds the exercises of this version that your exercises folder does not have yet (each where it belongs in the order of the course), replaces the README of a topic by its newer text, and never writes over an exercise you already have; `--dry-run` says what it would do. `run`, `list` and `watch` say when the folder is behind, and so does the header of the full-screen `watch`.
 - `golings list --json` and `golings run --json` print the exercises, their state and the result of a run as JSON, for editors and scripts. The format is versioned and described in `docs/json.md`. `run --json` exits 0 when the exercise fails (the answer is in `status`); both exit 1 with an `error` field when they can't answer.
 - A README section about using golings in an editor (VS Code and the errors gopls shows in an unfixed exercise).
 

@@ -256,6 +256,41 @@ var _ = Describe("More commands", func() {
 		})
 	})
 
+	Describe("Update", func() {
+		It("adds the exercises the folder does not have and then says it is up to date", func() {
+			root := tempDirHere()
+			Expect(os.WriteFile(filepath.Join(root, "info.toml"), nil, 0o644)).To(Succeed())
+
+			update := cmd.UpdateCmd(exerciseSource(), root)
+			Expect(update.Execute()).To(Succeed())
+
+			Expect(out.String()).To(ContainSubstring("Added 1 new exercises"))
+			Expect(out.String()).To(ContainSubstring("a1"))
+			Expect(filepath.Join(root, "exercises", "a", "a1", "main.go")).To(BeAnExistingFile())
+
+			out.Reset()
+			Expect(cmd.UpdateCmd(exerciseSource(), root).Execute()).To(Succeed())
+			Expect(out.String()).To(ContainSubstring("up to date"))
+		})
+
+		It("says what it would add with --dry-run and adds nothing", func() {
+			root := tempDirHere()
+			Expect(os.WriteFile(filepath.Join(root, "info.toml"), nil, 0o644)).To(Succeed())
+
+			update := cmd.UpdateCmd(exerciseSource(), root)
+			update.SetArgs([]string{"--dry-run"})
+			Expect(update.Execute()).To(Succeed())
+
+			Expect(out.String()).To(ContainSubstring("Would add 1 new exercises"))
+			Expect(filepath.Join(root, "exercises")).NotTo(BeADirectory())
+		})
+
+		It("fails outside a folder with an info.toml", func() {
+			Expect(cmd.UpdateCmd(exerciseSource(), tempDirHere()).Execute()).To(HaveOccurred())
+			Expect(out.String()).To(ContainSubstring("Cannot update"))
+		})
+	})
+
 	Describe("List", func() {
 		It("fails when the info file does not exist", func() {
 			list := cmd.ListCmd("../fixtures/info404.toml")
