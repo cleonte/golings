@@ -17,6 +17,7 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ### Changed
 
+- CodeQL scans the Go code and the workflows on every pull request, on `main` and weekly (`codeql.yml`).
 - The README badges, on one line under the title: the release, the license and the minimum Go version besides the build status.
 - The code is checked with golangci-lint v2 (`.golangci.yml`, `make lint`, pinned in the lint workflow), and what it found is fixed: doc comments, unused parameters and ignored errors made explicit. No change in behavior.
 
