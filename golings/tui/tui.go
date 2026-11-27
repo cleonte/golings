@@ -28,7 +28,10 @@ type RunFunc func(ctx context.Context, ex exercises.Exercise) (exercises.Result,
 
 // Config is what the full-screen view needs to start.
 type Config struct {
-	InfoFile string
+	// NewExercises is how many exercises this version has that the folder does
+	// not have yet; the header says so.
+	NewExercises int
+	InfoFile     string
 	// Changes delivers the files that were saved, see the watcher package.
 	Changes <-chan []string
 	// Run defaults to running the exercise with exercises.DefaultTimeout.
@@ -512,6 +515,9 @@ func (m *Model) header() string {
 	}
 	if m.skipped > 0 {
 		title += "  " + warnStyle.Render(fmt.Sprintf("%d skipped (see golings doctor)", m.skipped))
+	}
+	if m.cfg.NewExercises > 0 {
+		title += "  " + warnStyle.Render(fmt.Sprintf("%d new exercises: run golings update", m.cfg.NewExercises))
 	}
 
 	current := ""

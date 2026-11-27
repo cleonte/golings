@@ -53,6 +53,8 @@ them in full (in the full-screen view the f key does).`,
 					Root:      filepath.Dir(infoFile),
 					Solutions: golings.Solutions,
 					Editor:    editorCommand(),
+
+					NewExercises: newExercises(infoFile),
 				})
 			}
 

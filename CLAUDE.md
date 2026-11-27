@@ -10,7 +10,7 @@ Upstream is Apache-2.0: keep LICENSE, keep attribution to the original author in
 - Work on a branch per roadmap phase, e.g. `phase-1-housekeeping`. Never commit straight to main.
 
 ## Repo layout
-- `golings/` — the CLI (Go module `github.com/cleonte/golings`, the `go.mod` is at the root): `golings.go` (main), `cmd/`, `exercises/` (the manifest, the runner, how failures are shortened), `tui/` (the full-screen `watch`), `ui/`, `watcher/`, `workspace/` (`init` and `reset`), `doctor/`, `fixtures/`.
+- `golings/` — the CLI (Go module `github.com/cleonte/golings`, the `go.mod` is at the root): `golings.go` (main), `cmd/`, `exercises/` (the manifest, the runner, how failures are shortened), `tui/` (the full-screen `watch`), `ui/`, `watcher/`, `workspace/` (`init`, `reset` and `update`), `doctor/`, `fixtures/`.
 - `embed.go` (package `golings`, at the root) — embeds `info.toml`, `exercises/` and `solutions/` in the binary.
 - `exercises/<topic>/<name>/` — the learner-facing exercises (52 topics, 262 exercises), with a `README.md` per topic.
 - `solutions/<topic>/<name>/` — a verified solution for every exercise.

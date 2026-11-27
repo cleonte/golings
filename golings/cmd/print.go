@@ -57,6 +57,7 @@ func PrintList(infoFile string) {
 	}
 	ui.PrintList(os.Stdout, exs)
 	printTopicProgress(infoFile)
+	noticeNewExercises(infoFile)
 }
 
 // printTopicProgress prints the per-topic table below the exercise list.
@@ -104,6 +105,7 @@ func RunNextExerciseWith(infoFile string, verbose bool) {
 		return
 	}
 	color.Blue("Progress: %d/%d (%.2f%%)\n\n", done, total, progress*100)
+	noticeNewExercises(infoFile)
 
 	if skipped, err := exercises.Skipped(infoFile); err == nil && len(skipped) > 0 {
 		color.Yellow("%d exercise(s) skipped: %s. Try `golings doctor`.\n\n", len(skipped), skipReasons(skipped))
