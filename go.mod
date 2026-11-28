@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	charm.land/bubbletea/v2 v2.2.0
 	charm.land/lipgloss/v2 v2.1.1
-	github.com/cleonte/lingscore v0.6.0
+	github.com/cleonte/lingscore v0.7.0
 	github.com/fatih/color v1.19.0
 	github.com/jedib0t/go-pretty/v6 v6.9.3
 	github.com/onsi/ginkgo/v2 v2.34.0

@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/cleonte/lingscore/style"
+	"github.com/cleonte/lingscore/tui/checkall"
 	"github.com/cleonte/lingscore/tui/jumplist"
 	"github.com/cleonte/lingscore/tui/resume"
 
@@ -105,12 +106,7 @@ type Model struct {
 
 	// Checking every exercise (the c key). Like runs, the results of a check
 	// that was cancelled carry an older id and are ignored.
-	checkID     int
-	checkCtx    context.Context
-	checkCancel context.CancelFunc
-	checkItems  []checkItem
-	checkNext   int // index of the next exercise to start
-	checkActive int // how many are running now
+	check checkall.Check[exercises.Exercise]
 
 	// The run in progress. Results of earlier runs carry an older id and are
 	// ignored: a save during a run cancels it and starts a new one.
@@ -130,13 +126,6 @@ type changesMsg struct{ files []string }
 type changesClosedMsg struct{}
 
 type editDoneMsg struct{ err error }
-
-type checkDoneMsg struct {
-	id     int
-	index  int
-	result exercises.Result
-	err    error
-}
 
 type runDoneMsg struct {
 	id     int
@@ -184,7 +173,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Batch(m.startRun(), m.waitForChanges())
 
 	case changesMsg:
-		if m.checking() {
+		if m.check.Active() {
 			// A save should not throw away a check that is half way (golings
 			// itself saves a file when n takes out a marker). Leaving the check
 			// with esc runs the exercise again.
@@ -200,8 +189,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.notice = "The editor failed: " + msg.err.Error()
 		}
 
-	case checkDoneMsg:
-		return m, m.finishCheck(msg)
+	case checkall.DoneMsg:
+		return m, m.check.Finish(msg)
 
 	case runDoneMsg:
 		if msg.id == m.runID {
@@ -227,7 +216,7 @@ func (m *Model) handleKey(msg tea.KeyPressMsg) (tea.Model, tea.Cmd) {
 	key := msg.String()
 	if key == "q" || key == "ctrl+c" {
 		m.stopRun()
-		m.stopCheck()
+		m.check.Stop()
 		return m, tea.Quit
 	}
 	m.notice = ""
@@ -404,7 +393,7 @@ func (m *Model) stopRun() {
 // starts running it.
 func (m *Model) startRun() tea.Cmd {
 	m.stopRun()
-	m.stopCheck()
+	m.check.Stop()
 	m.mode, m.scroll = modeResult, 0
 
 	_, done, total, err := exercises.Progress(m.cfg.InfoFile)

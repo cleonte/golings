@@ -3,6 +3,7 @@ package tui
 import (
 	"context"
 	"errors"
+	"github.com/cleonte/lingscore/tui/checkall"
 	"os"
 	"regexp"
 	"strings"
@@ -29,7 +30,7 @@ func pump(t *testing.T, m *Model, cmd tea.Cmd) {
 		for _, c := range msg {
 			pump(t, m, c)
 		}
-	case checkDoneMsg, runDoneMsg:
+	case checkall.DoneMsg, runDoneMsg:
 		_, next := m.Update(msg)
 		pump(t, m, next)
 	}
@@ -156,7 +157,7 @@ func TestCheckAllShowsWhatEveryExerciseDoes(t *testing.T) {
 	pump(t, m, check)
 
 	view := plain(m.View().Content)
-	g.Expect(m.checking()).To(BeFalse(), "everything was checked")
+	g.Expect(m.check.Active()).To(BeFalse(), "everything was checked")
 	g.Expect(view).To(ContainSubstring("Checked 5 exercises: 2 work, 2 do not, 1 skipped"))
 	g.Expect(view).To(MatchRegexp(`✔ a1\n`))
 	g.Expect(view).To(ContainSubstring("✔ a2  works, the I AM NOT DONE marker is still there"))
@@ -263,7 +264,7 @@ func TestCheckAllRunsAFewAtATime(t *testing.T) {
 		messages.feed(t, m)
 	}
 
-	g.Expect(m.checking()).To(BeFalse())
+	g.Expect(m.check.Active()).To(BeFalse())
 	g.Expect(m.View().Content).To(ContainSubstring("Checked 6 exercises: 6 work, 0 do not, 0 skipped"))
 }
 
@@ -275,12 +276,10 @@ func TestEscapeStopsTheCheckAndRunsTheExerciseAgain(t *testing.T) {
 	messages := make(bus, 16)
 	messages.run(press(m, "c"))
 	g.Eventually(gated.started.Load).Should(Equal(int32(3)))
-	id := m.checkID
 
 	cmd := press(m, "esc")
 
-	g.Expect(m.checking()).To(BeFalse())
-	g.Expect(m.checkID).To(BeNumerically(">", id))
+	g.Expect(m.check.Active()).To(BeFalse())
 	g.Expect(m.mode).To(Equal(modeResult))
 	g.Expect(cmd).NotTo(BeNil(), "the exercise that was shown is run again")
 	// the cancelled runs report back late; their results must be ignored
@@ -288,7 +287,7 @@ func TestEscapeStopsTheCheckAndRunsTheExerciseAgain(t *testing.T) {
 		messages.feed(t, m)
 	}
 	g.Expect(m.mode).To(Equal(modeResult))
-	g.Expect(m.checkItems[0].status).To(Equal(checkRunning), "a late result of a stopped check changes nothing")
+	g.Expect(m.check.Items[0].Status).To(Equal(checkall.Running), "a late result of a stopped check changes nothing")
 }
 
 func TestASaveDuringTheCheckDoesNotThrowItAway(t *testing.T) {
@@ -301,7 +300,7 @@ func TestASaveDuringTheCheckDoesNotThrowItAway(t *testing.T) {
 
 	_, cmd := m.Update(changesMsg{files: []string{"x.go"}})
 
-	g.Expect(m.checking()).To(BeTrue())
+	g.Expect(m.check.Active()).To(BeTrue())
 	g.Expect(m.mode).To(Equal(modeCheck))
 	g.Expect(m.runID).To(Equal(id), "no new run was started")
 	g.Expect(cmd).NotTo(BeNil(), "it keeps waiting for the next save")
@@ -336,7 +335,7 @@ func TestQuitCancelsTheCheck(t *testing.T) {
 	quit := press(m, "q")
 
 	g.Expect(exec(t, quit)).To(BeAssignableToTypeOf(tea.QuitMsg{}))
-	g.Expect(m.checking()).To(BeFalse())
+	g.Expect(m.check.Active()).To(BeFalse())
 }
 
 func TestCheckAllWithoutExercises(t *testing.T) {
