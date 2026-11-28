@@ -8,6 +8,17 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.9.0] - 2026-11-28
+
+### Added
+
+- `golings update` also brings the newer file of an exercise you have not touched (it keeps the file as it was written in `.golings.json`, so it can tell). An exercise you have changed is left alone and named in the output: `golings reset` brings the new file and loses your work. Done is still decided by the marker in the file alone.
+
+### Changed
+
+- The watcher, the exercise marker, the progress file, the `update` helpers and the list of exercises in the full-screen view now come from the shared [lingscore](https://github.com/cleonte/lingscore) module, which tflings and k8slings use too, so the three look and behave the same. No other change in behavior.
+- Dependencies: bubbletea 2.1.2, lipgloss 2.1.1, go-pretty 6.9.3, ginkgo 2.34.0 and x/term 0.48.0.
+
 ## [1.8.0] - 2026-11-27
 
 ### Added
