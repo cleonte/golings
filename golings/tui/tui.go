@@ -17,6 +17,7 @@ import (
 
 	"github.com/cleonte/lingscore/style"
 	"github.com/cleonte/lingscore/tui/jumplist"
+	"github.com/cleonte/lingscore/tui/resume"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
@@ -503,6 +504,7 @@ func (m *Model) View() tea.View {
 
 	view := tea.NewView(b.String())
 	view.AltScreen = true
+	resume.Set(&view)
 	view.WindowTitle = "golings"
 	return view
 }
