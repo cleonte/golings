@@ -7,28 +7,12 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"github.com/cleonte/golings/golings/exercises"
+	"github.com/cleonte/lingscore/tui/checkall"
 )
 
 // checkWorkers is how many exercises are built and run at the same time while
 // checking all of them.
 const checkWorkers = 4
-
-type checkStatus int
-
-const (
-	checkWaiting checkStatus = iota
-	checkRunning
-	checkPassed
-	checkFailed
-	checkSkipped
-)
-
-type checkItem struct {
-	exercise exercises.Exercise
-	status   checkStatus
-	result   exercises.Result
-	err      error
-}
 
 // next moves on from an exercise that works: it takes out the "I AM NOT DONE"
 // marker, which is what the learner would do by hand, and runs the next one.
@@ -63,7 +47,7 @@ func (m *Model) next() tea.Cmd {
 
 // startCheck runs every exercise, a few at a time, without changing any file.
 func (m *Model) startCheck() tea.Cmd {
-	if m.checkCancel != nil {
+	if m.check.Active() {
 		m.notice = "Already checking the exercises."
 		return nil
 	}
@@ -78,143 +62,68 @@ func (m *Model) startCheck() tea.Cmd {
 	if m.status == statusRunning {
 		m.status = statusStarting
 	}
-	m.checkID++
-	ctx, cancel := context.WithCancel(context.Background())
-	m.checkCtx, m.checkCancel = ctx, cancel
-	m.checkItems = make([]checkItem, len(all))
-	for i, exercise := range all {
-		m.checkItems[i] = checkItem{exercise: exercise}
-	}
-	m.checkNext, m.checkActive = 0, 0
 	m.mode, m.scroll = modeCheck, 0
 
-	var cmds []tea.Cmd
-	for range checkWorkers {
-		if cmd := m.startNextCheck(); cmd != nil {
-			cmds = append(cmds, cmd)
+	run := m.cfg.Run
+	return m.check.Start(all, checkWorkers, func(ctx context.Context, e exercises.Exercise) checkall.Result {
+		return checkResult(e, run)(ctx)
+	})
+}
+
+// checkResult runs one exercise and says what the view shows about it: how it
+// failed, or why it was skipped.
+func checkResult(e exercises.Exercise, run RunFunc) func(context.Context) checkall.Result {
+	return func(ctx context.Context) checkall.Result {
+		result, err := run(ctx, e)
+		switch {
+		case exercises.IsSkipped(err):
+			return checkall.Result{Status: checkall.Skipped, Detail: skipReason(e, err)}
+		case err != nil:
+			return checkall.Result{Status: checkall.Failed, Detail: result.Failure().Kind.String()}
 		}
+		return checkall.Result{Status: checkall.Passed}
 	}
-	return tea.Batch(cmds...)
-}
-
-// startNextCheck starts the next exercise that has not been started yet.
-func (m *Model) startNextCheck() tea.Cmd {
-	if m.checkNext >= len(m.checkItems) {
-		return nil
-	}
-	index := m.checkNext
-	m.checkNext++
-	m.checkItems[index].status = checkRunning
-	m.checkActive++
-
-	exercise, id, run, ctx := m.checkItems[index].exercise, m.checkID, m.cfg.Run, m.checkCtx
-	return func() tea.Msg {
-		result, err := run(ctx, exercise)
-		return checkDoneMsg{id: id, index: index, result: result, err: err}
-	}
-}
-
-func (m *Model) finishCheck(msg checkDoneMsg) tea.Cmd {
-	if msg.id != m.checkID || m.checkCancel == nil || msg.index >= len(m.checkItems) {
-		return nil
-	}
-
-	item := &m.checkItems[msg.index]
-	item.result, item.err = msg.result, msg.err
-	switch {
-	case exercises.IsSkipped(msg.err):
-		item.status = checkSkipped
-	case msg.err != nil:
-		item.status = checkFailed
-	default:
-		item.status = checkPassed
-	}
-	m.checkActive--
-
-	if cmd := m.startNextCheck(); cmd != nil {
-		return cmd
-	}
-	if m.checkActive == 0 {
-		m.checkCancel()
-		m.checkCancel = nil
-	}
-	return nil
-}
-
-// stopCheck cancels a check that is still going.
-func (m *Model) stopCheck() {
-	if m.checkCancel != nil {
-		m.checkCancel()
-		m.checkCancel = nil
-		m.checkID++
-	}
-}
-
-// checking reports whether exercises are still being checked.
-func (m *Model) checking() bool {
-	return m.checkCancel != nil
 }
 
 func (m *Model) checkLines() []string {
-	var passed, failed, skipped, done int
-	for _, item := range m.checkItems {
-		switch item.status {
-		case checkPassed:
-			passed++
-		case checkFailed:
-			failed++
-		case checkSkipped:
-			skipped++
-		}
-		if item.status >= checkPassed {
-			done++
-		}
-	}
-
-	title := fmt.Sprintf("Checked %d exercises: %d work, %d do not, %d skipped", len(m.checkItems), passed, failed, skipped)
-	if m.checking() {
-		title = fmt.Sprintf("Checking the exercises… %d/%d", done, len(m.checkItems))
-	}
-	lines := []string{titleStyle.Render(title), ""}
-
-	for _, item := range m.checkItems {
-		lines = append(lines, m.checkLine(item))
+	lines := []string{titleStyle.Render(m.check.Title()), ""}
+	for _, item := range m.check.Items {
+		lines = append(lines, checkLine(item))
 	}
 	return lines
 }
 
 // skipReason says why an exercise was skipped, from the exercise itself or, if
 // that can't tell (the local Go changed since), from the error of its run.
-func skipReason(item checkItem) string {
-	if reason := item.exercise.SkipReason(); reason != "" {
+func skipReason(e exercises.Exercise, err error) string {
+	if reason := e.SkipReason(); reason != "" {
 		return reason
 	}
-	if errors.Is(item.err, exercises.ErrRaceUnsupported) {
+	if errors.Is(err, exercises.ErrRaceUnsupported) {
 		return "needs the race detector"
 	}
 	return "needs a newer Go"
 }
 
-func (m *Model) checkLine(item checkItem) string {
-	name := item.exercise.Name
-	switch item.status {
-	case checkWaiting:
+func checkLine(item checkall.Item[exercises.Exercise]) string {
+	name := item.Value.Name
+	switch item.Status {
+	case checkall.Waiting:
 		return dimStyle.Render("· " + name)
-	case checkRunning:
+	case checkall.Running:
 		return dimStyle.Render("… " + name)
-	case checkSkipped:
-		return warnStyle.Render(fmt.Sprintf("• %s  %s", name, skipReason(item)))
-	case checkPassed:
-		if item.exercise.State() == exercises.Pending {
+	case checkall.Skipped:
+		return warnStyle.Render(fmt.Sprintf("• %s  %s", name, item.Detail))
+	case checkall.Passed:
+		if item.Value.State() == exercises.Pending {
 			return okStyle.Render("✔ "+name) + dimStyle.Render("  works, the I AM NOT DONE marker is still there")
 		}
 		return okStyle.Render("✔ " + name)
 	}
 
 	// A failure: say how it failed, and shout if it was finished before.
-	how := item.result.Failure().Kind.String()
-	if item.exercise.State() == exercises.Done {
-		return warnStyle.Render(fmt.Sprintf("✗ %s  was finished, but now %s", name, how))
+	if item.Value.State() == exercises.Done {
+		return warnStyle.Render(fmt.Sprintf("✗ %s  was finished, but now %s", name, item.Detail))
 	}
-	return errStyle.Render("✗ "+name) + dimStyle.Render("  "+how)
+	return errStyle.Render("✗ "+name) + dimStyle.Render("  "+item.Detail)
 }
