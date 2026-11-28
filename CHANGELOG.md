@@ -8,6 +8,8 @@ This is a fork of [mauricioabreu/golings](https://github.com/mauricioabreu/golin
 
 ## [Unreleased]
 
+## [1.10.0] - 2026-11-28
+
 ### Added
 
 - The full-screen `watch` tells the terminal how to restart it (the Program Resume Protocol, OSC 7577; Bubble Tea 2.2.0), so a terminal that supports it, such as Rex, brings `golings watch` back, in the same folder, after the terminal restarts. Your progress is on disk, so nothing else is needed. Other terminals ignore it.
